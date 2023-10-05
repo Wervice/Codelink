@@ -1,0 +1,100 @@
+body {
+    background: black;
+    color: white;
+    padding: 0px;
+    margin: 0px;
+    height: 100vh;
+    overflow: hidden;
+}
+
+::selection {
+    background-color: rgb(68, 68, 68);
+    color: rgb(255, 255, 255);
+}
+
+#nav {
+    padding: 5px;
+    background-color: #1b1b1b;
+    cursor: default;
+}
+
+#nav button {
+    padding: 2px;
+    margin: 0px;
+    border-width: 0px;
+    background-color: transparent;
+    color: white;
+    width: 20px;
+}
+
+#nav button:hover {
+    transition: background ease-in-out 0.125s;
+    box-shadow: 0px 0px 1px 1px rgb(45, 45, 45);
+    border-radius: 5px;
+}
+
+#nav button:active {
+    background-color: #222222;
+}
+
+#nav button img {
+    height: 16px;
+    opacity: 80%;
+}
+
+#nav input {
+    margin: 5px;
+    font-size: 14px;
+    position: fixed;
+    background-color: transparent;
+    color: white;
+    border-radius: 5px;
+    border-width: 0px;
+    padding: 2.5px;
+    padding-left: 5px;
+    top: -1px;
+    width: calc(100vw - 140px);
+    font-family: "Space Mono", "Consolas", monospace;
+}
+
+#nav input:focus {
+    outline: none;
+    box-shadow: 0px 0px 1px 1px rgb(45, 45, 45);
+    background-color: #1b1b1b;
+}
+
+#nav img {
+    height: 16px;
+}
+
+#webview {
+    width: 100vw;
+    height: calc(100vh - 38px);
+}
+
+#favList {
+    position: fixed;
+    top: 33px;
+    right: 0px;
+    height: calc(100vh - 38px);
+    background-color: #1b1b1b;
+    padding: 10px;
+    border-left: 1px solid white;
+    overflow-y: scroll;
+    width: 20vw;
+    font-family: "Space Mono", "Consolas", monospace;
+}
+
+#favList button {
+    background-color: transparent;
+    color: white;
+    border-width: 0px;
+    border-bottom: 1px solid grey;
+    padding: 5px;
+    font-family: "Space Mono", "Consolas", monospace;
+    width: 100%;
+}
+
+#favList::-webkit-scrollbar {
+    width: 0px;
+}

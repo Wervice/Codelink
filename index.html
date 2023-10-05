@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeLink Main Screen</title>
+    <link rel="stylesheet" href="main.css">
+    <script src="main.js"></script>
+</head>
+
+<body>
+    <div id="allscreen">
+        <div id="loadingScreen" align="center">
+            <img src="images/icon.svg" alt="Logo" width="200">
+        </div>
+        <div id="popup" hidden>
+            <span id="popup_title"></span>
+            <br>
+            <span id="popup_text" align="left"></span>
+            <div style="height: 10px;"></div>
+            <input type="text" id="popup_content"><br>
+            <div id="selectListGUI" hidden></div>
+            <button id="popup_done_button">Done</button>
+            <button id="popup_no_button" onclick="document.getElementById('popup').hidden = true">Cancle</button>
+        </div>
+        <button class="application" title="Code Editor" id="codeEditorButton" onclick="openCodeEditor()"
+            oncontextmenu="localStorage.removeItem('codeEditor');localStorage.removeItem('codeEditorName'); openCodeEditor(); return false;"><img
+                src="images/editor.png" alt="Editor" id="editorIcon"><img src="images/redx.png" alt="X" title="Fail"
+                class="notification" id="codeEditorError" hidden></button><br>
+
+        <button class="application" title="Terminal" id="TerminalButton" onclick="openTerminal()"
+            oncontextmenu="localStorage.removeItem('terminalCommand'); openTerminal(); return false;"><img
+                src="images/terminal.png" id="TermIcon"><img src="images/redx.png" alt="X" title="Fail"
+                class="notification" id="terminalError" hidden></button>
+        <br>
+
+        <button class="application" title="File manager" id="FilemanagerButton" onclick="openfileManager()"
+            oncontextmenu="localStorage.removeItem('fileManger'); openfileManager(); return false;"><img src="
+        images/folder.png" alt="Mnicon" id="fileMangerIcon"><img src="images/redx.png" alt="X" title="Fail"
+                class="notification" id="fileManagerError" hidden></button><br>
+
+        <button class="application" title="Search error message" id="SearchButton" onclick="search()"><img 
+                src="images/search.png" alt="Search"><img src="images/redx.png" alt="X" title="Fail"
+                class="notification" id="searchError" hidden></button><br>
+        <button class="application" title="Exit" id="ExitButton" onclick="exit()"><img src="images/times.png"
+                alt="exit"></button><br>
+
+        <button class="application" title="Shut down computer" onclick="shutdown()"><img src="images/poweroff.png"
+                alt="Poweroff"></button>
+        <br>
+
+        <button class="application" onclick="window.open('help.html')"><img src="images/help.png" alt="Help"></button>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browser</title>
+    <script src="browser.js"></script>
+    <link rel="stylesheet" href="browser.css">
+</head>
+
+<body oncontextmenu="return false;">
+    <div id="favList" align="left" hidden></div>
+    <div id="nav">
+        <button onclick="document.getElementById('webview').back()"><img src="images/back.png" alt=""></button>
+        <button onclick="document.getElementById('webview').forward()"><img src="images/forward.png" alt=""></button>
+        <button onclick="openInNewBrowser()"><img src="images/link.png" alt=""></button>
+        <button onclick="addToFavs()" oncontextmenu="showFavs()"><img src="images/nobookmark.png" id="bookmarkIcon"></button>
+        <img src="images/nossl.png" id="sslIndicator" title="This only shows if the protocol is HTTP or HTTPS.&NewLine;For more information, please open the website in your main browser.&NewLine;This website may or may not be safe. This is indpendent from this icon.">
+        <input type="text" placeholder="Search or enter URL" id="url">
+    </div>
+    <webview id="webview" src="https://www.google.com/" style="display:inline-flex;" nwdisable></webview>
+</body>
+
+</html>

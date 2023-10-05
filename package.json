@@ -1,0 +1,22 @@
+{
+  "main": "index.html",
+  "name": "codelink",
+  "window": {
+    "frame": false,
+    "toolbar": false,
+    "width": 417,
+    "height": 385,
+    "icon": "images/icon.png",
+    "transparent": true
+  },
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "nw"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "nw": "^0.80.0-sdk"
+  },
+  "chromiumArgs": "--disable-features=nw2 --enable-transparent-visuals --disable-gpu"
+}
