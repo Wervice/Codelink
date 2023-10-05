@@ -15,7 +15,10 @@ It comes with no AI features by default.
 ## Installation
 > Codelink is devloped for programmers
 
-For the instllation, you need to have Node.js and NPM installed on your computer.   
+To run Codelink on your computer, you can go to the release page and download the Windows zip.    
+There, you can find an exe file. All you need to do now, is doubble click it and it launches.
+
+For this instllation, you need to have Node.js and NPM installed on your computer.   
 You can get Node.JS from [nodejs.org](https://nodejs.org/).
 
 Download this code and open your terminal in the folder.   
