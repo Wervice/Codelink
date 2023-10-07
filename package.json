@@ -16,7 +16,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "nw": "^0.80.0-sdk"
+    "nw": "^0.80.0"
   },
   "chromiumArgs": "--disable-features=nw2 --enable-transparent-visuals --disable-gpu"
 }
