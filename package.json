@@ -11,12 +11,38 @@
   },
   "version": "1.0.0",
   "scripts": {
-    "dev": "nw"
+    "dev": "nw",
+    "build": "nwp"
   },
   "author": "",
   "license": "MIT",
-  "dependencies": {
-    "nw": "^0.80.0-sdk"
+  "chromiumArgs": "--disable-features=nw2 --enable-transparent-visuals --disable-gpu",
+  "devDependencies": {
+    "nwjs-packager": "^1.5.1"
   },
-  "chromiumArgs": "--disable-features=nw2 --enable-transparent-visuals --disable-gpu"
+  "nwjs-packager": {
+    "nwVersion": "0.80.0",
+    "appFriendlyName": "Codelink",
+    "appMacIcon": "images/icon.icns",
+    "appWinIcon": "images/icon.ico",
+    "files": [
+      "images/**",
+      "./*"
+    ],
+    "builds": {
+      "linux": {
+        "tar.gz": true
+      },
+      "osx": {
+        "zip": true
+      },
+      "win": {
+        "zip": false
+      }
+    },
+    "appPackageName": "codelink",
+    "appVersion": "1.2stable",
+    "appDescription": "codelink.exe",
+    "appCopyright": "Constantin Volke"
+  }
 }

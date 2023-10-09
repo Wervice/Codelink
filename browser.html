@@ -9,14 +9,177 @@
     <link rel="stylesheet" href="browser.css">
 </head>
 
+<!-- 
+    TODO: Themes
+-->
+
 <body oncontextmenu="return false;">
+    <div id="intro" align="center" hidden>
+        <h1>Welcome to Codelink Browser</h1>
+        <br>
+        <div id="shortcuts" align="left">
+            <h2>Shortcuts</h2>
+            <br>
+            <table data-zoom="true">
+                <tr>
+                    <td class="shortcut"><button>CTRL</button><button>B</button></td>
+                    <td class="shortcut_description">Toggle Bookmarks <img src="images/nobookmark.png" alt="🔖"></td>
+                </tr>
+                <tr>
+                    <td class="shortcut"><button>CTRL</button><button>W</button></td>
+                    <td class="shortcut_description">Open in main browser <img src="images/link.png" alt="🔗"></td>
+                </tr>
+                <tr>
+                    <td class="shortcut"><button>CTRL</button><button>Q</button></td>
+                    <td class="shortcut_description">Close windows <img src="images/times.png" alt="X"></td>
+                </tr>
+                <tr>
+                    <td class="shortcut"><button>CTRL</button><button>R</button></td>
+                    <td class="shortcut_description">Reload page</td>
+                </tr>
+            </table>
+            <br>
+            <button class="cta bottom right" onclick="document.getElementById('shortcuts').hidden = true; document.getElementById('navigations').hidden = false;">-></button>
+        </div>
+        <div id="navigations" align="left" hidden>
+            <h2>Navigation</h2>
+            <br>
+            Navigation works like in any other browser.<br>
+            Here is a list of all special commands for the URL bar: <br><br>
+            <table data-zoom="true">
+                <tr><td>~</td><td>Navigates to google.com</td></tr>
+                <tr><td>~stack</td><td>Navigates to stackoverflow.com</td></tr>
+                <tr><td>~searchcode</td><td>Navigates to searchcode.com</td></tr>
+            </table>
+            <br>
+            The <img src="images/bookmark.png" alt="🔖" height="15"> Icon let's you bookmark a page.<br>
+            View all bookmarks by clicking the icon.<br>
+            <button class="cta bottom right" onclick="document.getElementById('navigations').hidden = true; document.getElementById('assistant_help').hidden = false;">-></button>
+
+        </div>
+        <div id="assistant_help" align="left"  hidden>
+            <h2>Bug assistant</h2>
+            <br>
+            <div align="center">
+                <img src="images/bug.png" alt="🪲" height="50">
+            </div><br>
+            The key feature of this browser is the bug assistant. <br>
+            It helps you research bug fixes faster. <br>
+            You can check it out using the <img src="images/bug.png" alt="🪲" height="20"> icon.
+            <button class="cta bottom right" onclick="localStorage.setItem('browserSetup', 'done'); document.getElementById('intro').hidden = true">Done</button>
+        </div>
+    </div>
+    <div id="bug_assistant" hidden>
+
+        <div id="modeSelectBar" align="center">
+
+            <button class="modeSelect left" title="Run a normal search for a fast bug fix."
+                onclick="setBugFixerMode('fast')">Fast</button><button class="modeSelect right"
+                title="Run an advanced search. This is recommended if you have a complicated bug."
+                onclick="setBugFixerMode('advanced')">Advanced</button>
+            <button class="modeSelect" style="width: 40px; border-radius: 10px;" onclick="terminateBugAssistant()"><img
+                    src="images/times.png" alt="X" title="Close" height="16"></button>
+        </div><br>
+        <div id="search_fast">
+            <h2>Fast</h2>
+            <h4 style="color: grey;">Optional: </h4>
+            <select id="language_fast">
+                <option value="default" selected>Select language</option>
+                <option value='Python'>Python</option>
+                <option value='JavaScript'>JavaScript</option>
+                <option value='Java'>Java</option>
+                <option value='C++'>C++</option>
+                <option value='C#'>C#</option>
+                <option value='Ruby'>Ruby</option>
+                <option value='Swift'>Swift</option>
+                <option value='Go'>Go</option>
+                <option value='PHP'>PHP</option>
+                <option value='Rust'>Rust</option>
+                <option value='Kotlin'>Kotlin</option>
+                <option value='TypeScript'>TypeScript</option>
+                <option value='Perl'>Perl</option>
+                <option value='Haskell'>Haskell</option>
+                <option value='Scala'>Scala</option>
+                <option value='Lua'>Lua</option>
+                <option value='Objective-C'>Objective-C</option>
+                <option value='Dart'>Dart</option>
+                <option value='Elixir'>Elixir</option>
+                <option value='R'>R</option>
+                <option value='Clojure'>Clojure</option>
+                <option value='SQL'>SQL</option>
+                <option value='Assembly'>Assembly</option>
+                <option value='COBOL'>COBOL</option>
+            </select><br>
+            <h4 style="color: grey;">Required: </h4>
+            <textarea id="information_fast" placeholder="Write a max. 15 words description of your problem."
+                onkeyup="countWordsFastSearch()"></textarea>
+            <br>
+            <span id="wordCounter_fast">0<br></span>
+            <br>
+            <span id="generatedQuery_fast"></span>
+            <div align="left"><button onclick="startSearchFast()" class="submit">Start search</button></div>
+        </div>
+        <div id="search_advanced" hidden>
+            <h2>Advanced Search</h2>
+            <h4 style="color: grey">Language Information: </h4>
+
+            <select id="language_advanced">
+                <option value="default" selected>Select language</option>
+                <option value='Python'>Python</option>
+                <option value='JavaScript'>JavaScript</option>
+                <option value='Java'>Java</option>
+                <option value='C++'>C++</option>
+                <option value='C#'>C#</option>
+                <option value='Ruby'>Ruby</option>
+                <option value='Swift'>Swift</option>
+                <option value='Go'>Go</option>
+                <option value='PHP'>PHP</option>
+                <option value='Rust'>Rust</option>
+                <option value='Kotlin'>Kotlin</option>
+                <option value='TypeScript'>TypeScript</option>
+                <option value='Perl'>Perl</option>
+                <option value='Haskell'>Haskell</option>
+                <option value='Scala'>Scala</option>
+                <option value='Lua'>Lua</option>
+                <option value='Objective-C'>Objective-C</option>
+                <option value='Dart'>Dart</option>
+                <option value='Elixir'>Elixir</option>
+                <option value='R'>R</option>
+                <option value='Clojure'>Clojure</option>
+                <option value='SQL'>SQL</option>
+                <option value='Assembly'>Assembly</option>
+                <option value='COBOL'>COBOL</option>
+            </select>
+            <input type="text" id="language_version_advanced" placeholder="Version Number">
+            <br>
+            <h4 style="color: grey;">Bug:</h4>
+            <input type="text" id="error_description_advanced" placeholder="Error Description">
+            <input type="text" id="error_code_advanced" placeholder="Error Code">
+            <br>
+            <h4 style="color: grey;">Enviroment:</h4>
+            <br>
+            <label for="framework_used_advanced" style="color: grey;">Did you use a framework</label>
+            <input type="checkbox" name="framework_used_advanced" id="framework_used_advanced"
+                onchange="document.getElementById('frameworkEntry').hidden = !this.checked">
+            <!-- !! To the future constantin. This 0=1 and 1=0 is supposed -->
+            <br><br>
+            <div id="frameworkEntry" hidden>
+                <input type="text" id="framework_advanced" placeholder="Framework name">
+                <br><br>
+            </div>
+            <button onclick="startSearchAdvanced()" class="submit">Start search</button>
+        </div>
+    </div>
     <div id="favList" align="left" hidden></div>
     <div id="nav">
         <button onclick="document.getElementById('webview').back()"><img src="images/back.png" alt=""></button>
         <button onclick="document.getElementById('webview').forward()"><img src="images/forward.png" alt=""></button>
         <button onclick="openInNewBrowser()"><img src="images/link.png" alt=""></button>
-        <button onclick="addToFavs()" oncontextmenu="showFavs()"><img src="images/nobookmark.png" id="bookmarkIcon"></button>
-        <img src="images/nossl.png" id="sslIndicator" title="This only shows if the protocol is HTTP or HTTPS.&NewLine;For more information, please open the website in your main browser.&NewLine;This website may or may not be safe. This is indpendent from this icon.">
+        <button onclick="launchBugAssistant()"><img src="images/bug.png" alt=""></button>
+        <button onclick="addToFavs()" ondblclick="showFavs()" oncontextmenu="showFavs()"><img
+                src="images/nobookmark.png" id="bookmarkIcon"></button>
+        <img src="images/nossl.png" id="sslIndicator"
+            title="This only shows if the protocol is HTTP or HTTPS.&NewLine;For more information, please open the website in your main browser.&NewLine;This website may or may not be safe. This is indpendent from this icon.">
         <input type="text" placeholder="Search or enter URL" id="url">
     </div>
     <webview id="webview" src="https://www.google.com/" style="display:inline-flex;" nwdisable></webview>
