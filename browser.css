@@ -162,19 +162,19 @@ input:focus, select:focus {
     background-color: #222222;
 }
 
-.left {
+.left_chip {
     border-right-width: 0px;
     border-bottom-left-radius: 10px;
     border-top-left-radius: 10px;
 }
 
-.middle {
+.middle_chip {
     border-right-width: 0px;
     border-left-width: 0px;
     border-radius: 0px;
 }
 
-.right {
+.right_chip {
     border-left-width: 0px;
     border-bottom-right-radius: 10px;
     border-top-right-radius: 10px;

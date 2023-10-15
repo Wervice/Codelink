@@ -36,12 +36,10 @@ nw {Full path to codelink code}
 
 I will soon update this to a better solution using a package manager.   
 
-## Usage
-You can now click a link on the left side to setup a launcher.   
-Please enter a correct command (Example: ``code`` or ``subl``)   
-The search icon will open a small browser window, that is optimized for
-quick searches and bug fixes.   
-It lets you set bookmarks, navigate and more.
+## Features
+- Links for your apps
+- Small browser with inteligen features
+- First version of FileTree
 
 ## Early stage
 Codelink is still in a very early stage.   
@@ -52,3 +50,8 @@ So, please give me feedback and stick around, so you want miss the update.
 Codelink is released under the Apache 2.0 license.   
 It uses NW.js which is released under the MIT License.   
 To support the design of my app, I also use Icons from [Icons8](https://icons8.com)
+
+## Questions and feedback
+If you have any problems, you can contact me:
+
+[Wervice@proton.me](wervice@proton.me)

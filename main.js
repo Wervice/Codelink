@@ -2,7 +2,7 @@ const { exec } = require('child_process');
 const { error } = require('console');
 const { stderr } = require('process');
 win = nw.Window.get()
-win.height = 382
+win.height = 435
 win.width = 350
 function gui_popup(title, text, command) {
     document.getElementById("popup_content").value = ""
@@ -126,25 +126,6 @@ catch {
 }
 
 function search() {
-    function language_name_parser(name) {
-        if (name.includes(" ")) {
-            if (name.length > 7) {
-                abrev = ""
-                for (word of name.split(" ")) {
-                    abrev += word.split("")[0]
-                }
-                name = abrev.toLocaleUpperCase().replace("🔥", "MOJO")
-            }
-            else {
-                name = name.replace(" ", "").replace("🔥", "MOJO")
-            }
-        }
-        else {
-            name = name.toLocaleUpperCase().replace("🔥", "MOJO")
-        }
-        return name
-    }
-    q = "https://www.google.com"
     nw.Window.open("browser.html")
 }
 
@@ -200,7 +181,6 @@ window.onload = function () {
         }
     }
     document.onclick = function (e) {
-        console.log(e.target)
         if (e.target != document.getElementById("selectListGUI")) {
             const listElement = document.getElementById("selectListGUI");
             listElement.hidden = true
@@ -211,7 +191,7 @@ window.onload = function () {
             document.getElementById("selectListGUI").hidden = false
         }
     })
-    setTimeout(function () { document.getElementById("loadingScreen").hidden = true }, 1000)
+    setTimeout(function () { fadeOut("loadingScreen", 500) }, 980)
 }
 
 function shutdown() {
@@ -241,6 +221,9 @@ function PopupDeleteOptions() {
     listElement.hidden = true
 }
 
+function openFileTree() {
+    nw.Window.open("filetree/filetree.html")
+}
 
 win.x = 1100
 win.y = 400

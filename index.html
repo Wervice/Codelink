@@ -7,9 +7,12 @@
     <title>CodeLink Main Screen</title>
     <link rel="stylesheet" href="main.css">
     <script src="main.js"></script>
+    <link rel="stylesheet" href="animations.css">
+    <script src="animations.js"></script>
 </head>
 
 <body>
+    <img src="images/icon.png" alt="Codelink logo" width="100" style="filter: grayscale() brightness(0.2); top: 150px; left: 150px; position: fixed;">
     <div id="allscreen">
         <div id="loadingScreen" align="center">
             <img src="images/icon.svg" alt="Logo" width="200">
@@ -35,16 +38,23 @@
                 class="notification" id="terminalError" hidden></button>
         <br>
 
-        <button class="application" title="File manager" id="FilemanagerButton" onclick="openfileManager()"
+        <button class="application" title="File Manager" id="FilemanagerButton" onclick="openfileManager()"
             oncontextmenu="localStorage.removeItem('fileManger'); openfileManager(); return false;"><img src="
-        images/folder.png" alt="Mnicon" id="fileMangerIcon"><img src="images/redx.png" alt="X" title="Fail"
+            images/folder.png" alt="Mnicon" id="fileMangerIcon"><img src="images/redx.png" alt="X" title="Fail"
                 class="notification" id="fileManagerError" hidden></button><br>
 
-        <button class="application" title="Search error message" id="SearchButton" onclick="search()"><img 
+        <button class="application" title="Intelligent file structure manager" id="FileTreeButton"
+            onclick="openFileTree()"><img src="
+        images/filetree.png" alt="Mnicon" id="fileTreeIcon"><img src="images/redx.png" alt="X" title="Fail"
+                class="notification" id="fileTreeError" hidden></button><br>
+
+        <button class="application" title="Search error message" id="SearchButton" onclick="search()"><img
                 src="images/search.png" alt="Search"><img src="images/redx.png" alt="X" title="Fail"
                 class="notification" id="searchError" hidden></button><br>
         <button class="application" title="Exit" id="ExitButton" onclick="exit()"><img src="images/times.png"
                 alt="exit"></button><br>
+
+
 
         <button class="application" title="Shut down computer" onclick="shutdown()"><img src="images/poweroff.png"
                 alt="Poweroff"></button>

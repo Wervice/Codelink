@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FileTree</title>
+    <script src="filetree.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <script src="../animations.js"></script>
+    <link rel="stylesheet" href="../animations.css">
+    <script src="..\modal.js"></script>
+</head>
+
+<body oncontextmenu="return false;">
+    <div id="inputModal" hidden>
+        <input type="text" id="inputModalInput">
+    </div>
+    <div id="contextmenu" hidden>
+        <button id="contextmenu_open">Open</button>
+        <button id="contextmenu_rename">Rename</button>
+        <button id="contextmenu_delete">Delete</button>
+        <!-- TODO <button id="contextmenu_copy">Copy</button>
+             TODO <button id="contextmenu_move">Move</button>
+             TODO <button id="contextmenu_details">Details</button>
+        -->
+        <button id="contextmenu_new">New</button>
+    </div>
+    <nav>
+        <input type="text" placeholder="Path or filename" id="pathInput">
+        <button onclick="goToPathInput()"><img src="../images/forward.png"></button>
+        <button onclick="goUp()"><img src="../images/up.png"></button>
+        <button onclick="newFile()"><img src="../images/new.png"></button>
+    </nav>
+    <table>
+        <tr>
+            <td>
+                <section id="folder_list">
+
+                </section>
+            </td>
+            <td>
+                <section id="browser_window">
+
+                </section>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>

@@ -39,7 +39,8 @@
                 </tr>
             </table>
             <br>
-            <button class="cta bottom right" onclick="document.getElementById('shortcuts').hidden = true; document.getElementById('navigations').hidden = false;">-></button>
+            <button class="cta bottom right"
+                onclick="document.getElementById('shortcuts').hidden = true; document.getElementById('navigations').hidden = false;">-></button>
         </div>
         <div id="navigations" align="left" hidden>
             <h2>Navigation</h2>
@@ -47,17 +48,27 @@
             Navigation works like in any other browser.<br>
             Here is a list of all special commands for the URL bar: <br><br>
             <table data-zoom="true">
-                <tr><td>~</td><td>Navigates to google.com</td></tr>
-                <tr><td>~stack</td><td>Navigates to stackoverflow.com</td></tr>
-                <tr><td>~searchcode</td><td>Navigates to searchcode.com</td></tr>
+                <tr>
+                    <td>~</td>
+                    <td>Navigates to google.com</td>
+                </tr>
+                <tr>
+                    <td>~stack</td>
+                    <td>Navigates to stackoverflow.com</td>
+                </tr>
+                <tr>
+                    <td>~searchcode</td>
+                    <td>Navigates to searchcode.com</td>
+                </tr>
             </table>
             <br>
             The <img src="images/bookmark.png" alt="🔖" height="15"> Icon let's you bookmark a page.<br>
             View all bookmarks by clicking the icon.<br>
-            <button class="cta bottom right" onclick="document.getElementById('navigations').hidden = true; document.getElementById('assistant_help').hidden = false;">-></button>
+            <button class="cta bottom right"
+                onclick="document.getElementById('navigations').hidden = true; document.getElementById('assistant_help').hidden = false;">-></button>
 
         </div>
-        <div id="assistant_help" align="left"  hidden>
+        <div id="assistant_help" align="left" hidden>
             <h2>Bug assistant</h2>
             <br>
             <div align="center">
@@ -66,15 +77,15 @@
             The key feature of this browser is the bug assistant. <br>
             It helps you research bug fixes faster. <br>
             You can check it out using the <img src="images/bug.png" alt="🪲" height="20"> icon.
-            <button class="cta bottom right" onclick="localStorage.setItem('browserSetup', 'done'); document.getElementById('intro').hidden = true">Done</button>
+            <button class="cta bottom right"
+                onclick="localStorage.setItem('browserSetup', 'done'); document.getElementById('intro').hidden = true">Done</button>
         </div>
     </div>
     <div id="bug_assistant" hidden>
 
         <div id="modeSelectBar" align="center">
-
-            <button class="modeSelect left" title="Run a normal search for a fast bug fix."
-                onclick="setBugFixerMode('fast')">Fast</button><button class="modeSelect right"
+            <button class="modeSelect left_chip" title="Run a normal search for a fast bug fix."
+                onclick="setBugFixerMode('fast')">Fast</button><button class="modeSelect right_chip"
                 title="Run an advanced search. This is recommended if you have a complicated bug."
                 onclick="setBugFixerMode('advanced')">Advanced</button>
             <button class="modeSelect" style="width: 40px; border-radius: 10px;" onclick="terminateBugAssistant()"><img
