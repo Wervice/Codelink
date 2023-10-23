@@ -1,0 +1,316 @@
+
+::-webkit-scrollbar {
+    width: 5px;
+}
+::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+::-webkit-scrollbar-button {
+    background-color: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background-color: white;
+    border-radius: 10px;
+}::selection {
+    background-color: white;
+    color: black;
+}
+
+body {
+    background: #191919;
+    color: white;
+    font-family: "Fira Code", "Fira Mono", monospace;
+    margin: 0px;
+}
+
+input:focus {
+    outline: #303030 solid 1px;
+}
+
+nav {
+    padding: 10px;
+    border-bottom: 1px solid #303030;
+    background: #171717;
+}
+
+nav input {
+    border-radius: 5px;
+    border: 1px solid #303030;
+    background: #191919;
+    color: white;
+    padding: 5px;
+    font-family: "Fira Code", "Fira Mono", monospace;
+    transition: filter ease-in-out 0.25;
+}
+
+nav input:focus {
+    filter: brightness(0.9);
+}
+
+nav button {
+    padding: 7px;
+    width: 49px;
+    border-radius: 5px;
+    border: 1px solid #303030;
+    background: #191919;
+    transition: ease-in-out 0.25s;
+}
+
+nav button:hover {
+    filter: brightness(1.1);
+}
+
+nav button:active {
+    transition: ease-in-out 0.125;
+    filter: brightness(0.9);
+}
+
+nav img {
+    height: 12px;
+}
+
+section#folder_list {
+    border-right: 1px solid #303030;
+    background: #191919;
+    min-width: 130px;
+    padding: 20px;
+    height: calc(100vh - 97px);
+    overflow-y: scroll;
+}
+
+section#folder_list button {
+    max-width: 250px;
+    background-color: #252525;
+    color: white;
+    border-width: 0px;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 2.5px;
+    margin-bottom: 5px;
+    font-family: "Fira Code", "Fira Mono", monospace;
+    text-align: left;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    transition: ease-in-out 0.25s;
+}
+
+section#folder_list button:hover {
+    filter: brightness(1.1);
+    box-shadow: 0px 5px 5px #0000004e;
+}
+
+section#browser_window {
+    height: calc(100vh - 97px);
+    padding: 20px;
+    overflow-y: scroll;
+    max-width: calc(90vw - 270px);
+}
+
+section#browser_window::-webkit-scrollbar {
+    display: none;
+}
+
+section#browser_window button {
+    width: 7vw;
+    height: 7vw;
+    min-width: 100px;
+    min-height: 100px;
+    max-width: 500px;
+    max-height: 500px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #191919;
+    color: white;
+    font-family: "Fira Code", "Fira Mono", monospace;
+    border: 1px solid #303030;
+    margin: 5px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+section#browser_window button img {
+    height: 30px;
+}
+
+td {
+    padding: 0px;
+    margin: 0px;
+}
+
+#contextmenu {
+    width: 150px;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #141414;
+    border-color: #2b2b2b;
+    border-width: 1px;
+    border-style: solid;
+    box-shadow: 0px 5px 10px 2px rgba(0, 0, 0, 0.184);
+    position: fixed;
+    z-index: 200;
+    animation-name: pop_open;
+    animation-duration: 250ms;
+}
+
+#contextmenu button {
+    width: 100%;
+    border-radius: 5px;
+    padding: 10px;
+    border: #2F2F2F 1px solid;
+    background-color: #1F1F1F;
+    color: white;
+    transition: 0.25s ease-in-out;
+    text-align: left;
+    font-family: "Fira Code", "Fira Mono", monospace;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+#contextmenu button:hover {
+    filter: brightness(1.1);
+}
+
+#inputModal {
+    position: fixed;
+    left: calc(50vw - (400px / 2));
+    top: 50px;
+    width: 400px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0px 5px 10px #00000032;
+    height: 40px;
+    outline: #2F2F2F 2px solid;
+    animation-name: fly-in;
+    animation-duration: 0.25s;
+    z-index: 100;
+}
+
+@keyframes fly-in {
+    0% {
+        top: -50px;
+        opacity: 0%;
+    }
+}
+
+#inputModal input {
+    height: 20px;
+    width: 380px;
+    background-color: rgb(19, 19, 19);
+    color: white;
+    border-width: 0px;
+    font-size: 15px;
+    font-family: "Fira Code", "Fira Mono", monospace;
+    padding: 10px;
+
+}
+
+#inputModal input:focus {
+    outline: none;
+}
+
+@keyframes fly-in-bottom {
+    0% {
+        bottom: -30px;
+        opacity: 0%;
+    }
+}
+
+#path_action_indicator {
+    position: fixed;
+    bottom: 0px;
+    padding: 10px;
+    height: 20px;
+    font-size: 20px;
+    background-color: #262626;
+    width: calc(100vw - 20px);
+    z-index: 100;
+    border-top: #303030 1px solid;
+    box-shadow: 0px 5px 5px #00000056;
+    border-radius: 5px 5px 0px 0px;
+    animation-name: fly-in-bottom;
+    animation-duration: 0.25s;
+    cursor: default;
+}
+
+#path_action_indicator::selection {
+    background-color: transparent;
+    color: white;
+}
+
+#path_action_indicator img {
+    height: 12px;
+    margin-top: -5px;
+    transform: scale(2);
+}
+
+#path_action_indicator button {
+    padding: 10px;
+    border-radius: 2.5px;
+    border-width: 0px;
+    background-color: dodgerblue;
+    color: white;
+    font-size: 12px;
+    font-family: "Fira Code", "Fira Mono", monospace;
+    bottom: 2.5px;
+    right: 2.5px;
+    position: fixed;
+    transition: ease-in-out 0.25s;
+}
+
+#path_action_indicator button:hover {
+    filter: brightness(1.1);
+}
+
+@keyframes pop_open {
+    0% {
+        overflow: hidden;
+        height: 0px;
+        width: 0px;
+        opacity: 0%;
+    }
+}
+
+#file_details {
+    position: fixed;
+    width: 50vw;
+    padding: 20px;
+    top: 50px;
+    height: calc(90vh - 100px);
+    max-height: 750px;
+    left: calc(30vw - 10px);
+    width: 40vw;
+    background-color: #1F1F1F;
+    border-radius: 10px;
+    z-index: 200;
+    border: 1px #2b2b2b solid;
+    box-shadow: 0px 5px 5px #00000031, 0px 0px 0px 100vw #0000007c;
+    animation: pop_open;
+    animation-duration: 250ms;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+#file_details h2 {
+    margin-top: 0px;
+    padding: 0px;
+}
+
+#file_details h2 img {
+    height: 16px;
+}
+
+#file_details table tr td {
+    min-width: 100px;
+}
+
+#file_details button {
+    padding: 7px;
+    border-radius: 5px;
+    border: 1px solid #303030;
+    background: #191919;
+    transition: ease-in-out 0.25s;
+    color: white;
+    font-family: "Fira Code", "Fira Mono", monospace;
+}

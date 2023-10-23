@@ -12,25 +12,66 @@
     <script src="..\modal.js"></script>
 </head>
 
+<!-- !
+    !
+    ! Codelink is not ready for build
+    ! The encryption part of the details section is not done.
+    !
+    ! -->
+
+
 <body oncontextmenu="return false;">
     <div id="inputModal" hidden>
         <input type="text" id="inputModalInput">
+    </div>
+    <div id="path_action_indicator" hidden></div>
+    <div id="file_details" hidden>
+        <h2>Details <img src="../images/times.png" alt="X" onclick="terminateDetails()"></h2>
+        <h3>Metadata</h3>
+        <table>
+            <tr>
+                <td>Name</td>
+                <td><span id="details_filename"></span></td>
+            </tr>
+            <tr>
+                <td>Type</td>
+                <td><span id="details_filetype"></span></td>
+            </tr>
+            <tr>
+                <td>Size</td>
+                <td><span id="details_filesize"></span></td>
+            </tr>
+            <tr>
+                <td>Created</td>
+                <td><span id="details_created"></span></td>
+            </tr>
+            <tr>
+                <td>Changed</td>
+                <td><span id="details_lastmod"></span></td>
+            </tr>
+        </table>
+        <h3>Security <small><img src="../images/help.png" height="16" alt="?" title="Help"
+                    onclick="terminateDetails(); confirmModal('Encryption', 'Codelink features a build-in encryption tool.\nThe encryption is based on AES 256.', function() {showDetails()})"></small>
+        </h3>
+        <span id="details_encrypted"></span>
+        <br>
+        <span id="details_owner"></span>
     </div>
     <div id="contextmenu" hidden>
         <button id="contextmenu_open">Open</button>
         <button id="contextmenu_rename">Rename</button>
         <button id="contextmenu_delete">Delete</button>
-        <!-- TODO <button id="contextmenu_copy">Copy</button>
-             TODO <button id="contextmenu_move">Move</button>
-             TODO <button id="contextmenu_details">Details</button>
-        -->
+        <button id="contextmenu_copy">Copy</button>
+        <button id="contextmenu_move">Move</button>
+        <button id="contextmenu_details">Details</button>
         <button id="contextmenu_new">New</button>
     </div>
     <nav>
         <input type="text" placeholder="Path or filename" id="pathInput">
-        <button onclick="goToPathInput()"><img src="../images/forward.png"></button>
-        <button onclick="goUp()"><img src="../images/up.png"></button>
-        <button onclick="newFile()"><img src="../images/new.png"></button>
+        <button onclick="goToPathInput()" title="Go to location"><img src="../images/forward.png"></button>
+        <button onclick="goUp()" title="One layer up"><img src="../images/up.png"></button>
+        <button onclick="newFile()" title="Create new file or folder"><img src="../images/new.png"></button>
+        <button onclick="openTerminalHere()" title="Open in terminal"><img src="../images/cmd.png"></button>
     </nav>
     <table>
         <tr>

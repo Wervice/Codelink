@@ -47,3 +47,14 @@ function confirmModal(title, message, command) {
         killModalPopup()
     }
 }
+
+function confirmModalWarning(title, message, command) {
+    document.getElementById('modalMain').hidden = false
+    document.getElementById('modalTitle').innerHTML = title
+    document.getElementById('modalMessage').innerHTML = message
+    document.getElementById('buttonConfirm').onclick = function () {
+        command()
+        killModalPopup()
+    }
+    document.getElementById('buttonConfirm').classList.add("red")
+}

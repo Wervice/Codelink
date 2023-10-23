@@ -1,0 +1,12 @@
+@keyframes fly-out {
+    100% {
+        top: -100vh;
+        opacity: 0%;
+    }
+}
+
+@keyframes fade-out {
+    100% {
+        opacity: 0%;
+    }
+}

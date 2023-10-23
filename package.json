@@ -5,7 +5,7 @@
     "frame": false,
     "toolbar": false,
     "width": 417,
-    "height": 385,
+    "height": 435,
     "icon": "images/icon.png",
     "transparent": true
   },
@@ -17,9 +17,6 @@
   "author": "",
   "license": "MIT",
   "chromiumArgs": "--disable-features=nw2 --enable-transparent-visuals --disable-gpu",
-  "devDependencies": {
-    "nwjs-packager": "^1.5.1"
-  },
   "nwjs-packager": {
     "nwVersion": "0.80.0",
     "appFriendlyName": "Codelink",
@@ -27,7 +24,8 @@
     "appWinIcon": "images/icon.ico",
     "files": [
       "images/**",
-      "./*"
+      "./*",
+      "./filetree/*"
     ],
     "builds": {
       "linux": {
@@ -41,8 +39,12 @@
       }
     },
     "appPackageName": "codelink",
-    "appVersion": "1.2stable",
+    "appVersion": "1.3stable",
     "appDescription": "codelink.exe",
     "appCopyright": "Constantin Volke"
+  },
+  "dependencies": {
+    "fs-extra": "^11.1.1",
+    "nwjs-packager": "^1.5.1"
   }
 }
