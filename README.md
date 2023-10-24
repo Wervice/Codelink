@@ -28,7 +28,8 @@ If you want to try Codelink on Linux or the above method failed, please try the 
 ## Features
 - Easy app integration
 - Simple and fast browser with bug assistant
-- Inteligent filemanger optimized for developers.
+- Inteligent filemanger optimized for developers
+- Encryption and easy file access
 
 ## Early stage
 Codelink is still in a very early stage.   

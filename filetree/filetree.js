@@ -125,7 +125,32 @@ function handleFile(filename) {
             exec("\"" + currentLocation + filename + "\"")
         }
         else {
-            alert("It is encrypted")
+            inputModal(function () {
+                document.getElementById("inputModalInput").value
+                try {
+                    if (fs.statSync(currentLocation+filename).size < (1024*1204*5)) {
+                    ccode = decrypt(JSON.parse(fs.readFileSync(currentLocation + filename, {
+                        "encoding": "binary"
+                    }).split("\nNOHEAD\n")[1]), document.getElementById("inputModalInput").value)
+                    fs.writeFileSync("decryptedDumpTest." + path.basename(currentLocation + filename).split(".")[path.basename(currentLocation + filename).split(".").length - 1], ccode, {
+                        "encoding": "binary"
+                    })
+                    exec("\"" + "decryptedDumpTest." + path.basename(currentLocation + filename).split(".")[path.basename(currentLocation + filename).split(".").length - 1] + "\"").on("exit", function () {
+                        setTimeout(function () {
+                        fs.writeFileSync("decryptedDumpTest." + path.basename(currentLocation + filename).split(".")[path.basename(currentLocation + filename).split(".").length - 1], "")
+                        fs.unlinkSync("decryptedDumpTest." + path.basename(currentLocation + filename).split(".")[path.basename(currentLocation + filename).split(".").length - 1])
+                    }, 2000)
+                    })
+                }
+                else {
+                    errorModal("Encrypted file", "This file is encrypted and too large for direct decryption.\nPlease decrypt it manualy and then try again.\nYou can also right click and use open to view the encrypted data.", function () {})
+                }
+                }
+                catch (e) {
+                    errorModal("Decryption", "Wrong password", function () { })
+                    console.error(e)
+                }
+            }, "This file is encrypted. Enter password.")
         }
     }
     else if (type == "folder") {
@@ -332,19 +357,20 @@ function terminateDetails() {
 
 function isEncryptedFile(filepath) {
     if (fs.existsSync(filepath) && fs.statSync(filepath).isFile()) {
-    fcontent = fs.readFileSync(filepath, {
-        "encoding": "utf-8"
-    })
-    try {
-        fcontent_metadata = fcontent.split("HEAD\n")[1].split("\nNOHEAD\n")[0].split(";")
-        console.log(fcontent_metadata)
-        return (fcontent_metadata[0] == "codelink");
+        fcontent = fs.readFileSync(filepath, {
+            "encoding": "utf-8"
+        })
+        try {
+            fcontent_metadata = fcontent.split("HEAD\n")[1].split("\nNOHEAD\n")[0].split(";")
+            console.log(fcontent_metadata)
+            return (fcontent_metadata[0] == "codelink");
+        }
+        catch {
+            return false;
+        }
     }
-    catch {
-        return false;
-    }}
     else {
-        console.warn("The file you tried to load doesn't exist. ("+filepath+"). isEncryptedFile()")
+        console.warn("The file you tried to load doesn't exist. (" + filepath + "). isEncryptedFile()")
         return false;
     }
 }
@@ -399,34 +425,34 @@ function encryptionSetup() {
         confirmModal("Remove encryption", "Do you want to remove the encryption from this file?", function () {
             inputModal(function () {
                 try {
-                ccode = decrypt(JSON.parse(fs.readFileSync(context_file, {
-                    "encoding": "binary"
-                }).split("\nNOHEAD\n")[1]), document.getElementById("inputModalInput").value)
-                fs.writeFileSync(context_file, ccode, {
-                    "encoding": "binary"
-                })
-            }
-            catch (e) {
-                errorModal("Decryption", "Wrong password", function () {})
-                console.error(e)
-            }
+                    ccode = decrypt(JSON.parse(fs.readFileSync(context_file, {
+                        "encoding": "binary"
+                    }).split("\nNOHEAD\n")[1]), document.getElementById("inputModalInput").value)
+                    fs.writeFileSync(context_file, ccode, {
+                        "encoding": "binary"
+                    })
+                }
+                catch (e) {
+                    errorModal("Decryption", "Wrong password", function () { })
+                    console.error(e)
+                }
             }, "Password for decryption")
         })
     }
     else {
         fadeOut("encryptionManager", 300)
-        confirmModal("Apply encryption", "When the encryption is applied, you need a password to read and edit the file.\nIt uses AES256. I would recommend choosing a strong password.\nYou're editing the file "+context_file, function () {
+        confirmModal("Apply encryption", "When the encryption is applied, you need a password to read and edit the file.\nIt uses AES256. I would recommend choosing a strong password.\nYou're editing the file " + context_file, function () {
             inputModal(function () {
                 try {
-                ccode = encrypt(fs.readFileSync(context_file, {
-                    "encoding": "binary"
-                }), document.getElementById("inputModalInput").value)
-                fs.writeFileSync(context_file, "HEAD\ncodelink;\nNOHEAD\n"+JSON.stringify(ccode))
-            }
-            catch (e) {
-                errorModal("Encryption failed", "Password was too long or short\nIt has to be 32 chars long", function () {})
-                console.error(e)
-            }
+                    ccode = encrypt(fs.readFileSync(context_file, {
+                        "encoding": "binary"
+                    }), document.getElementById("inputModalInput").value)
+                    fs.writeFileSync(context_file, "HEAD\ncodelink;\nNOHEAD\n" + JSON.stringify(ccode))
+                }
+                catch (e) {
+                    errorModal("Encryption failed", "Password was too long or short\nIt has to be 32 chars long", function () { })
+                    console.error(e)
+                }
             }, "Password for encryption (exactly 32 characters)")
         })
     }
