@@ -4,3 +4,4 @@ build/
 *notes*.*
 jsenc_test.js
 decryptedDumpTest*
+cache/

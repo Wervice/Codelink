@@ -24,7 +24,21 @@
     "appWinIcon": "images/icon.ico",
     "files": [
       "images/**",
-      "./*",
+      "./animations.css",
+      "./browser.css",
+      "./main.css",
+      "./modal.css",
+      "./browser.html",
+      "./help.html",
+      "./index.html",
+      "./animations.js",
+      "./browser.js",
+      "./main.js",
+      "./modal.js",
+      "./favs.js",
+      "./fsextra_license.txt",
+      "./nwjs_license.txt",
+      "./LICENSE",
       "./filetree/*"
     ],
     "builds": {
@@ -39,9 +53,9 @@
       }
     },
     "appPackageName": "codelink",
-    "appVersion": "1.3stable",
+    "appVersion": "1.4.1",
     "appDescription": "codelink.exe",
-    "appCopyright": "Constantin Volke"
+    "appCopyright": "Wervice (Constantin Volke)"
   },
   "dependencies": {
     "fs-extra": "^11.1.1",
