@@ -1,11 +1,10 @@
 <img src="images/codelink_banner.png" height=100>
 <br><br>
 
-Codelink is a simple tool, that helps you coding. It lets you launch your most important applications from once place, search for bugfixes faster and more. It uses NW.js to create a fast and stable interface.
-
-It features an own browser for quick searches and bug fixes. It was tested under Windows 10. It only needs NW from NPM to run. You can install it as [follows](#installation).
-
-It comes with no AI features by default.
+Codelink has lots of tools that are developed and designed for developers.   
+It can support your workflow and help you get anoying tasks done faster.   
+I will upload some release and build over time. Please star the project and follow, to get 
+reminders when a update is online.
 
 <br>
 <div align=left>
