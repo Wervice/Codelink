@@ -13,33 +13,23 @@ It comes with no AI features by default.
 </div>
 
 ## Installation
-> Codelink is devloped for programmers
+> Codelink is designed for developers
 
 To run Codelink on your computer, you can go to the release page and download the Windows zip.    
-There, you can find an exe file. All you need to do now, is doubble click it and it launches.
+There, you can find an exe file. All you need to do now, is doubble click it and it launches.   
+If would recommend to store it in your home folder and add a desktop shortcut. Please don't try to take
+the exe and run it standalone. You may almost certainly breake your download.    
 
-If this doesn't work, you can try the next method:
+If you want to try Codelink on Linux or the above method failed, please try the following or open an issue
 
-For this instllation, you need to have Node.js and NPM installed on your computer.   
-You can get Node.JS from [nodejs.org](https://nodejs.org/).
-
-Download this code and open your terminal in the folder.   
-Install NW.js in this folder:   
-``npm install nw``   
-Run Codelink:   
-``npm run dev``
-
-If this method doesn't work, you can also download the NW.js binaries from [nwjs.io](https://nwjs.io/) and run  
-``
-nw {Full path to codelink code}
-``
-
-I will soon update this to a better solution using a package manager.   
+1. Download code as zip & unpack
+2. Run `npm install nw`
+3. Run `npm run dev`
 
 ## Features
-- Links for your apps
-- Small browser with inteligen features
-- First version of FileTree
+- Easy app integration
+- Simple and fast browser with bug assistant
+- Inteligent filemanger optimized for developers.
 
 ## Early stage
 Codelink is still in a very early stage.   
