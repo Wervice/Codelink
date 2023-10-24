@@ -2,3 +2,4 @@ generateHTML.py
 node_modules/
 build/
 *notes*.*
+jsenc_test.js
