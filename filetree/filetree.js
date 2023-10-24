@@ -5,6 +5,9 @@ const path = require("path");
 const { listeners } = require("process");
 const internal = require("stream");
 const fse = require("fs-extra");
+const { fileURLToPath } = require("url");
+const crypto = require('crypto');
+const { channel } = require("diagnostics_channel");
 
 win = nw.Window.get()
 win.width = 750
@@ -76,13 +79,14 @@ function makeContext(filename) {
             this.setTimeout(function () { this.document.getElementById("contextmenu").hidden = true; }, 120)
         }
     }), 100)
-    if (mousey > window.innerHeight - 300){
-        this.document.getElementById("contextmenu").style.top = mousey-300 + "px"
-    this.document.getElementById("contextmenu").style.left = mousex + "px"
+    if (mousey > window.innerHeight - 300) {
+        this.document.getElementById("contextmenu").style.top = mousey - 300 + "px"
+        this.document.getElementById("contextmenu").style.left = mousex + "px"
     }
     else {
-    this.document.getElementById("contextmenu").style.top = mousey + "px"
-    this.document.getElementById("contextmenu").style.left = mousex + "px"}
+        this.document.getElementById("contextmenu").style.top = mousey + "px"
+        this.document.getElementById("contextmenu").style.left = mousex + "px"
+    }
     document.getElementById("contextmenu").hidden = false;
     if (currentLocation[currentLocation.length - 1] == "\/" || currentLocation[currentLocation.length - 1] == "\\") {
         currentLocation = currentLocation
@@ -117,7 +121,12 @@ function handleFile(filename) {
     }
     // Handle
     if (type == "file") {
-        exec("\"" + currentLocation + filename + "\"")
+        if (!isEncryptedFile(currentLocation + filename)) {
+            exec("\"" + currentLocation + filename + "\"")
+        }
+        else {
+            alert("It is encrypted")
+        }
     }
     else if (type == "folder") {
         renderFolderList(currentLocation + filename)
@@ -135,13 +144,40 @@ function inputModal(listener, placeholder = "") {
     document.getElementById("inputModalInput").placeholder = placeholder
     document.getElementById("inputModalInput").onkeydown = function (e) {
         if (e.key == "Enter") {
-            listener()
             flyOut("inputModal", 500)
             setTimeout(function () { document.getElementById("inputModalInput").value = "", document.getElementById("inputModalInput").placeholder = "" }, 600)
-
+            listener()
         }
     }
 } // ? Make a text input popup
+
+// * Beginning encryption code
+//Checking the crypto module
+const algorithm = 'aes-256-cbc'; //Using AES encryption
+
+//Encrypting text
+function encrypt(text, key) {
+    const iv = crypto.randomBytes(16);
+    let cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(key), iv);
+    let encrypted = cipher.update(text);
+    encrypted = Buffer.concat([encrypted, cipher.final()]);
+    return { iv: iv.toString('hex'), encryptedData: encrypted.toString('hex') };
+}
+
+// Decrypting text
+function decrypt(text, key) {
+    let iv = Buffer.from(text.iv, 'hex');
+    let encryptedText = Buffer.from(text.encryptedData, 'hex');
+    let decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(key), iv);
+    let decrypted = decipher.update(encryptedText);
+    decrypted = Buffer.concat([decrypted, decipher.final()]);
+    return decrypted.toString();
+}
+
+// * Ending encryption code
+
+
+
 
 function goToPathInput() {
     ilocation = document.getElementById('pathInput').value
@@ -165,21 +201,22 @@ function pasteFile() {
         currentLocation = currentLocation + "/"
     }
     if (fs.statSync(file_in_copy).isFile()) {
-    if (fs.existsSync(currentLocation + path.basename(file_in_copy))) {
-        errorModal("Paste error", "In this folder already is a file called " + path.basename(file_in_copy), function () {
-            inputModal(function () {
-                fs.copyFileSync(file_in_copy, currentLocation + document.getElementById("inputModalInput").value)
-                renderContentView(currentLocation)
-                renderFolderList(currentLocation)
-                terminateCopy()
-            }, "New name")
-        })
-    } else {
-        fs.copyFileSync(file_in_copy, currentLocation + path.basename(file_in_copy))
-        renderContentView(currentLocation)
-        renderFolderList(currentLocation)
-        terminateCopy()
-    }}
+        if (fs.existsSync(currentLocation + path.basename(file_in_copy))) {
+            errorModal("Paste error", "In this folder already is a file called " + path.basename(file_in_copy), function () {
+                inputModal(function () {
+                    fs.copyFileSync(file_in_copy, currentLocation + document.getElementById("inputModalInput").value)
+                    renderContentView(currentLocation)
+                    renderFolderList(currentLocation)
+                    terminateCopy()
+                }, "New name")
+            })
+        } else {
+            fs.copyFileSync(file_in_copy, currentLocation + path.basename(file_in_copy))
+            renderContentView(currentLocation)
+            renderFolderList(currentLocation)
+            terminateCopy()
+        }
+    }
     else {
         if (fs.existsSync(currentLocation + path.basename(file_in_copy))) {
             errorModal("Paste error", "In this folder already is a file called " + path.basename(file_in_copy), function () {
@@ -197,7 +234,7 @@ function pasteFile() {
             terminateCopy()
         }
     }
-}
+} // ? Paste a file at the currentLocation
 
 function moveFile() {
     if (currentLocation[currentLocation.length - 1] == "\/" || currentLocation[currentLocation.length - 1] == "\\") {
@@ -207,23 +244,24 @@ function moveFile() {
         currentLocation = currentLocation + "/"
     }
     if (fs.statSync(file_in_move).isFile()) {
-    if (fs.existsSync(currentLocation + path.basename(file_in_move))) {
-        errorModal("Paste error", "In this folder already is a file called " + path.basename(file_in_move), function () {
-            inputModal(function () {
-                fs.copyFileSync(file_in_move, currentLocation + document.getElementById("inputModalInput").value)
-                renderContentView(currentLocation)
-                renderFolderList(currentLocation)
-                fs.unlinkSync(file_in_move)
-                terminatemove()
-            }, "New name")
-        })
-    } else {
-        fs.copyFileSync(file_in_move, currentLocation + path.basename(file_in_move))
-        renderContentView(currentLocation)
-        renderFolderList(currentLocation)
-        fs.unlinkSync(file_in_move)
-        terminatemove()
-    }}
+        if (fs.existsSync(currentLocation + path.basename(file_in_move))) {
+            errorModal("Paste error", "In this folder already is a file called " + path.basename(file_in_move), function () {
+                inputModal(function () {
+                    fs.copyFileSync(file_in_move, currentLocation + document.getElementById("inputModalInput").value)
+                    renderContentView(currentLocation)
+                    renderFolderList(currentLocation)
+                    fs.unlinkSync(file_in_move)
+                    terminatemove()
+                }, "New name")
+            })
+        } else {
+            fs.copyFileSync(file_in_move, currentLocation + path.basename(file_in_move))
+            renderContentView(currentLocation)
+            renderFolderList(currentLocation)
+            fs.unlinkSync(file_in_move)
+            terminatemove()
+        }
+    }
     else {
         if (fs.existsSync(currentLocation + path.basename(file_in_move))) {
             errorModal("Paste error", "In this folder already is a file called " + path.basename(file_in_move), function () {
@@ -241,7 +279,8 @@ function moveFile() {
             terminatemove()
         }
     }
-}
+} // ? Move a file to the currentLocation. 
+// ! There are some differences between file and folder
 
 function newFile() {
     locationused = currentLocation
@@ -274,24 +313,43 @@ function newFile() {
 function terminateCopy() {
     file_in_copy = ""
     fadeOut('path_action_indicator', 250)
-}
+} // ? Stops the copy
 
 function terminatemove() {
     file_in_move = ""
     fadeOut('path_action_indicator', 250)
-}
+} // ? Stops the move
 
 function openTerminalHere() {
     if (localStorage.getItem("terminalCommand") != null) {
-        exec(localStorage.getItem("terminalCommand"), {"cwd": currentLocation})
+        exec(localStorage.getItem("terminalCommand"), { "cwd": currentLocation })
     }
     else {
-        exec("cmd", {"cwd": currentLocation})
+        exec("cmd", { "cwd": currentLocation })
     }
-}
+} // ? Launches the terminal (localStorage)
 
 function terminateDetails() {
     fadeOut("file_details", 250)
+} // ? Hide details
+
+function isEncryptedFile(filepath) {
+    if (fs.existsSync(filepath) && fs.statSync(filepath).isFile()) {
+    fcontent = fs.readFileSync(filepath, {
+        "encoding": "utf-8"
+    })
+    try {
+        fcontent_metadata = fcontent.split("HEAD\n")[1].split("\nNOHEAD\n")[0].split(";")
+        console.log(fcontent_metadata)
+        return (fcontent_metadata[0] == "codelink");
+    }
+    catch {
+        return false;
+    }}
+    else {
+        console.warn("The file you tried to load doesn't exist. ("+filepath+"). isEncryptedFile()")
+        return false;
+    }
 }
 
 function showDetails() {
@@ -300,9 +358,9 @@ function showDetails() {
     extension = ""
 
     if (fs.statSync(context_file).isFile()) {
-        extension = path.basename(context_file).split(".")[path.basename(context_file).split(".").length-1].toUpperCase()
-        size = "~" + Math.round(fs.statSync(context_file).size / (1024 * 1024)) + "MB" + " ("+fs.statSync(context_file).size+"B)"
-        if (context_file in fs.readFileSync("encryptedFiles.txt", {"encoding":"utf-8"}).split("\n")) {
+        extension = path.basename(context_file).split(".")[path.basename(context_file).split(".").length - 1].toUpperCase()
+        size = "~" + Math.round(fs.statSync(context_file).size / (1024 * 1024)) + "MB" + " (" + fs.statSync(context_file).size + "B)"
+        if (isEncryptedFile(context_file)) {
             encrypted = "Yes"
         }
         else {
@@ -320,8 +378,62 @@ function showDetails() {
     document.getElementById("details_filesize").innerText = size
     document.getElementById("details_created").innerText = cdate
     document.getElementById("details_lastmod").innerText = mdate
-    document.getElementById("details_encrypted").innerHTML = "Encrypted: "+encrypted
-    document.getElementById("details_owner").innerHTML = "Owner UID: "+fs.statSync(context_file).uid
+    document.getElementById("details_encrypted").innerHTML = "Encrypted: " + encrypted
+    document.getElementById("details_owner").innerHTML = "Owner UID: " + fs.statSync(context_file).uid
+} // ? Show details (context_file)
+
+function encryptionManager() {
+    terminateDetails()
+    document.getElementById("encryptionManager").hidden = false
+    document.getElementById("encryption_filename").innerText = context_file
+    if (isEncryptedFile(context_file)) {
+        document.getElementById("encryption_status").innerText = "Encrypted"
+        document.getElementById("encryption_button").innerText = "Remove encryption"
+    }
+    else {
+        document.getElementById("encryption_status").innerText = "Unencrypted"
+        document.getElementById("encryption_button").innerText = "Add encryption"
+    }
+}
+
+function encryptionSetup() {
+    if (isEncryptedFile(context_file)) {
+        fadeOut("encryptionManager", 300)
+        confirmModal("Remove encryption", "Do you want to remove the encryption from this file?", function () {
+            inputModal(function () {
+                try {
+                ccode = decrypt(JSON.parse(fs.readFileSync(context_file, {
+                    "encoding": "binary"
+                }).split("\nNOHEAD\n")[1]), document.getElementById("inputModalInput").value)
+                fs.writeFileSync(context_file, ccode, {
+                    "encoding": "binary"
+                })
+            }
+            catch (e) {
+                errorModal("Decryption", "Wrong password", function () {})
+                console.error(e)
+            }
+            }, "Password for decryption")
+        })
+    }
+    else {
+        fadeOut("encryptionManager", 300)
+        confirmModal("Apply encryption", "When the encryption is applied, you need a password to read and edit the file.\nIt uses AES256. I would recommend choosing a strong password.\nYou're editing the file "+context_file, function () {
+            inputModal(function () {
+                try {
+                ccode = encrypt(fs.readFileSync(context_file, {
+                    "encoding": "binary"
+                }), document.getElementById("inputModalInput").value)
+                fs.writeFileSync(context_file, "HEAD\ncodelink;\nNOHEAD\n"+JSON.stringify(ccode))
+            }
+            catch (e) {
+                errorModal("Encryption failed", "Password was too long or short\nIt has to be 32 chars long", function () {})
+                console.error(e)
+            }
+            }, "Password for encryption (exactly 32 characters)")
+        })
+    }
+
 }
 
 window.addEventListener("load", function () {

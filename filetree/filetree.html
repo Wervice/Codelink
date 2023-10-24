@@ -12,15 +12,15 @@
     <script src="..\modal.js"></script>
 </head>
 
-<!-- !
-    !
-    ! Codelink is not ready for build
-    ! The encryption part of the details section is not done.
-    !
-    ! -->
-
-
 <body oncontextmenu="return false;">
+    <div id="encryptionManager" hidden>
+        <h2>Encryption Manager <img src="../images/times.png" alt="X" height="16" onclick="fadeOut('encryptionManager', 500)"></h2>
+        <span id="encryption_filename"></span><br>
+        Status: <span id="encryption_status"></span>
+        <br>
+        <br>
+        <button id="encryption_button" onclick="encryptionSetup()" style="cursor: pointer;"></button>
+    </div>
     <div id="inputModal" hidden>
         <input type="text" id="inputModalInput">
     </div>
@@ -51,11 +51,14 @@
             </tr>
         </table>
         <h3>Security <small><img src="../images/help.png" height="16" alt="?" title="Help"
-                    onclick="terminateDetails(); confirmModal('Encryption', 'Codelink features a build-in encryption tool.\nThe encryption is based on AES 256.', function() {showDetails()})"></small>
+                    onclick="terminateDetails(); confirmModal('Encryption', 'Codelink features a build-in encryption tool.<br>The encryption is based on AES 256.<br>It requires a 32 characters long password.', function() {showDetails()})"></small>
         </h3>
         <span id="details_encrypted"></span>
         <br>
         <span id="details_owner"></span>
+        <br>
+        <br>
+        <button onclick="encryptionManager()" style="cursor: pointer;">Manage encryption</button>
     </div>
     <div id="contextmenu" hidden>
         <button id="contextmenu_open">Open</button>

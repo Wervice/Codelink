@@ -272,7 +272,7 @@ td {
     }
 }
 
-#file_details {
+#file_details, #encryptionManager {
     position: fixed;
     width: 50vw;
     padding: 20px;
@@ -305,7 +305,7 @@ td {
     min-width: 100px;
 }
 
-#file_details button {
+#file_details button, #encryptionManager button {
     padding: 7px;
     border-radius: 5px;
     border: 1px solid #303030;
