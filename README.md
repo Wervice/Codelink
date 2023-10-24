@@ -3,8 +3,8 @@
 
 Codelink has lots of tools that are developed and designed for developers.   
 It can support your workflow and help you get anoying tasks done faster.   
-I will upload some release and build over time. Please star the project and follow, to get 
-reminders when a update is online.
+I will upload some release and build over time.   
+Please star the project and follow, to get reminders when a update is online.
 
 <br>
 <div align=left>
@@ -44,3 +44,5 @@ To support the design of my app, I also use Icons from [Icons8](https://icons8.c
 If you have any problems, you can contact me:
 
 [Wervice@proton.me](wervice@proton.me)
+
+I also have a Fosstodon Account where you can follow me and get updates: [Wervice](https://fosstodon.org/@wervice)
