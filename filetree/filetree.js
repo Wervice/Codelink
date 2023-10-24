@@ -176,9 +176,6 @@ function decrypt(text, key) {
 
 // * Ending encryption code
 
-
-
-
 function goToPathInput() {
     ilocation = document.getElementById('pathInput').value
     renderFolderList(ilocation)

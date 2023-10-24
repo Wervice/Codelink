@@ -22,7 +22,7 @@ the exe and run it standalone. You may almost certainly breake your download.
 If you want to try Codelink on Linux or the above method failed, please try the following or open an issue
 
 1. Download code as zip & unpack
-2. Run `npm install nw`
+2. Run `npm install nw fs-extra`
 3. Run `npm run dev`
 
 ## Features
