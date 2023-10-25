@@ -1,7 +1,7 @@
 <br>
 <img src="images/codelink_banner.png" height=100>
 <br>
-<br>
+
 
 Codelink has lots of tools that are developed and designed for developers.   
 It can support your workflow and help you get anoying tasks done faster.   
