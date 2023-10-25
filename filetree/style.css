@@ -180,11 +180,12 @@ td {
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0px 5px 10px #00000032;
-    height: 40px;
+    height: 42px;
     outline: #2F2F2F 2px solid;
     animation-name: fly-in;
     animation-duration: 0.25s;
     z-index: 100;
+    background-color: rgb(19, 19, 19);
 }
 
 @keyframes fly-in {
@@ -313,4 +314,18 @@ td {
     transition: ease-in-out 0.25s;
     color: white;
     font-family: "Fira Code", "Fira Mono", monospace;
+}
+
+@keyframes gradient {
+    75% {
+        filter: hue-rotate(1deg);
+    }    
+}
+
+#loading_wheel {
+    height: 2px;
+    background-color: dodgerblue;
+    animation-name: gradient;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
 }

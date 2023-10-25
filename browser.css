@@ -1,4 +1,4 @@
-body {
+body, html {
     background: black;
     color: white;
     padding: 0px;
@@ -22,7 +22,7 @@ input:focus, select:focus {
 }
 
 #nav {
-    padding: 5px;
+    padding: 10px;
     background-color: #1b1b1b;
     cursor: default;
 }
@@ -34,16 +34,17 @@ input:focus, select:focus {
     background-color: transparent;
     color: white;
     width: 20px;
+    transition: ease-in-out 0.25s;
 }
 
 #nav button:hover {
-    transition: background ease-in-out 0.125s;
-    box-shadow: 0px 0px 1px 1px rgb(45, 45, 45);
+    box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.617);
     border-radius: 5px;
+    background-color: #313131;
 }
 
 #nav button:active {
-    background-color: #222222;
+    background-color: #444444;
 }
 
 #nav button img {
@@ -61,15 +62,21 @@ input:focus, select:focus {
     border-width: 0px;
     padding: 2.5px;
     padding-left: 5px;
-    top: -1px;
+    top: 2px;
     width: calc(100vw - 200px);
     font-family: "Space Mono", "Consolas", monospace;
+    transition: ease-in-out 0.25s;
+}
+
+#nav input:focus {
+    box-shadow: 0px 0px 1px 1px rgb(45, 45, 45);
+    background-color: #141414;
 }
 
 #nav input:focus {
     outline: none;
     box-shadow: 0px 0px 1px 1px rgb(45, 45, 45);
-    background-color: #1b1b1b;
+    background-color: #282828;
 }
 
 #nav img {
@@ -78,7 +85,7 @@ input:focus, select:focus {
 
 #webview {
     width: 100vw;
-    height: calc(100vh - 38px);
+    height: calc(100vh - 48px);
 }
 
 #favList {
@@ -116,14 +123,24 @@ input:focus, select:focus {
     left: 0px;
     width: 100vw;
     height: 100vw;
-    background-color: black;
+    background-color: #1b1b1b;
     z-index: 100;
-    padding: 10px;
+    padding: 20px;
     padding-top: 20px;
 }
 
 #intro h1, h2, h3, h4, h5, h6 {
     margin: 0px;
+}
+
+#intro button {
+    box-shadow: 0px 5px 5px black;
+    transition: ease-in-out 0.25s;
+}
+
+#intro button:hover {
+    box-shadow: 0px 5px 10px black;
+    filter: brightness(1.1);
 }
 
 #bug_assistant {

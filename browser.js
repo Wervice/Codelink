@@ -33,6 +33,10 @@ win = nw.Window.get()
 win.width = 700
 win.height = 600
 window.onload = function () {
+    setTimeout(
+        function () {
+        document.body.hidden = false}
+    , 250)
     document.getElementById("url").addEventListener("keydown", function (e) {
         if (e.key == "Enter") {
             if (document.getElementById("url").value.includes("https://") || document.getElementById("url").value.includes("http://")) {

@@ -170,8 +170,10 @@ function inputModal(listener, placeholder = "") {
     document.getElementById("inputModalInput").onkeydown = function (e) {
         if (e.key == "Enter") {
             flyOut("inputModal", 500)
+            document.getElementById("loading_wheel").hidden = false
             setTimeout(function () { document.getElementById("inputModalInput").value = "", document.getElementById("inputModalInput").placeholder = "" }, 600)
             listener()
+            fadeOut("loading_wheel", 250)
         }
     }
 } // ? Make a text input popup
@@ -180,7 +182,6 @@ function inputModal(listener, placeholder = "") {
 //Checking the crypto module
 const algorithm = 'aes-256-cbc'; //Using AES encryption
 
-//Encrypting text
 function encrypt(text, key) {
     const iv = crypto.randomBytes(16);
     let cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(key), iv);
@@ -189,7 +190,6 @@ function encrypt(text, key) {
     return { iv: iv.toString('hex'), encryptedData: encrypted.toString('hex') };
 }
 
-// Decrypting text
 function decrypt(text, key) {
     let iv = Buffer.from(text.iv, 'hex');
     let encryptedText = Buffer.from(text.encryptedData, 'hex');
@@ -199,7 +199,8 @@ function decrypt(text, key) {
     return decrypted.toString();
 }
 
-// ! Can I save place by using binary format
+// ? Can I save place by using binary format
+// ! NO
 
 // * Ending encryption code
 
