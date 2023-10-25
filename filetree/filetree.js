@@ -199,6 +199,8 @@ function decrypt(text, key) {
     return decrypted.toString();
 }
 
+// ! Can I save place by using binary format
+
 // * Ending encryption code
 
 function goToPathInput() {
