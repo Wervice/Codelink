@@ -9,7 +9,7 @@
     "icon": "images/icon.png",
     "transparent": true
   },
-  "version": "1.0.0",
+  "version": "1.4.1",
   "scripts": {
     "dev": "nw",
     "build": "nwp"
