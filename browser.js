@@ -35,8 +35,9 @@ win.height = 600
 window.onload = function () {
     setTimeout(
         function () {
-        document.body.hidden = false}
-    , 250)
+            document.body.hidden = false
+        }
+        , 250)
     document.getElementById("url").addEventListener("keydown", function (e) {
         if (e.key == "Enter") {
             if (document.getElementById("url").value.includes("https://") || document.getElementById("url").value.includes("http://")) {
@@ -45,10 +46,10 @@ window.onload = function () {
             else if (document.getElementById("url").value.includes(" ")) {
                 query = document.getElementById("url").value
 
-                url = "https://www.google.com/search?q=" + encodeURIComponent(query)
+                url = "https://www.startpage.com/search?q=" + encodeURIComponent(query)
             }
             else if (document.getElementById("url").value == "~") {
-                url = "https://www.google.com"
+                url = "https://www.startpage.com"
             }
             else if (document.getElementById("url").value == "~stack") {
                 url = "https://www.stackoverflow.com"
@@ -59,7 +60,7 @@ window.onload = function () {
             else if (!document.getElementById("url").value.includes(".")) {
                 query = document.getElementById("url").value
 
-                url = "https://www.google.com/search?q=" + encodeURIComponent(query)
+                url = "https://www.startpage.com/search?q=" + encodeURIComponent(query)
             }
             else {
                 url = "https://" + document.getElementById("url").value
@@ -69,6 +70,10 @@ window.onload = function () {
     })
     document.getElementById("webview").addEventListener("change", function () {
         document.getElementById("url").value = document.getElementById("webview").src
+    })
+
+    document.getElementById("webview").addEventListener("newwindow", function (e) {
+        document.getElementById("webview").src = e.targetUrl
     })
     urla = ""
     urlb = ""
@@ -206,7 +211,7 @@ function startSearchFast() {
     languageUsed = document.getElementById("language_fast").value
     if (languageUsed != "default") {
         query = problemDescription + " \"" + languageUsed + "\" OR title:" + problemDescription + " OR \":" + problemDescription + "\" " + languageUsed + " OR site:stackoverflow.com " + problemDescription + " " + languageUsed
-        document.getElementById("webview").src = "https://www.google.com/search?q=" + encodeURIComponent(query)
+        document.getElementById("webview").src = "https://www.startpage.com/search?q=" + encodeURIComponent(query)
     }
     else {
         languageUsed = ""
@@ -218,7 +223,7 @@ function startSearchFast() {
             }
         }
         query = problemDescription + " \"" + languageUsed + "\" OR title:" + problemDescription + " OR \":" + problemDescription + "\" " + languageUsed + " OR site:stackoverflow.com " + problemDescription + " " + languageUsed
-        document.getElementById("webview").src = "https://www.google.com/search?q=" + encodeURIComponent(query)
+        document.getElementById("webview").src = "https://www.startpage.com/search?q=" + encodeURIComponent(query)
     }
     terminateBugAssistant()
 }
@@ -230,7 +235,7 @@ function startSearchAdvanced() {
     errorDescriptionCode = document.getElementById("error_code_advanced").value
     frameworkName = document.getElementById("framework_advanced").value
     query = errorDescription + " \"" + errorDescriptionCode + "\" " + programmingLanguage + " " + programmingLanguageVersion + " " + frameworkName
-    document.getElementById("webview").src = "https://www.google.com/search?q=" + encodeURIComponent(query)
+    document.getElementById("webview").src = "https://www.startpage.com/search?q=" + encodeURIComponent(query)
     terminateBugAssistant()
 }
 

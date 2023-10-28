@@ -22,7 +22,7 @@ input:focus, select:focus {
 }
 
 #nav {
-    padding: 10px;
+    padding: 7.5px;
     background-color: #1b1b1b;
     cursor: default;
 }
@@ -62,7 +62,7 @@ input:focus, select:focus {
     border-width: 0px;
     padding: 2.5px;
     padding-left: 5px;
-    top: 2px;
+    top: 1px;
     width: calc(100vw - 200px);
     font-family: "Space Mono", "Consolas", monospace;
     transition: ease-in-out 0.25s;
@@ -85,7 +85,7 @@ input:focus, select:focus {
 
 #webview {
     width: 100vw;
-    height: calc(100vh - 48px);
+    height: calc(100vh - 42px);
 }
 
 #favList {
