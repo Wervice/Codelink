@@ -13,8 +13,13 @@
 </head>
 
 <body oncontextmenu="return false;">
+    <div id="compression_manager" hidden>
+        <h2>Compression manager <img src="../images/times.png" alt="X" height="16" onclick="fadeOut('compression_manager', 125)"></h2><img src="" alt=""></h2>
+        <input type="text" placeholder="Output name" id="gzipOutputName">
+        <button onclick="compressFile()">Compress</button>
+    </div>
     <div id="encryptionManager" hidden>
-        <h2>Encryption Manager <img src="../images/times.png" alt="X" height="16" onclick="fadeOut('encryptionManager', 500)"></h2>
+        <h2>Encryption Manager <img src="../images/times.png" alt="X" height="16" onclick="fadeOut('encryptionManager', 125)"></h2>
         <span id="encryption_filename"></span><br>
         Status: <span id="encryption_status"></span>
         <br>
@@ -26,7 +31,9 @@
         <br>
         <div id="loading_wheel" hidden></div>
     </div>
-    <div id="path_action_indicator" hidden></div>
+    <div id="inputModalDropdown" hidden></div>
+    <div id="path_action_indicator" hidden>
+    </div>
     <div id="file_details" hidden>
         <h2>Details <img src="../images/times.png" alt="X" onclick="terminateDetails()"></h2>
         <h3>Metadata</h3>
@@ -64,18 +71,19 @@
     </div>
     <div id="contextmenu" hidden>
         <button id="contextmenu_open">Open</button>
-        <button id="contextmenu_rename">Rename</button>
-        <button id="contextmenu_delete">Delete</button>
         <button id="contextmenu_copy">Copy</button>
         <button id="contextmenu_move">Move</button>
-        <button id="contextmenu_details">Details</button>
         <button id="contextmenu_new">New</button>
+        <button id="contextmenu_details">Details</button>
+        <button id="contextmenu_rename">Rename</button>
+        <button id="contextmenu_compress">Compress</button>
+        <button id="contextmenu_delete">Delete</button>
     </div>
     <nav>
         <input type="text" placeholder="Path or filename" id="pathInput">
         <button onclick="goToPathInput()" title="Go to location"><img src="../images/forward.png"></button>
         <button onclick="goUp()" title="One layer up"><img src="../images/up.png"></button>
-        <button onclick="newFile()" title="Create new file or folder"><img src="../images/new.png"></button>
+        <button onclick="commandLine()" title="Open command line&NewLine;Use CTRL + [+] as alternative"><img src="../images/command_enter.png"></button>
         <button onclick="openTerminalHere()" title="Open in terminal"><img src="../images/cmd.png"></button>
     </nav>
     <table>

@@ -225,5 +225,9 @@ function openFileTree() {
     nw.Window.open("filetree/filetree.html")
 }
 
+function openHelp() {
+    nw.Window.open("help.html")
+}
+
 win.x = 1100
 win.y = 400

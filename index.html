@@ -12,7 +12,8 @@
 </head>
 
 <body>
-    <img src="images/icon.png" alt="Codelink logo" width="100" style="filter: grayscale() brightness(0.2); top: 150px; left: 150px; position: fixed;">
+    <img src="images/icon.png" alt="Codelink logo" width="100"
+        style="filter: grayscale() brightness(0.2); top: 150px; left: 150px; position: fixed;">
     <div id="allscreen">
         <div id="loadingScreen" align="center">
             <img src="images/icon.svg" alt="Logo" width="200">
@@ -51,16 +52,22 @@
         <button class="application" title="Search error message" id="SearchButton" onclick="search()"><img
                 src="images/search.png" alt="Search"><img src="images/redx.png" alt="X" title="Fail"
                 class="notification" id="searchError" hidden></button><br>
+
+        <!-- 
+        TODO 
+        TODO <button class="application" title="Intelligent notepad" id="SearchButton" onclick="search()"><img
+        TODO         src="images/search.png" alt="Search"><img src="images/redx.png" alt="X" title="Fail"
+        TODO         class="notification" id="searchError" hidden></button><br>
+        TODO 
+        -->
         <button class="application" title="Exit" id="ExitButton" onclick="exit()"><img src="images/times.png"
                 alt="exit"></button><br>
-
-
 
         <button class="application" title="Shut down computer" onclick="shutdown()"><img src="images/poweroff.png"
                 alt="Poweroff"></button>
         <br>
 
-        <button class="application" onclick="window.open('help.html')"><img src="images/help.png" alt="Help"></button>
+        <button class="application" onclick="openHelp()"><img src="images/help.png" alt="Help"></button>
     </div>
 </body>
 

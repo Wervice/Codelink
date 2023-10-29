@@ -17,9 +17,15 @@
     display: none;
 }
 
+:root {
+    --box-shadow: 0px 3px 2px #000000b4;
+    --window-shadow: 0px 10px 20px #00000054;
+    --application-border-color: #464646;
+}
+
 input:focus {
     outline: none;
-    box-shadow: 0px 0px 0px 2px dodgerblue inset;
+    box-shadow: var(--box-shadow);
 }
 
 body {
@@ -37,7 +43,8 @@ body {
     overflow: hidden;
     margin: 7px;
     padding: 5px;
-    box-shadow: 0px 0px 2.5px 1px rgb(151, 151, 151), 0px 10px 5px rgba(0, 0, 0, 0.15);
+    outline: 1px #414141 solid;
+    box-shadow: var(--window-shadow);
 }
 
 button {
@@ -131,9 +138,10 @@ input {
     align-tracks: left;
     text-align: left;
     background-color: black;
-    border-color: rgba(255, 255, 255, 0.3);
+    border-color: var(--application-border-color);
     border-width: 1px;
     border-style: solid;
+    box-shadow: var(--box-shadow);    
 }
 
 .application img {
@@ -142,7 +150,7 @@ input {
 }
 
 .application:hover {
-    background-color: #ffffff0e;
+    filter: brightness(1.2);
     color: white;
 }
 
@@ -177,7 +185,7 @@ a {
     border-style: solid;
     border-width: 1px;
     border-color: #5b5b5b;
-    box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.53);
+    box-shadow: var(--box-shadow);
     height: 100px;
     overflow-y: scroll;
     animation-name: open;

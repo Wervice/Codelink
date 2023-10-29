@@ -12,13 +12,14 @@
     left: calc(25vw - 40px);
     border-radius: 5px;
     padding: 20px;
-    background-color: #232323;
+    background-color: #23232356;
     box-shadow: 0px 5px 15px #00000057;
     outline: rgb(64, 64, 64) solid 1px;
     color: white;
     font-family: "Fira Code", "Fira Mono", monospace;
     animation-name: fly-in;
     animation-duration: 0.25s;
+    backdrop-filter: blur(10px);
 }
 
 #modalMain.red {

@@ -12,7 +12,7 @@
   "version": "1.4.1",
   "scripts": {
     "dev": "nw",
-    "build": "nwp"
+    "build": "nwb"
   },
   "author": "",
   "license": "MIT",

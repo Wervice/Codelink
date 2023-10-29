@@ -1,13 +1,58 @@
-const { exec } = require("child_process");
 const fs = require("fs");
 const os = require("os");
-const path = require("path");
-const { listeners } = require("process");
-const internal = require("stream");
-const fse = require("fs-extra");
-const { fileURLToPath } = require("url");
 const crypto = require('crypto');
-const { channel } = require("diagnostics_channel");
+const internal = require("stream");
+const compression = require("node:zlib")
+const fse = require("fs-extra");
+const path = require("path");
+const { exec } = require("child_process");
+const { createGzip } = require('node:zlib');
+const { pipeline } = require('node:stream');
+extensionSort = {
+    "png": "image",
+    "jpeg": "image",
+    "webp": "image",
+    "gif": "image",
+    "heic": "image",
+    "svg": "image",
+
+    "html": "code",
+    "css": "code",
+    "php": "code",
+    "js": "code",
+    "py": "code",
+    "pyw": "executable",
+    "sh": "executable",
+    "dll": "executable",
+    "exe": "executable",
+    "elf": "executable",
+    "json": "code",
+    "xml": "code",
+    "r": "code",
+    "mojo": "code",
+    "c": "code",
+    "cs": "code",
+    "cpp": "code",
+
+    "md": "document",
+    "doc": "document",
+    "docx": "document",
+    "pdf": "document",
+    "rtf": "document",
+
+    "mp3": "audio",
+    "wav": "audio",
+
+    "csv": "spreadsheet",
+    "xlsx": "spreadsheet",
+    "xls": "spreadsheet",
+
+    "mp4": "video",
+    "webv": "video",
+
+    "db": "database"
+}
+var selected_file_id = 0
 
 win = nw.Window.get()
 win.width = 750
@@ -57,7 +102,12 @@ function renderContentView(location) {
         }
         try {
             if (fs.statSync(location + file).isFile()) {
-                img_path = "../images/file.png"
+                try {
+                    img_path = "../images/file_icons/" + extensionSort[path.basename(file).split(".")[1]] + ".png"
+                }
+                catch {
+                    img_path = "../images/file.png"
+                }
                 s = s + "<button data-filename=\"" + file + "\" onclick=handleFile(\"" + encodeURIComponent(file) + "\") oncontextmenu=makeContext('" + encodeURIComponent(file) + "')><img src=\"" + img_path + "\" height=16><br>" + file + "</button>"
 
             }
@@ -74,9 +124,9 @@ function renderContentView(location) {
 
 function makeContext(filename) {
     filename = decodeURIComponent(filename)
-    setTimeout(window.addEventListener("mouseup", function () {
+    setTimeout(window.addEventListener("click", function () {
         if (this.document.getElementById("contextmenu").hidden == false) {
-            this.setTimeout(function () { this.document.getElementById("contextmenu").hidden = true; }, 120)
+            this.setTimeout(function () { this.document.getElementById("contextmenu").hidden = true; }, 20)
         }
     }), 100)
     if (mousey > window.innerHeight - 300) {
@@ -128,23 +178,24 @@ function handleFile(filename) {
             inputModal(function () {
                 document.getElementById("inputModalInput").value
                 try {
-                    if (fs.statSync(currentLocation+filename).size < (1024*1204*5)) {
-                    ccode = decrypt(JSON.parse(fs.readFileSync(currentLocation + filename, {
-                        "encoding": "binary"
-                    }).split("\nNOHEAD\n")[1]), document.getElementById("inputModalInput").value)
-                    fs.writeFileSync("decryptedDumpTest." + path.basename(currentLocation + filename).split(".")[path.basename(currentLocation + filename).split(".").length - 1], ccode, {
-                        "encoding": "binary"
-                    })
-                    exec("\"" + "decryptedDumpTest." + path.basename(currentLocation + filename).split(".")[path.basename(currentLocation + filename).split(".").length - 1] + "\"").on("exit", function () {
-                        setTimeout(function () {
-                        fs.writeFileSync("decryptedDumpTest." + path.basename(currentLocation + filename).split(".")[path.basename(currentLocation + filename).split(".").length - 1], "")
-                        fs.unlinkSync("decryptedDumpTest." + path.basename(currentLocation + filename).split(".")[path.basename(currentLocation + filename).split(".").length - 1])
-                    }, 2000)
-                    })
-                }
-                else {
-                    errorModal("Encrypted file", "This file is encrypted and too large for direct decryption.\nPlease decrypt it manualy and then try again.\nYou can also right click and use open to view the encrypted data.", function () {})
-                }
+                    if (fs.statSync(currentLocation + filename).size < (1024 * 1204 * 5)) {
+                        ccode = decrypt(JSON.parse(fs.readFileSync(currentLocation + filename, {
+                            "encoding": "binary"
+                        }).split("\nNOHEAD\n")[1]), document.getElementById("inputModalInput").value)
+                        fs.writeFileSync("decryptedDumpTest." + path.basename(currentLocation + filename).split(".")[path.basename(currentLocation + filename).split(".").length - 1], ccode, {
+                            "encoding": "binary"
+                        })
+                        exec("\"" + "decryptedDumpTest." + path.basename(currentLocation + filename).split(".")[path.basename(currentLocation + filename).split(".").length - 1] + "\"")
+                        errorModal("Encryption closing", "Please close the file by clicking Ok, when you've viewed it.", function () {
+                            setTimeout(function () {
+                                fs.writeFileSync("decryptedDumpTest." + path.basename(currentLocation + filename).split(".")[path.basename(currentLocation + filename).split(".").length - 1], "")
+                                fs.unlinkSync("decryptedDumpTest." + path.basename(currentLocation + filename).split(".")[path.basename(currentLocation + filename).split(".").length - 1])
+                            })
+                        })
+                    }
+                    else {
+                        errorModal("Encrypted file", "This file is encrypted and too large for direct decryption.\nPlease decrypt it manualy and then try again.\nYou can also right click and use open to view the encrypted data.", function () { })
+                    }
                 }
                 catch (e) {
                     errorModal("Decryption", "Wrong password", function () { })
@@ -164,19 +215,31 @@ function handleFile(filename) {
     }
 } // ? Manage a file click
 
-function inputModal(listener, placeholder = "") {
+function inputModal(listener, placeholder = "", showDropdown = false, dropdownList = []) {
     document.getElementById("inputModal").hidden = false
     document.getElementById("inputModalInput").placeholder = placeholder
+    document.getElementById("inputModalInput").focus()
     document.getElementById("inputModalInput").onkeydown = function (e) {
         if (e.key == "Enter") {
-            flyOut("inputModal", 500)
             document.getElementById("loading_wheel").hidden = false
+            flyOut("inputModal", 500)
             setTimeout(function () { document.getElementById("inputModalInput").value = "", document.getElementById("inputModalInput").placeholder = "" }, 600)
             listener()
             fadeOut("loading_wheel", 250)
+            fadeOut("inputModalDropdown", 250)
         }
     }
+    dropdownHTML = ""
+    for (e of dropdownList) {
+        dropdownHTML += "<button onclick=insertDropdownSelection('" + encodeURIComponent(e) + "')>" + e + "</button>"
+    }
+    document.getElementById("inputModalDropdown").innerHTML = dropdownHTML
+    document.getElementById("inputModalDropdown").hidden = !showDropdown
 } // ? Make a text input popup
+
+function insertDropdownSelection(e) {
+    document.getElementById("inputModalInput").value = decodeURIComponent(e)
+}
 
 // * Beginning encryption code
 //Checking the crypto module
@@ -198,9 +261,6 @@ function decrypt(text, key) {
     decrypted = Buffer.concat([decrypted, decipher.final()]);
     return decrypted.toString();
 }
-
-// ? Can I save place by using binary format
-// ! NO
 
 // * Ending encryption code
 
@@ -305,9 +365,8 @@ function moveFile() {
         }
     }
 } // ? Move a file to the currentLocation. 
-// ! There are some differences between file and folder
 
-function newFile() {
+function commandLine() {
     locationused = currentLocation
     if (locationused[locationused.length - 1] == "\/" || locationused[locationused.length - 1] == "\\") {
         locationused = locationused
@@ -318,20 +377,103 @@ function newFile() {
     inputModal(
         function () {
             newPathFromInput = document.getElementById("inputModalInput").value
-            if (!fs.existsSync(locationused + newPathFromInput)) {
+            if (newPathFromInput.match(".* from .*") != null && newPathFromInput.split(" from ")[1] != null) {
+                fs.writeFileSync(locationused + newPathFromInput.split(" from ")[0], fs.readFileSync(locationused + newPathFromInput.split(" from ")[1], {
+                    "encoding": "utf-8"
+                }))
+                renderContentView(currentLocation)
+                renderFolderList(currentLocation)
+            }
+            else if (newPathFromInput.match("$rm .*[.].*") != null && newPathFromInput[0] == "$") {
+                errorModal(
+                    "Delete file",
+                    "Do you want to remove the file " + newPathFromInput.split("remove ")[1] + "?",
+                    function () {
+                        fs.unlinkSync(locationused + newPathFromInput.split("remove ")[1])
+                        renderContentView(currentLocation)
+                        renderFolderList(currentLocation)
+                    }
+                )
+            }
+            else if (newPathFromInput.includes("$find ") && newPathFromInput[0] == "$") {
+                file_list = []
+                folder_list = []
+                admin_only = []
+                admin_only = []
+                file_list_html = ""
+                folder_list_html = ""
+                query = newPathFromInput.split("find ")[1]
+                console.log(query)
+                for (file of fs.readdirSync(currentLocation)) {
+                    try {
+                        if (fs.statSync(currentLocation + "/" + file).isFile()) {
+                            if (file.match(query) != null) {
+                                file_list.push(file)
+                            }
+                        }
+                        else {
+                            if (file.match(query) != null) {
+                                folder_list.push(file)
+                            }
+                        }
+                    }
+                    catch {
+                        admin_only.push(file)
+                    }
+                }
+                for (file of file_list) {
+                    try {
+                        img_path = "../images/file_icons/" + extensionSort[path.basename(file).split(".")[1]] + ".png"
+                    }
+                    catch {
+                        img_path = "../images/file.png"
+                    }
+                    file_list_html = file_list_html + "<button data-filename=\"" + file + "\" onclick=handleFile(\"" + encodeURIComponent(file) + "\") oncontextmenu=makeContext('" + encodeURIComponent(file) + "')><img src=\"" + img_path + "\" height=16><br>" + file + "</button>"
+                }
+                for (folder of folder_list) {
+                    img_path = "../images/folder.png"
+                    if (file[0] == "." || file[0] == "$") {
+                        folder_list_html = folder_list_html + "<button data-filename=\"" + file + "\" oncontextmenu=makeContext(\"" + encodeURIComponent(file) + "\") onclick=handleFile(\"" + encodeURIComponent(file) + "\") style=opacity:70%><img src=\"" + img_path + "\" height=16> " + file + "</button><br>"
+                    }
+                    else {
+                        folder_list_html = folder_list_html + "<button data-filename=\"" + file + "\" oncontextmenu=makeContext(\"" + encodeURIComponent(file) + "\") onclick=handleFile(\"" + encodeURIComponent(file) + "\")><img src=\"" + img_path + "\" height=16> " + file + "</button><br>"
+                    }
+                }
+                setTimeout(function () {
+                    document.getElementById("browser_window").innerHTML = file_list_html
+                    document.getElementById("folder_list").innerHTML = folder_list_html
+                }, 100)
+            }
+            else if (newPathFromInput == "$editCss") {
+                if (localStorage.getItem("codeEditor") != null) {
+                    exec(localStorage.getItem("codeEditor") + " customCSS.css")
+                }
+                else {
+                    exec("notepad customCSS.css")
+                }
+            }
+            else if (!fs.existsSync(locationused + newPathFromInput)) {
                 if (newPathFromInput.includes(".")) {
+                    // * File
                     fs.writeFileSync(locationused + newPathFromInput, "")
                 }
                 else {
+                    // * Folder
                     fs.mkdirSync(locationused + newPathFromInput)
                 }
+                renderContentView(currentLocation)
+                renderFolderList(currentLocation)
             }
             else {
-                errorModal("File error", "This file couldn't be created.", function () { })
+                errorModal("File error", "This operation failed", function () { })
             }
-            renderContentView(currentLocation)
-            renderFolderList(currentLocation)
-        }, "Enter new filename or foldername")
+
+        }, "Enter command or filename", true, [
+        "$rm",
+        "$find",
+        "$editCss",
+        "b from a"
+    ])
 
 } // ? Create a new file
 
@@ -383,29 +525,36 @@ function showDetails() {
     document.getElementById("details_filename").innerText = path.basename(context_file)
     extension = ""
 
-    if (fs.statSync(context_file).isFile()) {
-        extension = path.basename(context_file).split(".")[path.basename(context_file).split(".").length - 1].toUpperCase()
-        size = "~" + Math.round(fs.statSync(context_file).size / (1024 * 1024)) + "MB" + " (" + fs.statSync(context_file).size + "B)"
-        if (isEncryptedFile(context_file)) {
-            encrypted = "Yes"
+    try {
+        if (fs.statSync(context_file).isFile()) {
+            extension = path.basename(context_file).split(".")[path.basename(context_file).split(".").length - 1].toUpperCase()
+            size = "~" + Math.round(fs.statSync(context_file).size / (1024 * 1024)) + "MB" + " (" + fs.statSync(context_file).size + "B)"
+            if (isEncryptedFile(context_file)) {
+                encrypted = "Yes"
+            }
+            else {
+                encrypted = "No"
+            }
         }
         else {
+            extension = "Folder"
+            size = "Not calculated"
             encrypted = "No"
         }
+        cdate = fs.statSync(context_file).birthtime.toUTCString()
+        mdate = fs.statSync(context_file).mtime.toUTCString()
+        document.getElementById("details_filetype").innerText = extension
+        document.getElementById("details_filesize").innerText = size
+        document.getElementById("details_created").innerText = cdate
+        document.getElementById("details_lastmod").innerText = mdate
+        document.getElementById("details_encrypted").innerHTML = "Encrypted: " + encrypted
+        document.getElementById("details_owner").innerHTML = "Owner UID: " + fs.statSync(context_file).uid
     }
-    else {
-        extension = "Folder"
-        size = "Not calculated"
-        encrypted = "No"
+    catch (e) {
+        console.error(e)
+        terminateDetails()
+        errorModal("Error", e, function () { })
     }
-    cdate = fs.statSync(context_file).birthtime.toUTCString()
-    mdate = fs.statSync(context_file).mtime.toUTCString()
-    document.getElementById("details_filetype").innerText = extension
-    document.getElementById("details_filesize").innerText = size
-    document.getElementById("details_created").innerText = cdate
-    document.getElementById("details_lastmod").innerText = mdate
-    document.getElementById("details_encrypted").innerHTML = "Encrypted: " + encrypted
-    document.getElementById("details_owner").innerHTML = "Owner UID: " + fs.statSync(context_file).uid
 } // ? Show details (context_file)
 
 function encryptionManager() {
@@ -462,8 +611,33 @@ function encryptionSetup() {
 
 }
 
+function compressFile() {
+    if (currentLocation[currentLocation.length - 1] == "\/" || currentLocation[currentLocation.length - 1] == "\\") {
+        currentLocation = currentLocation
+    }
+    else {
+        currentLocation = currentLocation + "/"
+    }
+    var gzip = createGzip();
+    var source = fs.createReadStream(context_file);
+    var destination = fs.createWriteStream(currentLocation + document.getElementById("gzipOutputName").value + ".gz");
+    pipeline(source, gzip, destination, (err) => {
+        if (err) {
+            console.error('An error occurred:', err);
+            fadeOut("compression_manager", 125)
+            errorModal("Compression failed", "The compression failed", function () { })
+        }
+        else {
+            fadeOut("compression_manager", 125)
+            renderContentView(currentLocation)
+            renderFolderList(currentLocation)
+        }
+    });
+
+}
+
 window.addEventListener("load", function () {
-    dataInit() // ! Do not move
+    dataInit()
     this.document.getElementById('pathInput').onkeydown = function (e) {
         if (e.key == "Enter") {
             if (this.value[0] != "?")
@@ -507,6 +681,9 @@ window.addEventListener("load", function () {
             renderFolderList(currentLocation)
         })
     }
+    this.document.getElementById("contextmenu_compress").onclick = function () {
+        document.getElementById("compression_manager").hidden = false
+    }
     this.document.getElementById('contextmenu_copy').onclick = function () {
         file_in_copy = context_file
         document.getElementById('path_action_indicator').innerHTML = "<img src=../images/times.png onclick=terminateCopy()> Copy " + file_in_copy + " <button onclick=pasteFile()>Paste</button>"
@@ -517,7 +694,7 @@ window.addEventListener("load", function () {
         document.getElementById('path_action_indicator').innerHTML = "<img src=../images/times.png onclick=terminateMove()> Copy " + file_in_move + " <button onclick=moveFile()>Move</button>"
         document.getElementById('path_action_indicator').hidden = false
     }
-    this.document.getElementById('contextmenu_new').onclick = function () { newFile() }
+    this.document.getElementById('contextmenu_new').onclick = function () { commandLine() }
     this.document.getElementById('contextmenu_details').onclick = function () { showDetails() }
     renderContentView(os.homedir() + "\\")
     renderFolderList(os.homedir() + "\\")
@@ -534,6 +711,42 @@ window.addEventListener("keydown", function (e) {
     if (e.key == "Escape") {
         flyOut("inputModal", 500)
         setTimeout(function () { document.getElementById("inputModalInput").value = "" }, 600)
+        this.document.getElementById("contextmenu").hidden = true
+        fadeOut("inputModalDropdown", 250)
+    }
+    else if (e.key == "+" && e.ctrlKey) {
+        commandLine()
+    }
+    else if (e.key == "l" && e.ctrlKey) {
+        this.document.getElementById("pathInput").focus()
+    }
+    else if (e.key == "r" && e.ctrlKey) {
+        renderContentView(currentLocation)
+        renderFolderList(currentLocation)
+    }
+    else if (e.key == "r" && e.ctrlKey && e.shiftKey) {
+        this.location.reload()
+    }
+    else if (e.key == "ArrowDown") {
+        selected_file_id = selected_file_id + 1
+        if (selected_file_id < 0 || this.document.querySelectorAll("#browser_window button").length < selected_file_id) {
+            selected_file_id = 0
+        }
+        for (e of this.document.querySelectorAll("#browser_window button")) {
+            e.style.background = "#191919"
+        }
+        this.document.querySelector("#browser_window button:nth-child(" + selected_file_id + ")").style.background = "#0570db"
+        this.document.querySelector("#browser_window button:nth-child(" + selected_file_id + ")").focus()
+    }
+    else if (e.key == "ArrowUp") {
+        selected_file_id = selected_file_id - 1
+        if (selected_file_id < 0 || this.document.querySelectorAll("#browser_window button").length < selected_file_id) {
+            selected_file_id = 0
+        }
+        for (e of this.document.querySelectorAll("#browser_window button")) {
+            e.style.background = "#191919"
+        }
+        this.document.querySelector("#browser_window button:nth-child(" + selected_file_id + ")").style.background = "#0570db"
+        this.document.querySelector("#browser_window button:nth-child(" + selected_file_id + ")").focus()
     }
 })
-

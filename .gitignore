@@ -2,6 +2,7 @@ generateHTML.py
 node_modules/
 build/
 *notes*.*
+notes/
 jsenc_test.js
 decryptedDumpTest*
 cache/
