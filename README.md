@@ -10,7 +10,7 @@ Please star the project and follow, to get reminders when a update is online.
 
 
 <div align=left>
-<img src="images/screenshot.png" width=200>
+<img src="images/screenshot.png">
 </div>
 
 ## Installation
