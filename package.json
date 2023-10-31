@@ -12,7 +12,7 @@
   "version": "1.4.1",
   "scripts": {
     "dev": "nw",
-    "build": "nwb"
+    "build": "nwp"
   },
   "author": "",
   "license": "MIT",
@@ -59,6 +59,9 @@
   },
   "dependencies": {
     "fs-extra": "^11.1.1",
+    "marked": "^9.1.4"
+  },
+  "devDependencies": {
     "nw": "^0.81.0-sdk",
     "nwjs-packager": "^1.5.1"
   }

@@ -8,6 +8,9 @@ const path = require("path");
 const { exec } = require("child_process");
 const { createGzip } = require('node:zlib');
 const { pipeline } = require('node:stream');
+const { cursorTo } = require("readline");
+const marked = require('marked');
+
 extensionSort = {
     "png": "image",
     "jpeg": "image",
@@ -50,7 +53,13 @@ extensionSort = {
     "mp4": "video",
     "webv": "video",
 
-    "db": "database"
+    "db": "database",
+
+    "zip": "archive",
+    "7z": "archive",
+    "tar": "archive",
+    "xz": "archive",
+    "gz": "archive"
 }
 var selected_file_id = 0
 
@@ -92,6 +101,7 @@ function renderFolderList(location) {
 } // ? Render the folder list
 
 function renderContentView(location) {
+    renderNotes(location)
     s = ""
     for (file of fs.readdirSync(location)) {
         if (location[location.length - 1] == "\/" || location[location.length - 1] == "\\") {
@@ -121,6 +131,58 @@ function renderContentView(location) {
     }
     document.getElementById("browser_window").innerHTML = s
 } // ? Render the content for the folder content view
+
+function renderNotes(location) {
+    notes_list_dom = document.getElementById("notes_list")
+    if (fs.existsSync(path.join(location, "codebook"))) {
+        html_code = "<button id=new_note onclick=newNote()><img src=../images/new.png></button>"
+        for (e of fs.readdirSync(path.join(location, "codebook"))) {
+            html_code += "<button class='notes'>" + e.split(".")[0] + "</button><button class=activity onclick=deleteNote(this) data-filename=" + encodeURIComponent(e) + "><img src=../images/delete.png height=15></button><br>"
+        }
+        notes_list_dom.innerHTML = html_code
+    }
+    else {
+        notes_list_dom.innerHTML = "<button id=initNotes title='Setup an instance of Codebooks in this folder&NewLine;This will create an sub directory and some markdown files.&NewLine;You can also gitignore it.' onclick=initNotes()>Init notes in this folder</button>"
+    }
+} // ? Renders the notes section
+
+function deleteNote(e) {
+    confirmModalWarning("Delete note", "Do you want to remove this note?<br>" + e.split(".")[0], function () {
+        fs.unlinkSync(path.join(currentLocation, "codebook", e.dataset.filename))
+        renderNotes(currentLocation)
+    })
+}
+
+function renderMDtoHTML() {
+    document.getElementById("notes_textarea").hidden = true
+    document.getElementById("notes_rendered").innerHTML = marked.marked(document.getElementById("notes_textarea").value)
+    document.getElementById("notes_rendered").hidden = false
+}
+
+function showMD() {
+    document.getElementById("notes_rendered").hidden = true
+    document.getElementById("notes_textarea").hidden = false
+    document.getElementById("notes_textarea").focus()
+}
+
+function newNote() {
+
+}
+
+function initNotes() {
+    if (fs.existsSync(path.join(currentLocation, ".gitignore"))) {
+        confirmModal("Gitignore", "Do you want to gitignore this folder?", function () {
+            fs.appendFileSync(path.join(currentLocation, ".gitignore"), "\ncodebook/*")
+        })
+    }
+    codebook_l = path.join(currentLocation, "codebook")
+    fs.mkdirSync(codebook_l)
+    fs.writeFileSync(path.join(codebook_l, "main.md"), "", {
+        "encoding": "utf-8"
+    })
+    renderNotes(currentLocation)
+    renderFolderList(currentLocation)
+}
 
 function makeContext(filename) {
     filename = decodeURIComponent(filename)
@@ -239,6 +301,7 @@ function inputModal(listener, placeholder = "", showDropdown = false, dropdownLi
 
 function insertDropdownSelection(e) {
     document.getElementById("inputModalInput").value = decodeURIComponent(e)
+    document.getElementById("inputModalInput").focus()
 }
 
 // * Beginning encryption code
@@ -384,7 +447,7 @@ function commandLine() {
                 renderContentView(currentLocation)
                 renderFolderList(currentLocation)
             }
-            else if (newPathFromInput.match("$rm .*[.].*") != null && newPathFromInput[0] == "$") {
+            else if (newPathFromInput.match("[$]rm .*[.].*") != null && newPathFromInput[0] == "$") {
                 errorModal(
                     "Delete file",
                     "Do you want to remove the file " + newPathFromInput.split("remove ")[1] + "?",
@@ -395,7 +458,7 @@ function commandLine() {
                     }
                 )
             }
-            else if (newPathFromInput.includes("$find ") && newPathFromInput[0] == "$") {
+            else if (newPathFromInput.match("^[$]find ") != null && newPathFromInput[0] == "$") {
                 file_list = []
                 folder_list = []
                 admin_only = []
@@ -444,6 +507,14 @@ function commandLine() {
                     document.getElementById("folder_list").innerHTML = folder_list_html
                 }, 100)
             }
+            else if (newPathFromInput.match("^[$]notes") != null && newPathFromInput[0] == "$") {
+                if (newPathFromInput == "$notes" || newPathFromInput == "$notes open") {
+                    document.getElementById("notes_view").hidden = false
+                }
+                // ! Dependency list
+                // ! Bug tracker
+                // ! Use markdown
+            }
             else if (newPathFromInput == "$editCss") {
                 if (localStorage.getItem("codeEditor") != null) {
                     exec(localStorage.getItem("codeEditor") + " customCSS.css")
@@ -452,7 +523,15 @@ function commandLine() {
                     exec("notepad customCSS.css")
                 }
             }
-            else if (!fs.existsSync(locationused + newPathFromInput)) {
+            else if (newPathFromInput == "$reload") {
+                renderContentView(currentLocation)
+                renderFolderList(currentLocation)
+                renderNotes(currentLocation)
+            }
+            else if (!fs.existsSync(locationused + newPathFromInput) || newPathFromInput.match("^[$]new ") != null) {
+                if (newPathFromInput.match("^$new ") != null) {
+                    newPathFromInput = newPathFromInput.replace("^$new ", "")
+                }
                 if (newPathFromInput.includes(".")) {
                     // * File
                     fs.writeFileSync(locationused + newPathFromInput, "")
@@ -472,7 +551,9 @@ function commandLine() {
         "$rm",
         "$find",
         "$editCss",
-        "b from a"
+        "$notes",
+        "b from a",
+        "$reload"
     ])
 
 } // ? Create a new file
@@ -671,7 +752,10 @@ window.addEventListener("load", function () {
                     fs.unlinkSync(context_file)
                 }
                 else {
-                    fs.rmdirSync(context_file)
+                    fs.rmSync(context_file, {
+                        "recursive": true,
+                        "force": true
+                    })
                 }
             }
             catch {
@@ -713,6 +797,7 @@ window.addEventListener("keydown", function (e) {
         setTimeout(function () { document.getElementById("inputModalInput").value = "" }, 600)
         this.document.getElementById("contextmenu").hidden = true
         fadeOut("inputModalDropdown", 250)
+        fadeOut("notes_view", 250)
     }
     else if (e.key == "+" && e.ctrlKey) {
         commandLine()
@@ -728,25 +813,35 @@ window.addEventListener("keydown", function (e) {
         this.location.reload()
     }
     else if (e.key == "ArrowDown") {
-        selected_file_id = selected_file_id + 1
-        if (selected_file_id < 0 || this.document.querySelectorAll("#browser_window button").length < selected_file_id) {
-            selected_file_id = 0
+        if (this.document.getElementById("notes_view").hidden) {
+            if (currentLocation[currentLocation.length - 1] == "\/" || currentLocation[currentLocation.length - 1] == "\\") {
+                currentLocation = currentLocation
+            }
+            else {
+                currentLocation = currentLocation + "/"
+            }
+            selected_file_id = selected_file_id + 1
+            if (selected_file_id < 0 || this.document.querySelectorAll("#browser_window button").length < selected_file_id) {
+                selected_file_id = 0
+            }
+            for (e of this.document.querySelectorAll("#browser_window button")) {
+                e.style.background = "#191919"
+            }
+            this.document.querySelector("#browser_window button:nth-child(" + selected_file_id + ")").style.background = "#0570db"
+            this.document.querySelector("#browser_window button:nth-child(" + selected_file_id + ")").focus()
         }
-        for (e of this.document.querySelectorAll("#browser_window button")) {
-            e.style.background = "#191919"
-        }
-        this.document.querySelector("#browser_window button:nth-child(" + selected_file_id + ")").style.background = "#0570db"
-        this.document.querySelector("#browser_window button:nth-child(" + selected_file_id + ")").focus()
     }
     else if (e.key == "ArrowUp") {
-        selected_file_id = selected_file_id - 1
-        if (selected_file_id < 0 || this.document.querySelectorAll("#browser_window button").length < selected_file_id) {
-            selected_file_id = 0
+        if (this.document.getElementById("notes_view").hidden) {
+            selected_file_id = selected_file_id - 1
+            if (selected_file_id < 0 || this.document.querySelectorAll("#browser_window button").length < selected_file_id) {
+                selected_file_id = 0
+            }
+            for (e of this.document.querySelectorAll("#browser_window button")) {
+                e.style.background = "#191919"
+            }
+            this.document.querySelector("#browser_window button:nth-child(" + selected_file_id + ")").style.background = "#0570db"
+            this.document.querySelector("#browser_window button:nth-child(" + selected_file_id + ")").focus()
         }
-        for (e of this.document.querySelectorAll("#browser_window button")) {
-            e.style.background = "#191919"
-        }
-        this.document.querySelector("#browser_window button:nth-child(" + selected_file_id + ")").style.background = "#0570db"
-        this.document.querySelector("#browser_window button:nth-child(" + selected_file_id + ")").focus()
     }
 })

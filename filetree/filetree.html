@@ -10,16 +10,39 @@
     <script src="../animations.js"></script>
     <link rel="stylesheet" href="../animations.css">
     <script src="..\modal.js"></script>
+    <link rel="stylesheet" href="../customCSS.css">
 </head>
 
 <body oncontextmenu="return false;">
+    <div id="notes_view" hidden>
+        <b>Codebooks</b> <img src="../images/times.png" alt="X" onclick="fadeOut('notes_view', 250)" height="12">
+        <br><br>
+        <table style="width: 100%; height: calc(100% - 40px);">
+            <tr>
+                <td>
+                    <div id="notes_list">
+                    </div>
+                </td>
+                <td>
+                    <div id="notes_editor">
+                        <button><img src="../images/save.png" alt="Save" title="Save note"></button><br>
+                        <input type="text" id="notes_title" placeholder="Untitled note">
+                        <textarea id="notes_textarea" placeholder="Here is the textarea" onblur="renderMDtoHTML()"></textarea>
+                    </div>
+                    <div id="notes_rendered" hidden onclick="showMD()"></div>
+                </td>
+            </tr>
+        </table>
+    </div>
     <div id="compression_manager" hidden>
-        <h2>Compression manager <img src="../images/times.png" alt="X" height="16" onclick="fadeOut('compression_manager', 125)"></h2><img src="" alt=""></h2>
+        <h2>Compression <img src="../images/times.png" alt="X" height="16"
+                onclick="fadeOut('compression_manager', 125)"></h2><img src="" alt=""></h2>
         <input type="text" placeholder="Output name" id="gzipOutputName">
         <button onclick="compressFile()">Compress</button>
     </div>
     <div id="encryptionManager" hidden>
-        <h2>Encryption Manager <img src="../images/times.png" alt="X" height="16" onclick="fadeOut('encryptionManager', 125)"></h2>
+        <h2>Encryption Manager <img src="../images/times.png" alt="X" height="16"
+                onclick="fadeOut('encryptionManager', 125)"></h2>
         <span id="encryption_filename"></span><br>
         Status: <span id="encryption_status"></span>
         <br>
@@ -83,7 +106,8 @@
         <input type="text" placeholder="Path or filename" id="pathInput">
         <button onclick="goToPathInput()" title="Go to location"><img src="../images/forward.png"></button>
         <button onclick="goUp()" title="One layer up"><img src="../images/up.png"></button>
-        <button onclick="commandLine()" title="Open command line&NewLine;Use CTRL + [+] as alternative"><img src="../images/command_enter.png"></button>
+        <button onclick="commandLine()" title="Open command line&NewLine;Use CTRL + [+] as alternative"><img
+                src="../images/command_enter.png"></button>
         <button onclick="openTerminalHere()" title="Open in terminal"><img src="../images/cmd.png"></button>
     </nav>
     <table>

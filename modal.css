@@ -20,6 +20,7 @@
     animation-name: fly-in;
     animation-duration: 0.25s;
     backdrop-filter: blur(10px);
+    z-index: 300;
 }
 
 #modalMain.red {
