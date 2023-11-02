@@ -15,7 +15,8 @@
 
 <body oncontextmenu="return false;">
     <div id="notes_view" hidden>
-        <b>Codebooks</b> <img src="../images/times.png" alt="X" onclick="fadeOut('notes_view', 250); saveNote()" height="16" width="16" style="margin-bottom: -2.5px;">
+        <b>Codebooks</b> <img src="../images/times.png" alt="X" onclick="fadeOut('notes_view', 250); saveNote()"
+            height="16" width="16" style="margin-bottom: -2.5px;">
         <br><br>
         <table style="width: 100%; height: calc(100% - 40px);">
             <tr>
@@ -25,13 +26,15 @@
                 </td>
                 <td>
                     <div id="notes_editor">
-                        <button onclick="saveNote()"><img src="../images/save.png" alt="Save" title="Save note"></button><em id="locationNote"></em>
+                        <button onclick="saveNote()"><img src="../images/save.png" alt="Save"
+                                title="Save note"></button><em id="locationNote"></em>
                         <select id="font_notes" onchange="changeFontNotes()">
                             <option value="monospace">Monospace</option>
                             <option value="sans-serif">Sans Serif</option><br>
                         </select>
                         <input type="text" id="notes_title" placeholder="Untitled note">
-                        <textarea id="notes_textarea" placeholder="Here is the textarea" onblur="renderMDtoHTML()"></textarea>
+                        <textarea id="notes_textarea" placeholder="Here is the textarea"
+                            onblur="renderMDtoHTML()"></textarea>
                     </div>
                     <div id="notes_rendered" hidden onclick="showMD()"></div>
                 </td>
@@ -39,9 +42,10 @@
         </table>
     </div>
     <div id="compression_manager" hidden>
-        <h2>Compression <img src="../images/times.png" alt="X" height="16"
+        <h2 style="margin: 0px; padding: 5px;">Compression <img src="../images/times.png" alt="X" height="16"
                 onclick="fadeOut('compression_manager', 125)"></h2><img src="" alt=""></h2>
-        <input type="text" placeholder="Output name" id="gzipOutputName">
+        <input type="text" placeholder="Output name" id="gzipOutputName" style="margin-left: -10px; margin-bottom: 5px;">
+        <br>
         <button onclick="compressFile()">Compress</button>
     </div>
     <div id="encryptionManager" hidden>
@@ -107,12 +111,14 @@
         <button id="contextmenu_delete">Delete</button>
     </div>
     <nav>
+        <img src="../images/file_icons/hdd.png" alt="HDD" style="margin-bottom: -2.5px;" hidden id="hdd_ident">
         <input type="text" placeholder="Path or filename" id="pathInput">
         <button onclick="goToPathInput()" title="Go to location"><img src="../images/forward.png"></button>
         <button onclick="goUp()" title="One layer up"><img src="../images/up.png"></button>
         <button onclick="commandLine()" title="Open command line&NewLine;Use CTRL + [+] as alternative"><img
                 src="../images/command_enter.png"></button>
         <button onclick="openTerminalHere()" title="Open in terminal"><img src="../images/cmd.png"></button>
+        <button onclick="toggleView()" title="Toggle view"><img src="../images/viewmode.png" id="toggle_view_indic"></button>
     </nav>
     <table>
         <tr>

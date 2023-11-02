@@ -33,6 +33,7 @@ body {
     color: white;
     font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
     margin: 0px;
+    overflow: hidden;
 }
 
 input:focus {
@@ -144,12 +145,33 @@ section#browser_window button {
 
 section#browser_window button img {
     height: 30px;
+    margin: 0 auto;
+    display: block;
 }
 
 
 #browser_window button:focus {
     outline: white solid 2px;
     filter: brightness(1.1);
+}
+
+button.list {
+    width: 51vw !important;
+    height: 10px !important;
+    max-width: 51vw !important;
+    margin: 0px !important;
+    padding: 5px !important;
+    border-radius: 0px !important;
+    border-width: 0px !important;
+    text-align: left;
+}
+
+button.list img {
+    height: 20px !important;
+    width: 20px !important;
+    margin-bottom: -5px !important;
+    display: inherit !important;
+    margin-right: 10px !important;
 }
 
 td {
@@ -377,7 +399,7 @@ td {
     top: 50px;
     left: calc(50vw - (500px/2));
     width: 500px;
-    height: 300px;
+    height: max-content;
     padding: 20px;
     border-radius: 10px;
     background-color: #1F1F1F;
@@ -557,7 +579,7 @@ td {
     text-align: left;
 }
 
-#notes_rendered h1, h2, h3, h4, h5, h6 {
+#notes_rendered h1, #notes_rendered h2, #notes_rendered h3, #notes_rendered h4, #notes_rendered h5, #notes_rendered h6 {
     margin: 0px;
     padding-bottom: 10px;
     padding-top: 5px;

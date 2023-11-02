@@ -120,18 +120,35 @@ function renderContentView(location) {
         try {
             if (fs.statSync(location + file).isFile()) {
                 try {
-                    img_path = "../images/file_icons/" + extensionSort[path.basename(file).split(".")[1]] + ".png"
+                    if (extensionSort[path.basename(file).split(".")[1]] != "image") {
+                        img_path = "../images/file_icons/" + extensionSort[path.basename(file).split(".")[1]] + ".png"
+                        if (file == "package.json") {
+                            img_path = "../images/package.png"
+                        }
+                        else if (file == ".gitignore") {
+                            img_path = "../images/git.png"
+                        }
+                        else if (file == "README.md" || file == "readme.md" || file == "README") {
+                            img_path = "../images/readme.png"
+                        }
+                        else if (file == "LICENSE") {
+                            img_path = "../images/license.png"
+                        }
+                    }
+                    else if (path.basename(file).split(".")[1] != "gif") {
+                        img_path = path.join(location, file)
+                    }
                 }
                 catch {
                     img_path = "../images/file.png"
                 }
-                s = s + "<button data-filename=\"" + file + "\" onclick=handleFile(\"" + encodeURIComponent(file) + "\") oncontextmenu=makeContext('" + encodeURIComponent(file) + "')><img src=\"" + img_path + "\" height=16><br>" + file + "</button>"
+                s = s + "<button data-filename=\"" + file + "\" onclick=handleFile(\"" + encodeURIComponent(file) + "\") oncontextmenu=makeContext('" + encodeURIComponent(file) + "')><img src=\"" + img_path + "\" height=16>" + file + "</button>"
 
             }
         }
         catch {
             img_path = "../images/adminfile.png"
-            s = s + "<button data-filename=\"" + file + "\" onclick=handleFile(\"" + encodeURIComponent(file) + "\") oncontextmenu=makeContext('" + encodeURIComponent(file) + "')><img src=\"" + img_path + "\" height=16><br>" + file + "</button>"
+            s = s + "<button data-filename=\"" + file + "\" onclick=handleFile(\"" + encodeURIComponent(file) + "\") oncontextmenu=makeContext('" + encodeURIComponent(file) + "')><img src=\"" + img_path + "\" height=16>" + file + "</button>"
 
         }
 
@@ -163,6 +180,25 @@ function deleteNote(e) {
             showMD()
         }
     })
+}
+
+list = false
+function toggleView() {
+    list = !list
+    console.log("Toggle view")
+    if (list) {
+        for (e of document.querySelectorAll("#browser_window button")) {
+            e.classList.add("list")
+            console.log(e)
+        }
+    }
+    else {
+        for (e of document.querySelectorAll("#browser_window button")) {
+            e.classList.remove("list")
+            console.log(e)
+        }
+    }
+    fs.writeFileSync("toggle_view.txt", list)
 }
 
 function renderMDtoHTML() {
@@ -605,6 +641,9 @@ function commandLine() {
                 renderFolderList(currentLocation)
                 renderNotes(currentLocation)
             }
+            else if (newPathFromInput == "$terminal") {
+                openTerminalHere()
+            }
             else if (!fs.existsSync(locationused + newPathFromInput) || newPathFromInput.match("^[$]new ") != null) {
                 if (newPathFromInput.match("^$new ") != null) {
                     newPathFromInput = newPathFromInput.replace("^$new ", "")
@@ -630,7 +669,8 @@ function commandLine() {
         "$editCss",
         "$notes",
         "b from a",
-        "$reload"
+        "$reload",
+        "$terminal"
     ])
 
 } // ? Create a new file
@@ -803,8 +843,27 @@ window.addEventListener("load", function () {
     setInterval(
         function () {
             document.getElementById("locationNote").innerText = currentLocation
+            if (currentLocation[0] != "C") {
+                document.getElementById("hdd_ident").hidden = false
+            }
+            else {
+                document.getElementById("hdd_ident").hidden = true
+            }
         }, 500
     )
+    list = fs.readFileSync("toggle_view.txt").toString() == "true"
+    if (list) {
+        for (e of document.querySelectorAll("#browser_window button")) {
+            e.classList.add("list")
+            console.log(e)
+        }
+    }
+    else {
+        for (e of document.querySelectorAll("#browser_window button")) {
+            e.classList.remove("list")
+            console.log(e)
+        }
+    }
     document.getElementById("notes_rendered").style.fontFamily = fontFamilies[fs.readFileSync("notes_font.txt").toString()]
     document.getElementById("notes_textarea").style.fontFamily = fontFamilies[fs.readFileSync("notes_font.txt").toString()]
     document.getElementById('notes_textarea').addEventListener('keydown', function (e) {

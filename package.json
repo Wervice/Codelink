@@ -11,12 +11,12 @@
   },
   "version": "1.4.1",
   "scripts": {
-    "dev": "nw",
+    "dev": "nwp -r",
     "build": "nwp"
   },
   "author": "",
   "license": "MIT",
-  "chromiumArgs": "--disable-features=nw2 --enable-transparent-visuals --disable-gpu",
+  "chromiumArgs": "--enable-transparent-visuals",
   "nwjs-packager": {
     "nwVersion": "0.80.0",
     "appFriendlyName": "Codelink",
@@ -59,11 +59,9 @@
   },
   "dependencies": {
     "fs-extra": "^11.1.1",
-    "highlight.js": "^11.9.0",
-    "marked": "^9.1.4"
+    "marked": "^9.1.5"
   },
   "devDependencies": {
-    "nw": "^0.81.0-sdk",
     "nwjs-packager": "^1.5.1"
   }
 }
