@@ -633,6 +633,7 @@ td {
 #locationNote {
     padding-left: 10px;
     opacity: 60%;
+    width: 100%;
 }
 
 @keyframes gradient {
