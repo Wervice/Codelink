@@ -31,7 +31,7 @@
 body {
     background: #191919;
     color: white;
-    font-family: "Fira Code", "Fira Mono", monospace;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
     margin: 0px;
 }
 
@@ -51,7 +51,7 @@ nav input {
     background: #191919;
     color: white;
     padding: 5px;
-    font-family: "Fira Code", "Fira Mono", monospace;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
     transition: filter ease-in-out 0.125s;
 }
 
@@ -100,7 +100,7 @@ section#folder_list button {
     padding: 10px;
     margin: 2.5px;
     margin-bottom: 5px;
-    font-family: "Fira Code", "Fira Mono", monospace;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
     text-align: left;
     overflow: hidden;
     white-space: nowrap;
@@ -134,7 +134,7 @@ section#browser_window button {
     border-radius: 5px;
     background-color: #191919;
     color: white;
-    font-family: "Fira Code", "Fira Mono", monospace;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
     border: 1px solid #303030;
     margin: 5px;
     overflow: hidden;
@@ -180,7 +180,7 @@ td {
     color: white;
     transition: 0.125s ease-in-out;
     text-align: left;
-    font-family: "Fira Code", "Fira Mono", monospace;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
     font-size: 12px;
     margin-bottom: 5px;
 }
@@ -242,7 +242,7 @@ td {
 #inputModalDropdown button {
     font-size: large;
     color: white;
-    font-family: "Fira Code", "Fira Mono", monospace;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
     background-color: transparent;
     border-style: none;
     width: 100%;
@@ -264,7 +264,7 @@ td {
     color: white;
     border-width: 0px;
     font-size: 15px;
-    font-family: "Fira Code", "Fira Mono", monospace;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
     padding: 10px;
 
 }
@@ -315,7 +315,7 @@ td {
     background-color: dodgerblue;
     color: white;
     font-size: 12px;
-    font-family: "Fira Code", "Fira Mono", monospace;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
     bottom: 2.5px;
     right: 2.5px;
     position: fixed;
@@ -369,7 +369,7 @@ td {
     background: #191919;
     transition: ease-in-out 0.125s;
     color: white;
-    font-family: "Fira Code", "Fira Mono", monospace;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
 }
 
 #compression_manager {
@@ -395,15 +395,15 @@ td {
     background: #191919;
     transition: ease-in-out 0.125s;
     color: white;
-    font-family: "Fira Code", "Fira Mono", monospace;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
 }
 
 #notes_view {
     position: fixed;
-    top: 50px;
-    left: 50px;
-    width: calc(100vw - 120px);
-    height: calc(100vh - 120px);
+    top: 0px;
+    left: 0px;
+    width: calc(100vw - 20px);
+    height: calc(100vh - 20px);
     padding: 10px;
     border-radius: 5px;
     background-color: #131313dc;
@@ -440,7 +440,7 @@ td {
     box-shadow: 0px 5px 10px #00000052;
     padding: 7px;
     border-radius: 2.5px;
-    font-family: "Fira Code", "Fira Mono", monospace;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
     border-width: 0px;
     width: calc(100% - 10px);
     transition: ease-in-out 0.25s;
@@ -451,7 +451,7 @@ td {
     color: #ffffff;
     padding: 7px;
     border-radius: 2.5px;
-    font-family: "Fira Code", "Fira Mono", monospace;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
     border-width: 0px;
     border-bottom: 1px solid #2e2e2e;
     width: calc(100% - 30px);
@@ -487,7 +487,7 @@ td {
     border-radius: 2.5px;
     border: 1px #edd400 solid;
     background-color: transparent;
-    font-family: "Fira Code", "Fira Mono", monospace;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
     color: white;
     font-size: 16px;
     transition: ease-in-out 0.25s;
@@ -508,7 +508,7 @@ td {
     background-color: transparent;
     font-size: larger;
     color: rgba(255, 255, 255, 0.778);
-    font-family: "Fira Code", "Fira Mono", monospace;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
     font-weight: bolder;
     padding: 10px;
 }
@@ -519,12 +519,12 @@ td {
 }
 
 #notes_textarea {
-    height: calc(100vh - 250px);
+    height: calc(100vh - 170px);
     width: calc(100vw - 450px);
     padding: 10px;
     padding-left: 9px;
     background-color: transparent;
-    font-family: "Fira Code", "Fira Mono", monospace;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
     border: none;
     font-size: 20px;
     font-weight: 100;
@@ -534,7 +534,7 @@ td {
 }
 
 #notes_rendered {
-    height: calc(100vh - 250px);
+    height: calc(100vh - 170px);
     width: calc(100vw - 600px);
     padding: 10px;
     background-color: transparent;
@@ -633,7 +633,34 @@ td {
 #locationNote {
     padding-left: 10px;
     opacity: 60%;
-    width: 100%;
+}
+
+#notes_view select {
+    padding: 5px;
+    border-radius: 2.5px;
+    border-width: 0px;
+    background-color: transparent;
+    border: 1px #303030 solid;
+    margin-left: 5px;
+    margin-bottom: 5px;
+    color: white;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+    transition: 0.25px;
+}
+
+#notes_view select:focus {
+    outline: none;
+}
+
+#notes_view select:hover {
+    filter: brightness(1.1);
+}
+
+option {
+    color: white;
+    background-color: black;
+    border-radius: 0px;
+    padding: 5px;
 }
 
 @keyframes gradient {

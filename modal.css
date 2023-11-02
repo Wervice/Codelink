@@ -16,7 +16,7 @@
     box-shadow: 0px 5px 15px #00000057;
     outline: rgb(64, 64, 64) solid 1px;
     color: white;
-    font-family: "Fira Code", "Fira Mono", monospace;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
     animation-name: fly-in;
     animation-duration: 0.25s;
     backdrop-filter: blur(10px);
@@ -45,7 +45,7 @@
     border-width: 0px;
     background-color: dodgerblue;
     color: white;
-    font-family: "Fira Code", "Fira Mono", monospace;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
 }
 
 #modalMain button.red {
@@ -54,7 +54,7 @@
     border-width: 0px;
     background-color: rgb(208, 14, 14);
     color: white;
-    font-family: "Fira Code", "Fira Mono", monospace;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
 }
 
 #modalMain button.grey {
@@ -63,7 +63,7 @@
     border-width: 0px;
     background-color: rgb(71, 71, 71);
     color: white;
-    font-family: "Fira Code", "Fira Mono", monospace;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
 }
 
 #modalMain #modalTitle {

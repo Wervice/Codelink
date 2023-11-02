@@ -12,7 +12,11 @@ const { cursorTo } = require("readline");
 const marked = require('marked');
 const bad_link_detect = /(?!```)\[([^\]]+)\]\(([^)]+)\)(?![^`]*```)/gm
 const to_dir_link = /(?<!`[^`]*?)#([A-Za-z0-9]+)/g
-
+const fontFamilies = {
+    "monospace": '"Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace',
+    "sans-serif": '"Arial", "Calibri", "Ubuntu", sans-serif',
+    "serif": 'serif'
+}
 extensionSort = {
     "png": "image",
     "jpeg": "image",
@@ -186,7 +190,7 @@ function newNote() {
 }
 
 function addLinkToNote(e) {
-    document.getElementById("notes_textarea").value += "#"+e.innerHTML
+    document.getElementById("notes_textarea").value += "#" + e.innerHTML
     showMD()
 }
 
@@ -209,7 +213,7 @@ function goToNote(source) {
         document.getElementById("notes_rendered").innerHTML = marked.marked(fs.readFileSync(path.join(currentLocation, "codebook", source + ".md"), {
             "encoding": "utf8"
         }).replace(bad_link_detect, "$1").replace(to_dir_link, "[$1](javascript:goToNote('$1'))"))
-    
+
 
         document.getElementById("notes_textarea").value = fs.readFileSync(path.join(currentLocation, "codebook", source + ".md"), {
             "encoding": "utf8"
@@ -218,7 +222,7 @@ function goToNote(source) {
         document.getElementById("notes_rendered").hidden = true
         document.getElementById("notes_textarea").hidden = false
     }
-    catch { 
+    catch {
         renderMDtoHTML()
         errorModal("Note not found", "This note does not exist", function () {
 
@@ -248,6 +252,13 @@ function initNotes() {
     })
     renderNotes(currentLocation)
     renderFolderList(currentLocation)
+}
+
+function changeFontNotes() {
+    font = document.getElementById("font_notes").value
+    fs.writeFileSync("notes_font.txt", font)
+    document.getElementById("notes_rendered").style.fontFamily = fontFamilies[font]
+    document.getElementById("notes_textarea").style.fontFamily = fontFamilies[font]
 }
 
 function makeContext(filename) {
@@ -765,22 +776,26 @@ function compressFile() {
     else {
         currentLocation = currentLocation + "/"
     }
-    var gzip = createGzip();
-    var source = fs.createReadStream(context_file);
-    var destination = fs.createWriteStream(currentLocation + document.getElementById("gzipOutputName").value + ".gz");
-    pipeline(source, gzip, destination, (err) => {
-        if (err) {
-            console.error('An error occurred:', err);
-            fadeOut("compression_manager", 125)
-            errorModal("Compression failed", "The compression failed", function () { })
-        }
-        else {
-            fadeOut("compression_manager", 125)
-            renderContentView(currentLocation)
-            renderFolderList(currentLocation)
-        }
-    });
-
+    if (fs.statSync(context_file).isFile()) {
+        var gzip = createGzip();
+        var source = fs.createReadStream(context_file);
+        var destination = fs.createWriteStream(currentLocation + document.getElementById("gzipOutputName").value + ".gz");
+        pipeline(source, gzip, destination, (err) => {
+            if (err) {
+                console.error('An error occurred:', err);
+                fadeOut("compression_manager", 125)
+                errorModal("Compression failed", "The compression failed", function () { })
+            }
+            else {
+                fadeOut("compression_manager", 125)
+                renderContentView(currentLocation)
+                renderFolderList(currentLocation)
+            }
+        });
+    }
+    else {
+        confirmModal("Compression failed", "Folder compression isn't supported right now.", function () { })
+    }
 }
 
 window.addEventListener("load", function () {
@@ -790,6 +805,8 @@ window.addEventListener("load", function () {
             document.getElementById("locationNote").innerText = currentLocation
         }, 500
     )
+    document.getElementById("notes_rendered").style.fontFamily = fontFamilies[fs.readFileSync("notes_font.txt").toString()]
+    document.getElementById("notes_textarea").style.fontFamily = fontFamilies[fs.readFileSync("notes_font.txt").toString()]
     document.getElementById('notes_textarea').addEventListener('keydown', function (e) {
         if (e.key == 'Tab') {
             e.preventDefault();
