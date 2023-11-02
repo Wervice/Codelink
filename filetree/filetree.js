@@ -650,6 +650,18 @@ function commandLine() {
                         btoa(fs.readFileSync(path.join(currentLocation, newPathFromInput.split(" ")[1]))))
                     confirmModal("Base64", "Copied string to clipboard", function () { })
                 }
+                else {
+                    confirmModal("Base64", "Please enter a filename to get a base64 value of.")
+                }
+            }
+            else if (newPathFromInput.split(" ")[0] == "$compress") {
+                if (newPathFromInput.split(" ")[1] != null) {
+                    context_file = path.join(currentLocation, newPathFromInput.split(" ")[1])
+                    document.getElementById("compression_manager").hidden = false
+                }
+                else {
+                    confirmModal("Base64", "Please enter a filename to compress.")
+                }
             }
             else if (!fs.existsSync(locationused + newPathFromInput) || newPathFromInput.match("^[$]new ") != null) {
                 if (newPathFromInput.match("^$new ") != null) {
@@ -673,12 +685,13 @@ function commandLine() {
         }, "Enter command or filename", true, [
         "$rm",
         "$find",
-        "$editCss",
         "$notes",
         "b from a",
         "$reload",
         "$terminal",
-        "$b64"
+        "$b64",
+        "$compress",
+        "$editCss"
     ])
 
 } // ? Create a new file
