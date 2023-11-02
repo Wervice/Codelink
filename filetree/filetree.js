@@ -644,6 +644,13 @@ function commandLine() {
             else if (newPathFromInput == "$terminal") {
                 openTerminalHere()
             }
+            else if (newPathFromInput.split(" ")[0] == "$b64") {
+                if (newPathFromInput.split(" ")[1] != null) {
+                    navigator.clipboard.writeText(
+                        btoa(fs.readFileSync(path.join(currentLocation, newPathFromInput.split(" ")[1]))))
+                    confirmModal("Base64", "Copied string to clipboard", function () { })
+                }
+            }
             else if (!fs.existsSync(locationused + newPathFromInput) || newPathFromInput.match("^[$]new ") != null) {
                 if (newPathFromInput.match("^$new ") != null) {
                     newPathFromInput = newPathFromInput.replace("^$new ", "")
@@ -670,7 +677,8 @@ function commandLine() {
         "$notes",
         "b from a",
         "$reload",
-        "$terminal"
+        "$terminal",
+        "$b64"
     ])
 
 } // ? Create a new file
