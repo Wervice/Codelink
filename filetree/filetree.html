@@ -15,7 +15,7 @@
 
 <body oncontextmenu="return false;">
     <div id="notes_view" hidden>
-        <b>Codebooks</b> <img src="../images/times.png" alt="X" onclick="fadeOut('notes_view', 250)" height="12">
+        <b>Codebooks</b> <img src="../images/times.png" alt="X" onclick="fadeOut('notes_view', 250); saveNote()" height="12">
         <br><br>
         <table style="width: 100%; height: calc(100% - 40px);">
             <tr>
@@ -25,7 +25,7 @@
                 </td>
                 <td>
                     <div id="notes_editor">
-                        <button><img src="../images/save.png" alt="Save" title="Save note"></button><br>
+                        <button onclick="saveNote()"><img src="../images/save.png" alt="Save" title="Save note"></button><span id="locationNote"></span><br>
                         <input type="text" id="notes_title" placeholder="Untitled note">
                         <textarea id="notes_textarea" placeholder="Here is the textarea" onblur="renderMDtoHTML()"></textarea>
                     </div>

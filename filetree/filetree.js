@@ -10,6 +10,8 @@ const { createGzip } = require('node:zlib');
 const { pipeline } = require('node:stream');
 const { cursorTo } = require("readline");
 const marked = require('marked');
+const bad_link_detect = /(?!```)\[([^\]]+)\]\(([^)]+)\)(?![^`]*```)/gm
+const to_dir_link = /(?<!`[^`]*?)#([A-Za-z0-9]+)/g
 
 extensionSort = {
     "png": "image",
@@ -61,6 +63,7 @@ extensionSort = {
     "xz": "archive",
     "gz": "archive"
 }
+
 var selected_file_id = 0
 
 win = nw.Window.get()
@@ -81,7 +84,7 @@ function renderFolderList(location) {
 
             }
             else {
-                img_path = "../images/folder.png"
+                img_path = "../images/folder_filled.png"
                 if (file[0] == "." || file[0] == "$") {
                     s = s + "<button data-filename=\"" + file + "\" oncontextmenu=makeContext(\"" + encodeURIComponent(file) + "\") onclick=handleFile(\"" + encodeURIComponent(file) + "\") style=opacity:70%><img src=\"" + img_path + "\" height=16> " + file + "</button><br>"
                 }
@@ -135,9 +138,9 @@ function renderContentView(location) {
 function renderNotes(location) {
     notes_list_dom = document.getElementById("notes_list")
     if (fs.existsSync(path.join(location, "codebook"))) {
-        html_code = "<button id=new_note onclick=newNote()><img src=../images/new.png></button>"
+        html_code = "<button id=new_note onclick=newNote()><img src=../images/new.png> New note</button><br><br>"
         for (e of fs.readdirSync(path.join(location, "codebook"))) {
-            html_code += "<button class='notes'>" + e.split(".")[0] + "</button><button class=activity onclick=deleteNote(this) data-filename=" + encodeURIComponent(e) + "><img src=../images/delete.png height=15></button><br>"
+            html_code += "<button class='notes' onclick=showNote(this) oncontextmenu=addLinkToNote(this)>" + e.split(".")[0] + "</button><button class=activity onclick=deleteNote(this) data-filename=" + encodeURIComponent(e) + "><img src=../images/delete.png height=15></button><br>"
         }
         notes_list_dom.innerHTML = html_code
     }
@@ -147,16 +150,23 @@ function renderNotes(location) {
 } // ? Renders the notes section
 
 function deleteNote(e) {
-    confirmModalWarning("Delete note", "Do you want to remove this note?<br>" + e.split(".")[0], function () {
-        fs.unlinkSync(path.join(currentLocation, "codebook", e.dataset.filename))
+    confirmModalWarning("Delete note", "Do you want to remove this note?<br>" + decodeURIComponent(e.dataset.filename.split(".")[0]), function () {
+        fs.unlinkSync(path.join(currentLocation, "codebook", decodeURIComponent(e.dataset.filename)))
         renderNotes(currentLocation)
+        if (decodeURIComponent(e.dataset.filename) == document.getElementById("notes_textarea").value) {
+            document.getElementById("notes_title").value = null
+            document.getElementById("notes_textarea").value = null
+            showMD()
+        }
     })
 }
 
 function renderMDtoHTML() {
     document.getElementById("notes_textarea").hidden = true
-    document.getElementById("notes_rendered").innerHTML = marked.marked(document.getElementById("notes_textarea").value)
+    document.getElementById("notes_rendered").innerHTML = marked.marked(document.getElementById("notes_textarea").value.replace(bad_link_detect, "$1").replace(to_dir_link, "[$1](javascript:goToNote('$1'))"))
     document.getElementById("notes_rendered").hidden = false
+
+
 }
 
 function showMD() {
@@ -166,13 +176,69 @@ function showMD() {
 }
 
 function newNote() {
+    if (document.getElementById("notes_title").value != null && document.getElementById("notes_title").value != "") {
+        fs.writeFileSync(path.join(currentLocation, "codebook", document.getElementById("notes_title").value + ".md"), document.getElementById("notes_textarea").value)
+    }
+    document.getElementById("notes_title").value = null
+    document.getElementById("notes_textarea").value = null
+    showMD()
+    renderNotes(currentLocation)
+}
 
+function addLinkToNote(e) {
+    document.getElementById("notes_textarea").value += "#"+e.innerHTML
+    showMD()
+}
+
+function showNote(e) {
+    saveNote()
+    document.getElementById("notes_rendered").innerHTML = marked.marked(fs.readFileSync(path.join(currentLocation, "codebook", e.innerText + ".md"), {
+        "encoding": "utf8"
+    }).replace(bad_link_detect, "$1").replace(to_dir_link, "[$1](javascript:goToNote('$1'))"))
+    document.getElementById("notes_textarea").value = fs.readFileSync(path.join(currentLocation, "codebook", e.innerText + ".md"), {
+        "encoding": "utf8"
+    })
+
+    document.getElementById("notes_title").value = e.innerText
+    document.getElementById("notes_rendered").hidden = false
+    document.getElementById("notes_textarea").hidden = true
+}
+
+function goToNote(source) {
+    try {
+        document.getElementById("notes_rendered").innerHTML = marked.marked(fs.readFileSync(path.join(currentLocation, "codebook", source + ".md"), {
+            "encoding": "utf8"
+        }).replace(bad_link_detect, "$1").replace(to_dir_link, "[$1](javascript:goToNote('$1'))"))
+    
+
+        document.getElementById("notes_textarea").value = fs.readFileSync(path.join(currentLocation, "codebook", source + ".md"), {
+            "encoding": "utf8"
+        })
+        document.getElementById("notes_title").value = source
+        document.getElementById("notes_rendered").hidden = true
+        document.getElementById("notes_textarea").hidden = false
+    }
+    catch { 
+        renderMDtoHTML()
+        errorModal("Note not found", "This note does not exist", function () {
+
+        })
+    }
+}
+
+function saveNote() {
+    if (document.getElementById("notes_title").value != null && document.getElementById("notes_title").value != "") {
+        fs.writeFileSync(path.join(currentLocation, "codebook", document.getElementById("notes_title").value + ".md"), document.getElementById("notes_textarea").value)
+    } else if (document.getElementById("notes_textarea").value != "") {
+        fs.writeFileSync(path.join(currentLocation, "codebook", "Untitled note" + ".md"), document.getElementById("notes_textarea").value)
+    }
+    renderNotes(currentLocation)
 }
 
 function initNotes() {
     if (fs.existsSync(path.join(currentLocation, ".gitignore"))) {
-        confirmModal("Gitignore", "Do you want to gitignore this folder?", function () {
-            fs.appendFileSync(path.join(currentLocation, ".gitignore"), "\ncodebook/*")
+        confirmModal("Gitignore", "Do you want to gitignore codebooks?", function () {
+            fs.appendFileSync(path.join(currentLocation, ".gitignore"), "\ncodebook")
         })
     }
     codebook_l = path.join(currentLocation, "codebook")
@@ -719,6 +785,26 @@ function compressFile() {
 
 window.addEventListener("load", function () {
     dataInit()
+    setInterval(
+        function () {
+            document.getElementById("locationNote").innerText = currentLocation
+        }, 500
+    )
+    document.getElementById('notes_textarea').addEventListener('keydown', function (e) {
+        if (e.key == 'Tab') {
+            e.preventDefault();
+            var start = this.selectionStart;
+            var end = this.selectionEnd;
+
+            // set textarea value to: text before caret + tab + text after caret
+            this.value = this.value.substring(0, start) +
+                "\t" + this.value.substring(end);
+
+            // put caret at right position again
+            this.selectionStart =
+                this.selectionEnd = start + 1;
+        }
+    });
     this.document.getElementById('pathInput').onkeydown = function (e) {
         if (e.key == "Enter") {
             if (this.value[0] != "?")

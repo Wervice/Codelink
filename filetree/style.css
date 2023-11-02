@@ -406,7 +406,7 @@ td {
     height: calc(100vh - 120px);
     padding: 10px;
     border-radius: 5px;
-    background-color: #1f1f1fdc;
+    background-color: #131313dc;
     border: 1px solid #303030;
     box-shadow: 0px 5px 5px #00000031, 0px 0px 0px 100vw #0000007c;
     z-index: 200;
@@ -431,6 +431,7 @@ td {
     height: 100%;
     max-width: 30vw;
     border-right: 1px solid #303030;
+    overflow-y: scroll;
 }
 
 #notes_list button#initNotes {
@@ -470,6 +471,7 @@ td {
 #notes_list button.activity img {
     width: 16px;
     height: 16px;
+    margin-bottom: -5px;
 }
 
 #notes_list button.activity:hover {
@@ -485,10 +487,19 @@ td {
     border-radius: 2.5px;
     border: 1px #edd400 solid;
     background-color: transparent;
+    font-family: "Fira Code", "Fira Mono", monospace;
+    color: white;
+    font-size: 16px;
+    transition: ease-in-out 0.25s;
 }
 
 #new_note img {
     height: 15px;
+    margin-bottom: -2px;
+}
+
+#new_note:hover {
+    background-color: #edd5003c;
 }
 
 #notes_editor input {
@@ -499,8 +510,7 @@ td {
     color: rgba(255, 255, 255, 0.778);
     font-family: "Fira Code", "Fira Mono", monospace;
     font-weight: bolder;
-    margin-bottom: 10px;
-    padding: 5px;
+    padding: 10px;
 }
 
 #notes_editor input:focus {
@@ -511,10 +521,13 @@ td {
 #notes_textarea {
     height: calc(100vh - 250px);
     width: calc(100vw - 450px);
-    padding: 5px;
+    padding: 10px;
+    padding-left: 9px;
     background-color: transparent;
+    font-family: "Fira Code", "Fira Mono", monospace;
     border: none;
     font-size: 20px;
+    font-weight: 100;
     color: white;
     caret-color: white;
     resize: none;
@@ -522,21 +535,23 @@ td {
 
 #notes_rendered {
     height: calc(100vh - 250px);
-    max-width: calc(100vw - 600px);
-    padding: 5px;
+    width: calc(100vw - 600px);
+    padding: 10px;
     background-color: transparent;
     border: none;
     font-size: 20px;
+    font-weight: 100;
     color: white;
     caret-color: white;
     overflow-y: scroll;
+    line-height: 35px;
 }
 
 #notes_textarea:focus {
     outline: none;
 }
 
-#notes_rendered p {
+#notes_rendered p, pre {
     padding: 0px;
     margin: 0px;
     text-align: left;
@@ -546,6 +561,16 @@ td {
     margin: 0px;
     padding-bottom: 10px;
     padding-top: 5px;
+    font-weight: bolder;
+    border-bottom: 1px solid #30303072;
+}
+
+#notes_rendered blockquote {
+    padding-right: 10px;
+    margin: 0px;
+    margin-bottom: 5px;
+    padding-left: 5px;
+    border-left: 5px dodgerblue solid;
 }
 
 #notes_rendered table td {
@@ -555,10 +580,35 @@ td {
     padding: 5px;
 }
 
-#notes_rendered code {
-    background-color: #ffffff1e;
-    border-radius: 2.5px;
+#notes_rendered code, p:has(code) {
+    color: #eace43;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+#notes_rendered a, #notes_rendered a:hover, #notes_rendered a:active {
+    color: #ffa200;
+    text-decoration: none;
     padding: 2.5px;
+    transition: ease-in-out 0.25s;
+}
+
+#notes_rendered a:hover {
+    background-color: #ffa20040;
+    border-radius: 2.5px;
+    filter: brightness(1.1);
+}
+
+#notes_rendered a:active {
+    filter: brightness(1.4);
+    outline: 2px solid #ffa200;
+}
+
+#notes_rendered hr {
+    border-style: solid;
+    border-color: white;
 }
 
 #notes_editor button {
@@ -578,6 +628,11 @@ td {
 
 #notes_rendered::-webkit-scrollbar {
     display: none;
+}
+
+#locationNote {
+    padding-left: 10px;
+    opacity: 60%;
 }
 
 @keyframes gradient {
