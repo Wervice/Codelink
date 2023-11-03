@@ -42,7 +42,8 @@
       "./filetree/*",
       "./mhl_license.txt",
       "./marked_license.txt",
-      "./notes_font.txt"
+      "./notes_font.txt",
+      "./toggle_view.txt"
     ],
     "builds": {
       "linux": {

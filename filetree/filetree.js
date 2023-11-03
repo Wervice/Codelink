@@ -959,7 +959,7 @@ window.addEventListener("load", function () {
     }
     this.document.getElementById('contextmenu_move').onclick = function () {
         file_in_move = context_file
-        document.getElementById('path_action_indicator').innerHTML = "<img src=../images/times.png onclick=terminateMove()> Copy " + file_in_move + " <button onclick=moveFile()>Move</button>"
+        document.getElementById('path_action_indicator').innerHTML = "<img src=../images/times.png onclick=terminatemove()> Copy " + file_in_move + " <button onclick=moveFile()>Move</button>"
         document.getElementById('path_action_indicator').hidden = false
     }
     this.document.getElementById('contextmenu_new').onclick = function () { commandLine() }

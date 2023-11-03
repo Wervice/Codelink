@@ -159,6 +159,7 @@ button.list {
     width: 51vw !important;
     height: 10px !important;
     max-width: 51vw !important;
+    min-height: 30px !important;
     margin: 0px !important;
     padding: 5px !important;
     border-radius: 0px !important;
