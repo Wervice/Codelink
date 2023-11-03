@@ -39,7 +39,10 @@
       "./fsextra_license.txt",
       "./nwjs_license.txt",
       "./LICENSE",
-      "./filetree/*"
+      "./filetree/*",
+      "./mhl_license.txt",
+      "./marked_license.txt",
+      "./notes_font.txt"
     ],
     "builds": {
       "linux": {
@@ -53,7 +56,7 @@
       }
     },
     "appPackageName": "codelink",
-    "appVersion": "1.4.1",
+    "appVersion": "1.5.0",
     "appDescription": "codelink.exe",
     "appCopyright": "Wervice (Constantin Volke)"
   },
