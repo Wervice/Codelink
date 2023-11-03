@@ -142,19 +142,20 @@ function renderContentView(location) {
                 catch {
                     img_path = "../images/file.png"
                 }
-                s = s + "<button data-filename=\"" + file + "\" onclick=handleFile(\"" + encodeURIComponent(file) + "\") oncontextmenu=makeContext('" + encodeURIComponent(file) + "')><img src=\"" + img_path + "\" height=16>" + file + "</button>"
-
+                s = s + "<button data-filename=\"" + file + "\" onclick=handleFile(\"" + encodeURIComponent(file) + "\") oncontextmenu=makeContext('" + encodeURIComponent(file) + "') onfocus=showPreview(" + encodeURIComponent(file) + ")><img src=\"" + img_path + "\" height=16>" + file + "</button>"
             }
         }
         catch {
             img_path = "../images/adminfile.png"
             s = s + "<button data-filename=\"" + file + "\" onclick=handleFile(\"" + encodeURIComponent(file) + "\") oncontextmenu=makeContext('" + encodeURIComponent(file) + "')><img src=\"" + img_path + "\" height=16>" + file + "</button>"
-
         }
-
     }
     document.getElementById("browser_window").innerHTML = s
 } // ? Render the content for the folder content view
+
+function showPreview(name) {
+    console.warn("Preview not set up yet")
+}
 
 function renderNotes(location) {
     notes_list_dom = document.getElementById("notes_list")
