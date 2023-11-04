@@ -1,9 +1,17 @@
 const { exec } = require('child_process');
 const { error } = require('console');
 const { stderr } = require('process');
+const os = require("os");
 win = nw.Window.get()
-win.height = 435
+
+if (os.platform() == "win32") {
+    win.height = 440
+}
+else {
+    win.height = 400
+}
 win.width = 350
+
 function gui_popup(title, text, command) {
     document.getElementById("popup_content").value = ""
     document.getElementById("popup").hidden = false;
@@ -20,7 +28,7 @@ function openCodeEditor() {
             "Please enter a command to run you code editor",
             function () {
                 localStorage.setItem("codeEditor", document.getElementById("popup_content").value);
-                
+
                 cmd_to_name = {
                     "code": "VS Code",
                     "code.exe": "VS Code",
@@ -82,18 +90,18 @@ function openTerminal() {
         })
     }
     else {
-try {
-        exec(localStorage.getItem("terminalCommand").replace("cmd.exe", "start cmd.exe").replace("powershell.exe", "start powershell.exe").replace("cmd", "start cmd").replace("powershell", "start powershell"))
-}
-catch {
-    document.getElementById("codeEditorError").hidden = false
-    document.getElementById("popup_content").hidden = true
-    gui_popup("Execution error", "Error code", function () {
-        document.getElementById("popup").hidden = true;
-        document.getElementById("popup_content").hidden = false;
-    })
-}
-}
+        try {
+            exec(localStorage.getItem("terminalCommand").replace("cmd.exe", "start cmd.exe").replace("powershell.exe", "start powershell.exe").replace("cmd", "start cmd").replace("powershell", "start powershell"))
+        }
+        catch {
+            document.getElementById("codeEditorError").hidden = false
+            document.getElementById("popup_content").hidden = true
+            gui_popup("Execution error", "Error code", function () {
+                document.getElementById("popup").hidden = true;
+                document.getElementById("popup_content").hidden = false;
+            })
+        }
+    }
 }
 
 function openfileManager() {
@@ -111,17 +119,17 @@ function openfileManager() {
         )
     }
     else {
-try {
-        exec(localStorage.getItem("fileManger"))
-}
-catch {
-    document.getElementById("codeEditorError").hidden = false
-    document.getElementById("popup_content").hidden = true
-    gui_popup("Execution error", "Error code", function () {
-        document.getElementById("popup").hidden = true;
-        document.getElementById("popup_content").hidden = false;
-    })
-}
+        try {
+            exec(localStorage.getItem("fileManger"))
+        }
+        catch {
+            document.getElementById("codeEditorError").hidden = false
+            document.getElementById("popup_content").hidden = true
+            gui_popup("Execution error", "Error code", function () {
+                document.getElementById("popup").hidden = true;
+                document.getElementById("popup_content").hidden = false;
+            })
+        }
     }
 }
 
@@ -140,6 +148,10 @@ window.onload = function () {
         "Vim": "images/vim.png",
         "NeoVim": "images/neovim.png",
         "Micro": "images/micro.png"
+    }
+    if (os.platform() == "linux") {
+        document.getElementById("allscreen").style.boxShadow = ""
+
     }
     if (localStorage.getItem("codeEditorName") != null) {
         if (code_editor_icon[localStorage.getItem("codeEditorName")] != null) {
@@ -229,5 +241,5 @@ function openHelp() {
     nw.Window.open("help.html")
 }
 
-win.x = 1100
-win.y = 400
+win.x = 300
+win.y = 300

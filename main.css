@@ -35,16 +35,16 @@ body {
     font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
     height: calc(100vh - 2px);
     color: white;
+    overflow: hidden;
 }
 
 #allscreen {
     background-color: #191919;
-    border-radius: 10px;
     overflow: hidden;
-    margin: 7px;
     padding: 5px;
     outline: 1px #414141 solid;
-    box-shadow: var(--window-shadow);
+    height: calc(100vh - 11px);
+    width: 100%;
 }
 
 button {

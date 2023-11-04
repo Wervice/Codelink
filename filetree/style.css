@@ -125,8 +125,8 @@ section#browser_window::-webkit-scrollbar {
 }
 
 section#browser_window button {
-    width: 7vw;
-    height: 7vw;
+    width:  8vw;
+    height: 8vw;
     min-width: 100px;
     min-height: 100px;
     max-width: 500px;
@@ -141,17 +141,17 @@ section#browser_window button {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    transition: 0.25s ease-in-out;
 }
 
 section#browser_window button img {
-    height: 30px;
+    height: 35px;
     margin: 0 auto;
     display: block;
 }
 
-
 #browser_window button:focus {
-    outline: white solid 2px;
+    outline: #ffffff30 solid 2px;
     filter: brightness(1.1);
 }
 

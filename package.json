@@ -2,12 +2,12 @@
   "main": "index.html",
   "name": "codelink",
   "window": {
-    "frame": false,
+    "frame": true,
     "toolbar": false,
     "width": 417,
-    "height": 435,
+    "height": 400,
     "icon": "images/icon.png",
-    "transparent": true
+    "transparent": false
   },
   "version": "1.4.1",
   "scripts": {
@@ -56,9 +56,9 @@
         "zip": false
       }
     },
-    "appPackageName": "codelink",
-    "appVersion": "1.5.0",
-    "appDescription": "codelink.exe",
+    "appPackageName": "Codelink",
+    "appVersion": "1.5.1",
+    "appDescription": "Codelink",
     "appCopyright": "Wervice (Constantin Volke)"
   },
   "dependencies": {

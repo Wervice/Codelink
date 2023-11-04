@@ -17,6 +17,7 @@ const fontFamilies = {
     "sans-serif": '"Arial", "Calibri", "Ubuntu", sans-serif',
     "serif": 'serif'
 }
+
 extensionSort = {
     "png": "image",
     "jpeg": "image",
@@ -77,14 +78,14 @@ win.height = 500
 function renderFolderList(location) {
     s = ""
     for (file of fs.readdirSync(location)) {
-        if (location[location.length - 1] == "\/" || location[location.length - 1] == "\\") {
+        /* if (location[location.length - 1] == "\/" || location[location.length - 1] == "\\") {
             location = location
         }
         else {
             location = location + "/"
-        }
+        }*/
         try {
-            if (fs.statSync(location + file).isFile()) {
+            if (fs.statSync(path.join(location, file)).isFile()) {
 
             }
             else {
@@ -111,14 +112,14 @@ function renderContentView(location) {
     renderNotes(location)
     s = ""
     for (file of fs.readdirSync(location)) {
-        if (location[location.length - 1] == "\/" || location[location.length - 1] == "\\") {
+        /*if (location[location.length - 1] == "\/" || location[location.length - 1] == "\\") {
             location = location
         }
         else {
             location = location + "/"
-        }
+        }*/
         try {
-            if (fs.statSync(location + file).isFile()) {
+            if (fs.statSync(path.join(location, file)).isFile()) {
                 try {
                     if (extensionSort[path.basename(file).split(".")[1]] != "image") {
                         img_path = "../images/file_icons/" + extensionSort[path.basename(file).split(".")[1]] + ".png"
@@ -206,8 +207,6 @@ function renderMDtoHTML() {
     document.getElementById("notes_textarea").hidden = true
     document.getElementById("notes_rendered").innerHTML = marked.marked(document.getElementById("notes_textarea").value.replace(bad_link_detect, "$1").replace(to_dir_link, "[$1](javascript:goToNote('$1'))"))
     document.getElementById("notes_rendered").hidden = false
-
-
 }
 
 function showMD() {
@@ -314,13 +313,13 @@ function makeContext(filename) {
         this.document.getElementById("contextmenu").style.left = mousex + "px"
     }
     document.getElementById("contextmenu").hidden = false;
-    if (currentLocation[currentLocation.length - 1] == "\/" || currentLocation[currentLocation.length - 1] == "\\") {
+    /*if (currentLocation[currentLocation.length - 1] == "\/" || currentLocation[currentLocation.length - 1] == "\\") {
         currentLocation = currentLocation
     }
     else {
         currentLocation = currentLocation + "/"
-    }
-    context_file = currentLocation + filename
+    }*/
+    context_file = path.join(currentLocation, filename)
     return false;
 } // ? Fire context menu
 
@@ -328,13 +327,13 @@ function handleFile(filename) {
     // Get stat
     filename = decodeURIComponent(filename)
     try {
-        if (currentLocation[currentLocation.length - 1] == "\/" || currentLocation[currentLocation.length - 1] == "\\") {
+        /*if (currentLocation[currentLocation.length - 1] == "\/" || currentLocation[currentLocation.length - 1] == "\\") {
             currentLocation = currentLocation
         }
         else {
             currentLocation = currentLocation + "/"
-        }
-        if (fs.statSync(currentLocation + filename).isFile()) {
+        }*/
+        if (fs.statSync(path.join(currentLocation, filename)).isFile()) {
             type = "file"
         }
         else {
@@ -343,12 +342,12 @@ function handleFile(filename) {
     }
     catch (e) {
         type = "admin"
-        console.error(e)
+        console.error("Admin file: "+e)
     }
     // Handle
     if (type == "file") {
         if (!isEncryptedFile(currentLocation + filename)) {
-            exec("\"" + currentLocation + filename + "\"")
+            exec("xdg-open \"" + currentLocation + filename + "\"")
         }
         else {
             inputModal(function () {
@@ -456,24 +455,27 @@ function goUp() {
 } // ? Go one dir up
 
 function pasteFile() {
-    if (currentLocation[currentLocation.length - 1] == "\/" || currentLocation[currentLocation.length - 1] == "\\") {
+    /*if (currentLocation[currentLocation.length - 1] == "\/" || currentLocation[currentLocation.length - 1] == "\\") {
         currentLocation = currentLocation
     }
     else {
         currentLocation = currentLocation + "/"
-    }
+    }*/
     if (fs.statSync(file_in_copy).isFile()) {
-        if (fs.existsSync(currentLocation + path.basename(file_in_copy))) {
+        if (fs.existsSync(
+            path.join(currentLocation, path.basename(file_in_copy)
+            )
+        )) {
             errorModal("Paste error", "In this folder already is a file called " + path.basename(file_in_copy), function () {
                 inputModal(function () {
-                    fs.copyFileSync(file_in_copy, currentLocation + document.getElementById("inputModalInput").value)
+                    fs.copyFileSync(file_in_copy, path.join(currentLocation, document.getElementById("inputModalInput").value))
                     renderContentView(currentLocation)
                     renderFolderList(currentLocation)
                     terminateCopy()
                 }, "New name")
             })
         } else {
-            fs.copyFileSync(file_in_copy, currentLocation + path.basename(file_in_copy))
+            fs.copyFileSync(file_in_copy, path.join(currentLocation, path.basename(file_in_copy)))
             renderContentView(currentLocation)
             renderFolderList(currentLocation)
             terminateCopy()
@@ -483,14 +485,14 @@ function pasteFile() {
         if (fs.existsSync(currentLocation + path.basename(file_in_copy))) {
             errorModal("Paste error", "In this folder already is a file called " + path.basename(file_in_copy), function () {
                 inputModal(function () {
-                    fse.copySync(file_in_copy, currentLocation + document.getElementById("inputModalInput").value)
+                    fse.copySync(file_in_copy, path.join(currentLocation, document.getElementById("inputModalInput").value))
                     renderContentView(currentLocation)
                     renderFolderList(currentLocation)
                     terminateCopy()
                 }, "New name")
             })
         } else {
-            fse.copySync(file_in_copy, currentLocation + path.basename(file_in_copy))
+            fse.copySync(file_in_copy, path.join(currentLocation, path.basename(file_in_copy)))
             renderContentView(currentLocation)
             renderFolderList(currentLocation)
             terminateCopy()
@@ -499,17 +501,17 @@ function pasteFile() {
 } // ? Paste a file at the currentLocation
 
 function moveFile() {
-    if (currentLocation[currentLocation.length - 1] == "\/" || currentLocation[currentLocation.length - 1] == "\\") {
+    /*if (currentLocation[currentLocation.length - 1] == "\/" || currentLocation[currentLocation.length - 1] == "\\") {
         currentLocation = currentLocation
     }
     else {
         currentLocation = currentLocation + "/"
-    }
+    }*/
     if (fs.statSync(file_in_move).isFile()) {
-        if (fs.existsSync(currentLocation + path.basename(file_in_move))) {
+        if (fs.existsSync(path.join(currentLocation, path.basename(file_in_move)))) {
             errorModal("Paste error", "In this folder already is a file called " + path.basename(file_in_move), function () {
                 inputModal(function () {
-                    fs.copyFileSync(file_in_move, currentLocation + document.getElementById("inputModalInput").value)
+                    fs.copyFileSync(file_in_move, path.join(currentLocation, document.getElementById("inputModalInput").value))
                     renderContentView(currentLocation)
                     renderFolderList(currentLocation)
                     fs.unlinkSync(file_in_move)
@@ -517,7 +519,7 @@ function moveFile() {
                 }, "New name")
             })
         } else {
-            fs.copyFileSync(file_in_move, currentLocation + path.basename(file_in_move))
+            fs.copyFileSync(file_in_move, path.join(currentLocation + path.basename(file_in_move)))
             renderContentView(currentLocation)
             renderFolderList(currentLocation)
             fs.unlinkSync(file_in_move)
@@ -525,17 +527,17 @@ function moveFile() {
         }
     }
     else {
-        if (fs.existsSync(currentLocation + path.basename(file_in_move))) {
+        if (fs.existsSync(path.join(currentLocation + path.basename(file_in_move)))) {
             errorModal("Paste error", "In this folder already is a file called " + path.basename(file_in_move), function () {
                 inputModal(function () {
-                    fse.moveSync(file_in_move, currentLocation + document.getElementById("inputModalInput").value)
+                    fse.moveSync(file_in_move, path.join(currentLocation, document.getElementById("inputModalInput").value))
                     renderContentView(currentLocation)
                     renderFolderList(currentLocation)
                     terminatemove()
                 }, "New name")
             })
         } else {
-            fse.moveSync(file_in_move, currentLocation + path.basename(file_in_move))
+            fse.moveSync(file_in_move, path.join(currentLocation, path.basename(file_in_move)))
             renderContentView(currentLocation)
             renderFolderList(currentLocation)
             terminatemove()
@@ -545,17 +547,17 @@ function moveFile() {
 
 function commandLine() {
     locationused = currentLocation
-    if (locationused[locationused.length - 1] == "\/" || locationused[locationused.length - 1] == "\\") {
+    /* TODO if (locationused[locationused.length - 1] == "\/" || locationused[locationused.length - 1] == "\\") {
         locationused = locationused
     }
     else {
         locationused = locationused + "/"
-    }
+    }*/
     inputModal(
         function () {
             newPathFromInput = document.getElementById("inputModalInput").value
             if (newPathFromInput.match(".* from .*") != null && newPathFromInput.split(" from ")[1] != null) {
-                fs.writeFileSync(locationused + newPathFromInput.split(" from ")[0], fs.readFileSync(locationused + newPathFromInput.split(" from ")[1], {
+                fs.writeFileSync(locationused + newPathFromInput.split(" from ")[0], fs.readFileSync(path.join(locationused, newPathFromInput.split(" from ")[1]), {
                     "encoding": "utf-8"
                 }))
                 renderContentView(currentLocation)
@@ -566,7 +568,7 @@ function commandLine() {
                     "Delete file",
                     "Do you want to remove the file " + newPathFromInput.split("remove ")[1] + "?",
                     function () {
-                        fs.unlinkSync(locationused + newPathFromInput.split("remove ")[1])
+                        fs.unlinkSync(path.join(locationused, newPathFromInput.split("remove ")[1]))
                         renderContentView(currentLocation)
                         renderFolderList(currentLocation)
                     }
@@ -583,7 +585,7 @@ function commandLine() {
                 console.log(query)
                 for (file of fs.readdirSync(currentLocation)) {
                     try {
-                        if (fs.statSync(currentLocation + "/" + file).isFile()) {
+                        if (fs.statSync(path.join(currentLocation, file)).isFile()) {
                             if (file.match(query) != null) {
                                 file_list.push(file)
                             }
@@ -670,11 +672,11 @@ function commandLine() {
                 }
                 if (newPathFromInput.includes(".")) {
                     // * File
-                    fs.writeFileSync(locationused + newPathFromInput, "")
+                    fs.writeFileSync(path.join(locationused, newPathFromInput), "")
                 }
                 else {
                     // * Folder
-                    fs.mkdirSync(locationused + newPathFromInput)
+                    fs.mkdirSync(path.join(locationused, newPathFromInput))
                 }
                 renderContentView(currentLocation)
                 renderFolderList(currentLocation)
@@ -832,16 +834,16 @@ function encryptionSetup() {
 }
 
 function compressFile() {
-    if (currentLocation[currentLocation.length - 1] == "\/" || currentLocation[currentLocation.length - 1] == "\\") {
+    /*if (currentLocation[currentLocation.length - 1] == "\/" || currentLocation[currentLocation.length - 1] == "\\") {
         currentLocation = currentLocation
     }
     else {
         currentLocation = currentLocation + "/"
-    }
+    }*/
     if (fs.statSync(context_file).isFile()) {
         var gzip = createGzip();
         var source = fs.createReadStream(context_file);
-        var destination = fs.createWriteStream(currentLocation + document.getElementById("gzipOutputName").value + ".gz");
+        var destination = fs.createWriteStream(path.join(currentLocation, "/"+document.getElementById("gzipOutputName").value+".gz"));
         pipeline(source, gzip, destination, (err) => {
             if (err) {
                 console.error('An error occurred:', err);
@@ -865,7 +867,7 @@ window.addEventListener("load", function () {
     setInterval(
         function () {
             document.getElementById("locationNote").innerText = currentLocation
-            if (currentLocation[0] != "C") {
+            if (currentLocation[0] != "C" && currentLocation[0] != "/") {
                 document.getElementById("hdd_ident").hidden = false
             }
             else {
@@ -964,10 +966,10 @@ window.addEventListener("load", function () {
     }
     this.document.getElementById('contextmenu_new').onclick = function () { commandLine() }
     this.document.getElementById('contextmenu_details').onclick = function () { showDetails() }
-    renderContentView(os.homedir() + "\\")
-    renderFolderList(os.homedir() + "\\")
-    this.document.getElementById("pathInput").value = os.homedir() + "\\"
-    currentLocation = os.homedir() + "\\"
+    renderContentView(os.homedir() + "/")
+    renderFolderList(os.homedir() + "/")
+    this.document.getElementById("pathInput").value = os.homedir() + "/"
+    currentLocation = os.homedir() + "/"
 })
 
 window.addEventListener("mousemove", function (e) {
@@ -998,12 +1000,6 @@ window.addEventListener("keydown", function (e) {
     }
     else if (e.key == "ArrowDown") {
         if (this.document.getElementById("notes_view").hidden) {
-            if (currentLocation[currentLocation.length - 1] == "\/" || currentLocation[currentLocation.length - 1] == "\\") {
-                currentLocation = currentLocation
-            }
-            else {
-                currentLocation = currentLocation + "/"
-            }
             selected_file_id = selected_file_id + 1
             if (selected_file_id < 0 || this.document.querySelectorAll("#browser_window button").length < selected_file_id) {
                 selected_file_id = 0
