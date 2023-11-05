@@ -22,7 +22,12 @@ function gui_popup(title, text, command) {
 function openCodeEditor() {
     PopupDeleteOptions()
     if (localStorage.getItem("codeEditor") == null) {
+        if (os.platform() == "win32") {
         PopupaddOptions(["code | (Install)", "micro | (Imstall)", "subl | Sublime (Install)", "neovim | (Install)", "vim | (Install)"])
+    }
+    else {
+        PopupaddOptions(["code | (Install)", "nvim | (Install)"])
+    }
         gui_popup(
             "Editor setup",
             "Please enter a command to run you code editor",
@@ -79,7 +84,12 @@ function openCodeEditor() {
 
 function openTerminal() {
     if (localStorage.getItem("terminalCommand") == null) {
+        if (os.platform() == "win32") { 
         PopupaddOptions(["wt | Terminal (Install)", "hyper | Hyper.JS (Install)", "cmd | Command Line", "powershell | PowerShell", "cmder | CMDer (Install)"])
+    }
+    else {
+        PopupaddOptions(["xfce4-terminal | (Install)", "xterm | Install", "gnome-terminal | (Install)"])
+    }
         gui_popup("Setup the terminal", "Please enter a commmand to open your terminal. <a href='javascript:learnMoreTerminal()'>Learn more</a>", function () {
             localStorage.setItem("terminalCommand", document.getElementById("popup_content").value)
             document.getElementById("popup").hidden = true;
@@ -106,7 +116,12 @@ function openTerminal() {
 
 function openfileManager() {
     if (localStorage.getItem("fileManger") == null) {
+        if (os.platform() == "win32") {
         PopupaddOptions(["explorer", "totalcmd | (Install)"])
+    }
+    else {
+        PopupaddOptions(["nemo | (Install)", "nautilus | (Install)", "caja | (Install)", "thunar | (Install)"])
+    }
         gui_popup(
             "Setup filemanager", "Emter a command that runs you filemanager",
             function () {

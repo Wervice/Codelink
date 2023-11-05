@@ -4,8 +4,6 @@
   "window": {
     "frame": true,
     "toolbar": false,
-    "width": 417,
-    "height": 400,
     "icon": "images/icon.png",
     "transparent": false
   },

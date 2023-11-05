@@ -125,6 +125,7 @@ input {
     margin-bottom: 5px;
     font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
     transition: all ease-in-out 0.25s;
+    width: calc(100% - 10px);
 }
 
 .application {
