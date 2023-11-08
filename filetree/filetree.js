@@ -7,6 +7,8 @@ const fse = require("fs-extra");
 const path = require("path");
 const { exec } = require("child_process");
 const { createGzip } = require('node:zlib');
+const zlib = require('node:zlib')
+const tar = require("tar")
 const { pipeline } = require('node:stream');
 const { cursorTo } = require("readline");
 const marked = require('marked');
@@ -112,12 +114,6 @@ function renderContentView(location) {
     renderNotes(location)
     s = ""
     for (file of fs.readdirSync(location)) {
-        /*if (location[location.length - 1] == "\/" || location[location.length - 1] == "\\") {
-            location = location
-        }
-        else {
-            location = location + "/"
-        }*/
         try {
             if (fs.statSync(path.join(location, file)).isFile()) {
                 try {
@@ -143,15 +139,22 @@ function renderContentView(location) {
                 catch {
                     img_path = "../images/file.png"
                 }
-                s = s + "<button data-filename=\"" + file + "\" onclick=handleFile(\"" + encodeURIComponent(file) + "\") oncontextmenu=makeContext('" + encodeURIComponent(file) + "') onfocus=showPreview(" + encodeURIComponent(file) + ")><img src=\"" + img_path + "\" height=16>" + file + "</button>"
+                s = s + "<button data-filename=\"" + file + "\" oncontextmenu=makeContext(\"" + file + "\") onclick=handleFile(\"" + file + "\")><img src=\"" + img_path + "\" height=16>" + file + "</button>"
             }
         }
         catch {
             img_path = "../images/adminfile.png"
-            s = s + "<button data-filename=\"" + file + "\" onclick=handleFile(\"" + encodeURIComponent(file) + "\") oncontextmenu=makeContext('" + encodeURIComponent(file) + "')><img src=\"" + img_path + "\" height=16>" + file + "</button>"
+            s = s + "<button data-filename=\"" + file + "\"> <img src=\"" + img_path + "\" height=16>" + file + "</button>"
         }
     }
     document.getElementById("browser_window").innerHTML = s
+    list = fs.readFileSync("toggle_view.txt").toString() == "true"
+    if (list) {
+        for (e of document.querySelectorAll("#browser_window button")) {
+            e.classList.add("list")
+            console.log(e)
+        }
+    }
 } // ? Render the content for the folder content view
 
 function showPreview(name) {
@@ -200,7 +203,7 @@ function toggleView() {
             console.log(e)
         }
     }
-    fs.writeFileSync("toggle_view.txt", list)
+    fs.writeFileSync("toggle_view.txt", list.toString())
 }
 
 function renderMDtoHTML() {
@@ -313,12 +316,6 @@ function makeContext(filename) {
         this.document.getElementById("contextmenu").style.left = mousex + "px"
     }
     document.getElementById("contextmenu").hidden = false;
-    /*if (currentLocation[currentLocation.length - 1] == "\/" || currentLocation[currentLocation.length - 1] == "\\") {
-        currentLocation = currentLocation
-    }
-    else {
-        currentLocation = currentLocation + "/"
-    }*/
     context_file = path.join(currentLocation, filename)
     return false;
 } // ? Fire context menu
@@ -327,12 +324,6 @@ function handleFile(filename) {
     // Get stat
     filename = decodeURIComponent(filename)
     try {
-        /*if (currentLocation[currentLocation.length - 1] == "\/" || currentLocation[currentLocation.length - 1] == "\\") {
-            currentLocation = currentLocation
-        }
-        else {
-            currentLocation = currentLocation + "/"
-        }*/
         if (fs.statSync(path.join(currentLocation, filename)).isFile()) {
             type = "file"
         }
@@ -342,12 +333,17 @@ function handleFile(filename) {
     }
     catch (e) {
         type = "admin"
-        console.error("Admin file: "+e)
+        console.error("Admin file: " + e)
     }
     // Handle
     if (type == "file") {
         if (!isEncryptedFile(currentLocation + filename)) {
-            exec("xdg-open \"" + currentLocation + filename + "\"")
+            if (os.platform() == "linux") {
+                exec("xdg-open \"" + currentLocation + filename + "\"")
+            }
+            else {
+                exec("\"" + currentLocation + filename + "\"")
+            }
         }
         else {
             inputModal(function () {
@@ -380,9 +376,9 @@ function handleFile(filename) {
         }
     }
     else if (type == "folder") {
-        renderFolderList(currentLocation + filename)
-        renderContentView(currentLocation + filename)
-        currentLocation = currentLocation + filename
+        renderFolderList(path.join(currentLocation, filename))
+        renderContentView(path.join(currentLocation, filename))
+        currentLocation = path.join(currentLocation, filename)
         document.getElementById("pathInput").value = currentLocation
     }
     else if (type == "admin") {
@@ -834,28 +830,24 @@ function encryptionSetup() {
 }
 
 function compressFile() {
-    /*if (currentLocation[currentLocation.length - 1] == "\/" || currentLocation[currentLocation.length - 1] == "\\") {
-        currentLocation = currentLocation
-    }
-    else {
-        currentLocation = currentLocation + "/"
-    }*/
     if (fs.statSync(context_file).isFile()) {
-        var gzip = createGzip();
-        var source = fs.createReadStream(context_file);
-        var destination = fs.createWriteStream(path.join(currentLocation, "/"+document.getElementById("gzipOutputName").value+".gz"));
-        pipeline(source, gzip, destination, (err) => {
-            if (err) {
-                console.error('An error occurred:', err);
-                fadeOut("compression_manager", 125)
-                errorModal("Compression failed", "The compression failed", function () { })
-            }
-            else {
-                fadeOut("compression_manager", 125)
+        cwdb = process.cwd()
+        process.chdir(currentLocation)
+        tar.c([path.basename(context_file)], {
+            gzip: true
+        }, [context_file]).pipe(
+            fs.createWriteStream(path.join(path.join(currentLocation, document.getElementById("gzipOutputName").value.replace("\\", "_").replace("/", "_")) + ".tar.gz"))
+        ).on
+        ("finish",
+            function () {
+                fadeOut("compression_manager", 250)
+                getElementById("gzipOutputName").value = ""
                 renderContentView(currentLocation)
                 renderFolderList(currentLocation)
+                process.chdir(cwdb)
             }
-        });
+        )
+
     }
     else {
         confirmModal("Compression failed", "Folder compression isn't supported right now.", function () { })
