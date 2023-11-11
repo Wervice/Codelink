@@ -6,9 +6,8 @@ const compression = require("node:zlib")
 const fse = require("fs-extra");
 const path = require("path");
 const { exec } = require("child_process");
-const { createGzip } = require('node:zlib');
-const zlib = require('node:zlib')
 const tar = require("tar")
+const zip = require("jszip")
 const { pipeline } = require('node:stream');
 const { cursorTo } = require("readline");
 const marked = require('marked');
@@ -337,30 +336,30 @@ function handleFile(filename) {
     }
     // Handle
     if (type == "file") {
-        if (!isEncryptedFile(currentLocation + filename)) {
+        if (!isEncryptedFile(path.join(currentLocation, filename))) {
             if (os.platform() == "linux") {
-                exec("xdg-open \"" + currentLocation + filename + "\"")
+                exec("xdg-open \"" + path.join(currentLocation, filename) + "\"")
             }
             else {
-                exec("\"" + currentLocation + filename + "\"")
+                exec("\"" + path.join(currentLocation, filename) + "\"")
             }
         }
         else {
             inputModal(function () {
                 document.getElementById("inputModalInput").value
                 try {
-                    if (fs.statSync(currentLocation + filename).size < (1024 * 1204 * 5)) {
-                        ccode = decrypt(JSON.parse(fs.readFileSync(currentLocation + filename, {
+                    if (fs.statSync(path.join(currentLocation, filename)).size < (1024 * 1204 * 5)) {
+                        ccode = decrypt(JSON.parse(fs.readFileSync(path.join(currentLocation, filename), {
                             "encoding": "binary"
                         }).split("\nNOHEAD\n")[1]), document.getElementById("inputModalInput").value)
-                        fs.writeFileSync("decryptedDumpTest." + path.basename(currentLocation + filename).split(".")[path.basename(currentLocation + filename).split(".").length - 1], ccode, {
+                        fs.writeFileSync("decryptedDumpTest." + path.basename(path.join(currentLocation, filename)).split(".")[path.basename(path.join(currentLocation, filename)).split(".").length - 1], ccode, {
                             "encoding": "binary"
                         })
-                        exec("\"" + "decryptedDumpTest." + path.basename(currentLocation + filename).split(".")[path.basename(currentLocation + filename).split(".").length - 1] + "\"")
+                        exec("\"" + "decryptedDumpTest." + path.basename(path.join(currentLocation, filename)).split(".")[path.basename(path.join(currentLocation, filename)).split(".").length - 1] + "\"")
                         errorModal("Encryption closing", "Please close the file by clicking Ok, when you've viewed it.", function () {
                             setTimeout(function () {
-                                fs.writeFileSync("decryptedDumpTest." + path.basename(currentLocation + filename).split(".")[path.basename(currentLocation + filename).split(".").length - 1], "")
-                                fs.unlinkSync("decryptedDumpTest." + path.basename(currentLocation + filename).split(".")[path.basename(currentLocation + filename).split(".").length - 1])
+                                fs.writeFileSync("decryptedDumpTest." + path.basename(path.join(currentLocation, filename)).split(".")[path.basename(path.join(currentLocation, filename)).split(".").length - 1], "")
+                                fs.unlinkSync("decryptedDumpTest." + path.basename(path.join(currentLocation, filename)).split(".")[path.basename(path.join(currentLocation, filename)).split(".").length - 1])
                             })
                         })
                     }
@@ -830,24 +829,22 @@ function encryptionSetup() {
 }
 
 function compressFile() {
+    cwdb = process.cwd()
     if (fs.statSync(context_file).isFile()) {
-        cwdb = process.cwd()
         process.chdir(currentLocation)
-        tar.c([path.basename(context_file)], {
-            gzip: true
-        }, [context_file]).pipe(
-            fs.createWriteStream(path.join(path.join(currentLocation, document.getElementById("gzipOutputName").value.replace("\\", "_").replace("/", "_")) + ".tar.gz"))
-        ).on
-        ("finish",
-            function () {
-                fadeOut("compression_manager", 250)
-                getElementById("gzipOutputName").value = ""
+        var zip_e = zip(
+            
+        );
+        zip_e.file(path.basename(context_file), fs.readFileSync(context_file));
+        wstream = zip_e
+            .generateNodeStream({ type: 'nodebuffer', streamFiles: true, compression: "DEFLATE" })
+        wstream.pipe(fs.createWriteStream(path.join(currentLocation, document.getElementById("gzipOutputName").value + ".zip")))
+            .once('close', function () {
+                fadeOut("compression_manager", 300)
+                process.chdir(cwdb)
                 renderContentView(currentLocation)
                 renderFolderList(currentLocation)
-                process.chdir(cwdb)
-            }
-        )
-
+            });
     }
     else {
         confirmModal("Compression failed", "Folder compression isn't supported right now.", function () { })
