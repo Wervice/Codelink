@@ -36,7 +36,7 @@ body {
     overflow: hidden;
 }
 
-input:focus {
+input:focus, button:focus {
     outline: #303030 solid 1px;
 }
 
@@ -52,6 +52,7 @@ nav input {
     background: #191919;
     color: white;
     padding: 5px;
+    width: 250px;
     font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
     transition: filter ease-in-out 0.125s;
 }
@@ -125,12 +126,12 @@ section#browser_window::-webkit-scrollbar {
 }
 
 section#browser_window button {
-    width:  8vw;
-    height: 8vw;
-    min-width: 100px;
+    width:  9vw;
+    height: 6vw;
+    min-width: 120px;
     min-height: 100px;
-    max-width: 500px;
-    max-height: 500px;
+    max-width: 260px;
+    max-height: 300px;
     padding: 10px;
     border-radius: 5px;
     background-color: #191919;
@@ -140,8 +141,7 @@ section#browser_window button {
     margin: 5px;
     overflow: hidden;
     white-space: nowrap;
-    text-overflow: ellipsis;
-    transition: 0.25s ease-in-out;
+    transition: 0.125s ease-in-out;
 }
 
 section#browser_window button img {
@@ -151,7 +151,7 @@ section#browser_window button img {
 }
 
 #browser_window button:focus {
-    outline: #ffffff30 solid 2px;
+    outline: #303030 solid 2px;
     filter: brightness(1.1);
 }
 
@@ -184,7 +184,7 @@ td {
     width: 150px;
     padding: 10px;
     border-radius: 10px;
-    background-color: #14141409;
+    background-color: #1414143c;
     backdrop-filter: blur(10px);
     border-color: #2b2b2b;
     border-width: 1px;
@@ -199,7 +199,7 @@ td {
     border-radius: 5px;
     padding: 10px;
     border: none;
-    background-color: #1f1f1f3d;
+    background-color: #00000000;
     color: white;
     transition: 0.125s ease-in-out;
     text-align: left;
