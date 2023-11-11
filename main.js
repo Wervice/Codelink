@@ -222,9 +222,12 @@ window.onload = function () {
 }
 
 function shutdown() {
-    if (confirm("Do you want to shut down your computer? After clicking you'll get 64 seconds to close and save your files.") == true) {
-
+    if (confirm("Do you want to shutdown your computer?\nPlease click ok to confirm.\nYou then have 64 seconds to save your work.") == true) {
+        if (os.platform() == "win32") {
         exec("shutdown /s /t 64")
+    }else {
+        alert("Linux shutdown is not supported")
+    }
     }
 }
 
