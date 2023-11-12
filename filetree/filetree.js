@@ -32,11 +32,6 @@ extensionSort = {
     "php": "code",
     "js": "code",
     "py": "code",
-    "pyw": "executable",
-    "sh": "executable",
-    "dll": "executable",
-    "exe": "executable",
-    "elf": "executable",
     "json": "code",
     "xml": "code",
     "r": "code",
@@ -44,8 +39,14 @@ extensionSort = {
     "c": "code",
     "cs": "code",
     "cpp": "code",
+    "txt": "code",
+    "md": "code",
+    "pyw": "executable",
+    "sh": "executable",
+    "dll": "executable",
+    "exe": "executable",
+    "elf": "executable",
 
-    "md": "document",
     "doc": "document",
     "docx": "document",
     "pdf": "document",
@@ -112,6 +113,7 @@ function renderFolderList(location) {
 function renderContentView(location) {
     renderNotes(location)
     s = ""
+    document.getElementById("preview_window").innerText = ""
     for (file of fs.readdirSync(location)) {
         try {
             if (fs.statSync(path.join(location, file)).isFile()) {
@@ -138,7 +140,7 @@ function renderContentView(location) {
                 catch {
                     img_path = "../images/file.png"
                 }
-                s = s + "<button data-filename=\"" + file + "\" oncontextmenu=makeContext(\"" + file + "\") onclick=handleFile(\"" + file + "\")><img src=\"" + img_path + "\" height=16>" + file + "</button>"
+                s = s + "<button data-filename=\"" + file + "\" oncontextmenu=makeContext(\"" + file + "\") onclick=handleFile(\"" + file + "\") onfocus=showPreview(\"" + file + "\")><img src=\"" + img_path + "\" height=16>" + file + "</button>"
             }
         }
         catch {
@@ -157,7 +159,18 @@ function renderContentView(location) {
 } // ? Render the content for the folder content view
 
 function showPreview(name) {
-    console.warn("Preview not set up yet")
+    if (extensionSort[path.basename(name).split(".")[1]] == "code") {
+        document.getElementById("preview_window").hidden = false
+        document.getElementById("preview_window").innerHTML = fs.readFileSync(path.join(currentLocation, name)).toString().replace()
+    }
+    else if (extensionSort[path.basename(name).split(".")[1]] == "image" && path.basename(name).split(".")[1] != "gif") {
+        document.getElementById("preview_window").hidden = false
+        document.getElementById("preview_window").innerHTML = "<img src=\"" + path.join(currentLocation, name) + "\" alt=\"" + name + "\">"
+    }
+    else {
+        document.getElementById("preview_window").innerText = ""
+        document.getElementById("preview_window").hidden = true
+    }
 }
 
 function renderNotes(location) {
@@ -833,7 +846,7 @@ function compressFile() {
     if (fs.statSync(context_file).isFile()) {
         process.chdir(currentLocation)
         var zip_e = zip(
-            
+
         );
         zip_e.file(path.basename(context_file), fs.readFileSync(context_file));
         wstream = zip_e

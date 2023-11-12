@@ -119,6 +119,7 @@ section#browser_window {
     height: calc(100vh - 97px);
     padding: 20px;
     overflow-y: scroll;
+    width: calc(80vw - 300px);
 }
 
 section#browser_window::-webkit-scrollbar {
@@ -153,6 +154,21 @@ section#browser_window button img {
 #browser_window button:focus {
     outline: #303030 solid 2px;
     filter: brightness(1.1);
+}
+
+div#preview_window {
+    position: fixed;
+    width: 20vw;
+    right: 0px;
+    top: 51px;
+    padding: 10px;
+    height: calc(100vh - 71px);
+    border-left: 1px solid #303030;
+    overflow-x: scroll;
+}
+
+div#preview_window::-webkit-scrollbar {
+    display: none;
 }
 
 button.list {
