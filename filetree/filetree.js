@@ -553,7 +553,7 @@ function moveFile() {
                 }, "New name")
             })
         } else {
-            fs.copyFileSync(file_in_move, path.join(currentLocation + path.basename(file_in_move)))
+            fs.copyFileSync(file_in_move, path.join(currentLocation, path.basename(file_in_move)))
             renderContentView(currentLocation)
             renderFolderList(currentLocation)
             fs.unlinkSync(file_in_move)
@@ -561,7 +561,7 @@ function moveFile() {
         }
     }
     else {
-        if (fs.existsSync(path.join(currentLocation + path.basename(file_in_move)))) {
+        if (fs.existsSync(path.join(currentLocation, path.basename(file_in_move)))) {
             errorModal("Paste error", "In this folder already is a file called " + path.basename(file_in_move), function () {
                 inputModal(function () {
                     fse.moveSync(file_in_move, path.join(currentLocation, document.getElementById("inputModalInput").value))
