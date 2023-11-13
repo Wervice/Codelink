@@ -47,9 +47,9 @@
         "zip": false
       }
     },
-    "appPackageName": "Codelink",
+    "appPackageName": "FileTree",
     "appVersion": "1.6",
-    "appDescription": "Codelink",
+    "appDescription": "FileTree",
     "appCopyright": "Wervice (Constantin Volke)"
   },
   "dependencies": {
