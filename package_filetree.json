@@ -7,7 +7,7 @@
     "icon": "images/filetree_colored_sys.png",
     "transparent": false
   },
-  "version": "1.6",
+  "version": "1.6.1",
   "scripts": {
     "dev": "nwp -r",
     "build": "nwp"
@@ -48,7 +48,7 @@
       }
     },
     "appPackageName": "FileTree",
-    "appVersion": "1.6",
+    "appVersion": "1.6.1",
     "appDescription": "FileTree",
     "appCopyright": "Wervice (Constantin Volke)"
   },
