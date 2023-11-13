@@ -1,13 +1,13 @@
 {
-  "main": "index.html",
-  "name": "codelink",
+  "main": "filetree/filetree.html",
+  "name": "filetree",
   "window": {
     "frame": true,
     "toolbar": false,
-    "icon": "images/icon.png",
+    "icon": "images/filetree_colored_sys.png",
     "transparent": false
   },
-  "version": "1.6.1",
+  "version": "1.6",
   "scripts": {
     "dev": "nwp -r",
     "build": "nwp"
@@ -17,23 +17,16 @@
   "chromiumArgs": "--enable-transparent-visuals",
   "nwjs-packager": {
     "nwVersion": "0.80.0",
-    "appFriendlyName": "Codelink",
-    "appMacIcon": "images/icon.icns",
-    "appWinIcon": "images/icon.ico",
+    "appFriendlyName": "FileTree",
+    "appMacIcon": "images/filetree_colored_sys.ico",
+    "appWinIcon": "images/filetree_colored_sys.ico",
     "files": [
       "images/**",
       "./animations.css",
-      "./browser.css",
-      "./main.css",
       "./modal.css",
-      "./browser.html",
       "./help.html",
-      "./index.html",
       "./animations.js",
-      "./browser.js",
-      "./main.js",
       "./modal.js",
-      "./favs.js",
       "./fsextra_license.txt",
       "./nwjs_license.txt",
       "./LICENSE",
@@ -55,7 +48,7 @@
       }
     },
     "appPackageName": "Codelink",
-    "appVersion": "1.6.1",
+    "appVersion": "1.6",
     "appDescription": "Codelink",
     "appCopyright": "Wervice (Constantin Volke)"
   },

@@ -4,7 +4,7 @@
   "window": {
     "frame": true,
     "toolbar": false,
-    "icon": "images/filetree_line_sys.png",
+    "icon": "images/filetree_colored_sys.png",
     "transparent": false
   },
   "version": "1.6",
@@ -18,8 +18,8 @@
   "nwjs-packager": {
     "nwVersion": "0.80.0",
     "appFriendlyName": "FileTree",
-    "appMacIcon": "images/filetree_line_sys.ico",
-    "appWinIcon": "images/filetree_line_sys.ico",
+    "appMacIcon": "images/filetree_colored_sys.ico",
+    "appWinIcon": "images/filetree_colored_sys.ico",
     "files": [
       "images/**",
       "./animations.css",
