@@ -41,6 +41,9 @@ extensionSort = {
     "cpp": "code",
     "txt": "code",
     "md": "code",
+    "gitignore": "code",
+    "LICENSE": "code",
+    "Makefile": "code",
     "pyw": "executable",
     "sh": "executable",
     "dll": "executable",
@@ -111,6 +114,7 @@ function renderFolderList(location) {
 } // ? Render the folder list
 
 function renderContentView(location) {
+    selected_file_id = 0
     renderNotes(location)
     s = ""
     document.getElementById("preview_window").innerText = ""
@@ -140,7 +144,7 @@ function renderContentView(location) {
                 catch {
                     img_path = "../images/file.png"
                 }
-                s = s + "<button data-filename=\"" + file + "\" oncontextmenu=makeContext(\"" + file + "\") onclick=handleFile(\"" + file + "\") onfocus=showPreview(\"" + file + "\")><img src=\"" + img_path + "\" height=16>" + file + "</button>"
+                s = s + "<button data-filename=\"" + file + "\" oncontextmenu=makeContext(\"" + file + "\") onclick=handleFile(\"" + file + "\") onfocus=showPreview(\"" + file + "\")><img src=\"" + img_path + "\" onerror=this.src='../images/file_icons/image.png' height=16>" + file + "</button>"
             }
         }
         catch {
@@ -159,13 +163,35 @@ function renderContentView(location) {
 } // ? Render the content for the folder content view
 
 function showPreview(name) {
-    if (extensionSort[path.basename(name).split(".")[1]] == "code") {
+    if (extensionSort[path.basename(name).split(".")[1]] == "code" && fs.statSync(path.join(currentLocation, name)).size < 1024 * 1024) {
         document.getElementById("preview_window").hidden = false
-        document.getElementById("preview_window").innerHTML = fs.readFileSync(path.join(currentLocation, name)).toString().replace()
+        highlighted_string = fs.readFileSync(path.join(currentLocation, name)).toString()
+            .replaceAll("<", "&lt")
+            .replaceAll(">", "&gt")
+            .replaceAll("=", "<b class='syn_operator'>=</b>")
+            .replaceAll(";", "<b class='syn_char'>;</b>")
+            .replaceAll("|", "<b class='syn_operator'>|</b>")
+            .replaceAll(",", "<b class='syn_char'>,</b>")
+            .replaceAll(":", "<b class='syn_char'>:</b>")
+            .replaceAll("!", "<b class='syn_operator'>!</b>")
+            .replaceAll("(", "<b class='syn_bracket'>(</b>")
+            .replaceAll(")", "<b class='syn_bracket'>)</b>")
+            .replaceAll("{", "<b class='syn_bracket'>{</b>")
+            .replaceAll("}", "<b class='syn_bracket'>}</b>")
+            .replaceAll("[", "<b class='syn_bracket'>[</b>")
+            .replaceAll("]", "<b class='syn_bracket'>]</b>")
+            .replaceAll("&lt", "<b class='syn_operator'>&lt</b>")
+            .replaceAll("&gt", "<b class='syn_operator'>&gt</b>")
+            .replaceAll("\n", "<br>")
+            .replaceAll("\t", "    ")
+        document.getElementById("preview_window").innerHTML = highlighted_string
+    }
+    else if (extensionSort[path.basename(name).split(".")[1]] == "code" && fs.statSync(path.join(currentLocation, name)).size > 1024 * 1024) {
+        document.getElementById("preview_window").innerHTML = "File is to big for preview"
     }
     else if (extensionSort[path.basename(name).split(".")[1]] == "image" && path.basename(name).split(".")[1] != "gif") {
         document.getElementById("preview_window").hidden = false
-        document.getElementById("preview_window").innerHTML = "<img src=\"" + path.join(currentLocation, name) + "\" alt=\"" + name + "\">"
+        document.getElementById("preview_window").innerHTML = "<img src=\"" + path.join(currentLocation, name) + "\" alt=\"" + name + "\" onerror=this.src='../images/file_icons/image.png'>"
     }
     else {
         document.getElementById("preview_window").innerText = ""
@@ -555,12 +581,6 @@ function moveFile() {
 
 function commandLine() {
     locationused = currentLocation
-    /* TODO if (locationused[locationused.length - 1] == "\/" || locationused[locationused.length - 1] == "\\") {
-        locationused = locationused
-    }
-    else {
-        locationused = locationused + "/"
-    }*/
     inputModal(
         function () {
             newPathFromInput = document.getElementById("inputModalInput").value
@@ -674,6 +694,25 @@ function commandLine() {
                     confirmModal("Base64", "Please enter a filename to compress.")
                 }
             }
+            else if (newPathFromInput.split(" ")[0] == "$rfile") {
+                if (newPathFromInput.split(" ")[1] != null) {
+                    try {
+                        needed_i = Number(newPathFromInput.split(" ")[1])
+                        i = 0
+                        string = ""
+                        while (i != needed_i) {
+                            string = string + "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\n "[Math.floor(Math.random() * 64)]
+                            i++
+                        }
+                        fs.writeFileSync(path.join(currentLocation, "random_file.txt"), string)
+                        renderContentView(currentLocation)
+                        renderFolderList(currentLocation)
+                    } catch (e) {
+                        console.error(e)
+                        errorModal("Generation failed", "Unknown error", function () { })
+                    }
+                }
+            }
             else if (!fs.existsSync(locationused + newPathFromInput) || newPathFromInput.match("^[$]new ") != null) {
                 if (newPathFromInput.match("^$new ") != null) {
                     newPathFromInput = newPathFromInput.replace("^$new ", "")
@@ -701,6 +740,7 @@ function commandLine() {
         "$reload",
         "$terminal",
         "$b64",
+        "$rfile",
         "$compress",
         "$editCss"
     ])
@@ -916,7 +956,12 @@ window.addEventListener("load", function () {
         }
     }
     this.document.getElementById('contextmenu_open').onclick = function () {
-        exec(context_file)
+        if (os.platform() == "win32") {
+            exec(context_file)
+        }
+        else {
+            exec("xdg-open \"" + context_file + "\"")
+        }
     }
     this.document.getElementById('contextmenu_rename').onclick = function () {
         document.getElementById("inputModalInput").value = context_file

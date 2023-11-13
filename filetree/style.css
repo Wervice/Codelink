@@ -165,10 +165,16 @@ div#preview_window {
     height: calc(100vh - 71px);
     border-left: 1px solid #303030;
     overflow-x: scroll;
+    color: #ccd1d4
 }
 
 div#preview_window::-webkit-scrollbar {
     display: none;
+}
+
+div#preview_window img {
+    margin: 0 auto;
+    max-width: 200px;
 }
 
 button.list {
@@ -714,4 +720,16 @@ option {
     animation-name: gradient;
     animation-duration: 250s;
     animation-iteration-count: infinite;
+}
+
+.syn_bracket {
+    color: rgb(89, 255, 0);
+}
+
+.syn_operator {
+    color: rgb(0, 102, 255);
+}
+
+.syn_char {
+    color: rgb(255, 68, 0);
 }
