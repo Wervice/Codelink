@@ -1,0 +1,735 @@
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-button {
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: white;
+    border-radius: 10px;
+}
+
+::selection {
+    background-color: white;
+    color: black;
+}
+
+@keyframes pop_open {
+    0% {
+        overflow: hidden;
+        height: 0px;
+        opacity: 0%;
+    }
+}
+
+body {
+    background: #191919;
+    color: white;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+    margin: 0px;
+    overflow: hidden;
+}
+
+input:focus, button:focus {
+    outline: #303030 solid 1px;
+}
+
+nav {
+    padding: 10px;
+    border-bottom: 1px solid #303030;
+    background: #171717;
+}
+
+nav input {
+    border-radius: 5px;
+    border: 1px solid #303030;
+    background: #191919;
+    color: white;
+    padding: 5px;
+    width: 250px;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+    transition: filter ease-in-out 0.125s;
+}
+
+nav input:focus {
+    filter: brightness(0.9);
+}
+
+nav button {
+    padding: 7px;
+    width: 49px;
+    border-radius: 5px;
+    border: 1px solid #303030;
+    background: #191919;
+    transition: ease-in-out 0.125s;
+}
+
+nav button:hover {
+    filter: brightness(1.1);
+}
+
+nav button:active {
+    transition: ease-in-out 0.125;
+    filter: brightness(0.9);
+}
+
+nav img {
+    height: 12px;
+    scale: 1.35;
+}
+
+section#folder_list {
+    border-right: 1px solid #303030;
+    background: #191919;
+    min-width: 130px;
+    padding: 20px;
+    height: calc(100vh - 97px);
+    overflow-y: scroll;
+}
+
+section#folder_list button {
+    max-width: 250px;
+    background-color: #252525;
+    color: white;
+    border-width: 0px;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 2.5px;
+    margin-bottom: 5px;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+    text-align: left;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    transition: ease-in-out 0.125s;
+}
+
+section#folder_list button:hover {
+    filter: brightness(1.1);
+    box-shadow: 0px 5px 5px #0000004e;
+}
+
+section#browser_window {
+    height: calc(100vh - 97px);
+    padding: 20px;
+    overflow-y: scroll;
+    width: calc(80vw - 300px);
+}
+
+section#browser_window::-webkit-scrollbar {
+    display: none;
+}
+
+section#browser_window button {
+    width:  9vw;
+    height: 6vw;
+    min-width: 120px;
+    min-height: 100px;
+    max-width: 260px;
+    max-height: 300px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #191919;
+    color: white;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+    border: 1px solid #303030;
+    margin: 5px;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: 0.125s ease-in-out;
+}
+
+section#browser_window button img {
+    height: 35px;
+    margin: 0 auto;
+    display: block;
+}
+
+#browser_window button:focus {
+    outline: #303030 solid 2px;
+    filter: brightness(1.1);
+}
+
+div#preview_window {
+    position: fixed;
+    width: 20vw;
+    right: 0px;
+    top: 51px;
+    padding: 10px;
+    height: calc(100vh - 71px);
+    border-left: 1px solid #303030;
+    overflow-x: scroll;
+    color: #ccd1d4
+}
+
+div#preview_window::-webkit-scrollbar {
+    display: none;
+}
+
+div#preview_window img {
+    margin: 0 auto;
+    max-width: 200px;
+}
+
+button.list {
+    width: 51vw !important;
+    height: 10px !important;
+    max-width: 51vw !important;
+    min-height: 30px !important;
+    margin: 0px !important;
+    padding: 5px !important;
+    border-radius: 0px !important;
+    border-width: 0px !important;
+    text-align: left;
+}
+
+button.list img {
+    height: 20px !important;
+    width: 20px !important;
+    margin-bottom: -5px !important;
+    display: inherit !important;
+    margin-right: 10px !important;
+}
+
+td {
+    padding: 0px;
+    margin: 0px;
+}
+
+#contextmenu {
+    width: 150px;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #1414143c;
+    backdrop-filter: blur(10px);
+    border-color: #2b2b2b;
+    border-width: 1px;
+    border-style: solid;
+    box-shadow: 0px 5px 10px 2px rgba(0, 0, 0, 0.184);
+    position: fixed;
+    z-index: 200;
+}
+
+#contextmenu button {
+    width: 100%;
+    border-radius: 5px;
+    padding: 10px;
+    border: none;
+    background-color: #00000000;
+    color: white;
+    transition: 0.125s ease-in-out;
+    text-align: left;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+#contextmenu button:hover {
+    background-color: #0080ff;
+}
+
+#contextmenu_delete:hover {
+    background-color: rgb(225, 22, 4) !important;
+}
+
+@keyframes fly-in {
+    0% {
+        top: -50px;
+        opacity: 0%;
+    }
+}
+
+#inputModal {
+    --width: 500px;
+    position: fixed;
+    left: calc(50vw - (var(--width) / 2));
+    top: 50px;
+    width: var(--width);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0px 5px 10px #00000032;
+    height: 42px;
+    outline: #2F2F2F 2px solid;
+    animation-name: fly-in;
+    animation-duration: 0.25s;
+    z-index: 100;
+    background-color: rgba(19, 19, 19, 0.381);
+    backdrop-filter: blur(10px);
+}
+
+#inputModalDropdown {
+    position: fixed;
+    top: 100px;
+    width: 500px;
+    left: calc(50vw - 255px);
+    background-color: #191919;
+    border: 1px #303030 solid;
+    box-shadow: 0px 5px 10px #00000032;
+    padding: 5px;
+    z-index: 200;
+    border-radius: 5px;
+    animation-name: fly-in;
+    animation-duration: 0.25s;
+    max-height: 200px;
+    overflow-x: scroll;
+}
+
+#inputModalDropdown::-webkit-scrollbar {
+    display: none;
+}
+
+#inputModalDropdown button {
+    font-size: large;
+    color: white;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+    background-color: transparent;
+    border-style: none;
+    width: 100%;
+    text-align: left;
+    transition: 0.25s ease-in-out;
+    border-radius: 2.5px;
+    margin: 2.5px;
+    padding: 5px;
+}
+
+#inputModalDropdown button:hover {
+    background-color: #2e2e2e;
+}
+
+#inputModal input {
+    height: 20px;
+    width: var(--width);
+    background-color: rgba(19, 19, 19, 0.339);
+    color: white;
+    border-width: 0px;
+    font-size: 15px;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+    padding: 10px;
+
+}
+
+#inputModal input:focus {
+    outline: none;
+}
+
+@keyframes fly-in-bottom {
+    0% {
+        bottom: -30px;
+        opacity: 0%;
+    }
+}
+
+#path_action_indicator {
+    position: fixed;
+    bottom: 0px;
+    padding: 10px;
+    height: 20px;
+    font-size: 20px;
+    background-color: #262626;
+    width: calc(100vw - 20px);
+    z-index: 100;
+    border-top: #303030 1px solid;
+    box-shadow: 0px 5px 5px #00000056;
+    border-radius: 5px 5px 0px 0px;
+    animation-name: fly-in-bottom;
+    animation-duration: 0.125s;
+    cursor: default;
+}
+
+#path_action_indicator::selection {
+    background-color: transparent;
+    color: white;
+}
+
+#path_action_indicator img {
+    height: 12px;
+    margin-top: -5px;
+    transform: scale(2);
+}
+
+#path_action_indicator button {
+    padding: 10px;
+    border-radius: 2.5px;
+    border-width: 0px;
+    background-color: dodgerblue;
+    color: white;
+    font-size: 12px;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+    bottom: 2.5px;
+    right: 2.5px;
+    position: fixed;
+    transition: ease-in-out 0.125s;
+}
+
+#path_action_indicator button:hover {
+    filter: brightness(1.1);
+}
+
+#file_details,
+#encryptionManager {
+    position: fixed;
+    width: 50vw;
+    padding: 20px;
+    top: 50px;
+    height: calc(90vh - 100px);
+    max-height: 750px;
+    left: calc(30vw - 10px);
+    width: 40vw;
+    background-color: #1F1F1F;
+    border-radius: 10px;
+    z-index: 200;
+    border: 1px #2b2b2b solid;
+    box-shadow: 0px 5px 5px #00000031, 0px 0px 0px 100vw #0000007c;
+    animation: pop_open;
+    animation-duration: 125ms;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+#file_details h2 {
+    margin-top: 0px;
+    padding: 0px;
+}
+
+#file_details h2 img {
+    height: 16px;
+}
+
+#file_details table tr td {
+    min-width: 100px;
+}
+
+#file_details button,
+#encryptionManager button,
+#compression_manager button {
+    padding: 7px;
+    border-radius: 5px;
+    border: 1px solid #303030;
+    background: #191919;
+    transition: ease-in-out 0.125s;
+    color: white;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+}
+
+#compression_manager {
+    position: fixed;
+    top: 50px;
+    left: calc(50vw - (500px/2));
+    width: 500px;
+    height: max-content;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #1F1F1F;
+    border: 1px solid #303030;
+    box-shadow: 0px 5px 5px #00000031, 0px 0px 0px 100vw #0000007c;
+    animation: pop_open;
+    animation-duration: 125ms;
+    z-index: 200;
+}
+
+#compression_manager input {
+    padding: 7px;
+    border-radius: 5px;
+    border: 1px solid #303030;
+    background: #191919;
+    transition: ease-in-out 0.125s;
+    color: white;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+}
+
+#notes_view {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: calc(100vw - 20px);
+    height: calc(100vh - 20px);
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #131313dc;
+    border: 1px solid #303030;
+    box-shadow: 0px 5px 5px #00000031, 0px 0px 0px 100vw #0000007c;
+    z-index: 200;
+    animation: pop_open;
+    animation-duration: 250ms;
+    backdrop-filter: blur(10px);
+}
+
+#notes_view table {
+    max-width: 100%;
+    max-height: 100%;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+#notes_view table td {
+    width: fit-content;
+}
+
+#notes_list {
+    width: 300px;
+    height: 100%;
+    max-width: 30vw;
+    border-right: 1px solid #303030;
+    overflow-y: scroll;
+}
+
+#notes_list button#initNotes {
+    background-color: #edd400;
+    color: #000000;
+    box-shadow: 0px 5px 10px #00000052;
+    padding: 7px;
+    border-radius: 2.5px;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+    border-width: 0px;
+    width: calc(100% - 10px);
+    transition: ease-in-out 0.25s;
+}
+
+#notes_list button.notes {
+    background-color: transparent;
+    color: #ffffff;
+    padding: 7px;
+    border-radius: 2.5px;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+    border-width: 0px;
+    border-bottom: 1px solid #2e2e2e;
+    width: calc(100% - 30px);
+    transition: ease-in-out 0.25s;
+    text-align: left;
+}
+
+#notes_list button.activity {
+    width: 20px;
+    border: none;
+    background-color: transparent;
+    transition: ease-in-out 250ms;
+    border-radius: 2.5px;
+    text-align: center;
+}
+
+#notes_list button.activity img {
+    width: 16px;
+    height: 16px;
+    margin-bottom: -5px;
+}
+
+#notes_list button.activity:hover {
+    filter: brightness(1.1);
+}
+
+#notes_list button#initNotes:hover, #notes_list button.notes {
+    filter: brightness(0.9);
+}
+
+#new_note {
+    padding: 5px;
+    border-radius: 2.5px;
+    border: 1px #edd400 solid;
+    background-color: transparent;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+    color: white;
+    font-size: 16px;
+    transition: ease-in-out 0.25s;
+}
+
+#new_note img {
+    height: 15px;
+    margin-bottom: -2px;
+}
+
+#new_note:hover {
+    background-color: #edd5003c;
+}
+
+#notes_editor input {
+    width: calc(100vw - 450px);
+    border-width: 0px;
+    background-color: transparent;
+    font-size: larger;
+    color: rgba(255, 255, 255, 0.778);
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+    font-weight: bolder;
+    padding: 10px;
+}
+
+#notes_editor input:focus {
+    outline: none;
+    border-width: 0px;
+}
+
+#notes_textarea {
+    height: calc(100vh - 170px);
+    width: calc(100vw - 450px);
+    padding: 10px;
+    padding-left: 9px;
+    background-color: transparent;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+    border: none;
+    font-size: 20px;
+    font-weight: 100;
+    color: white;
+    caret-color: white;
+    resize: none;
+}
+
+#notes_rendered {
+    height: calc(100vh - 170px);
+    width: calc(100vw - 600px);
+    padding: 10px;
+    background-color: transparent;
+    border: none;
+    font-size: 20px;
+    font-weight: 100;
+    color: white;
+    caret-color: white;
+    overflow-y: scroll;
+    line-height: 35px;
+}
+
+#notes_textarea:focus {
+    outline: none;
+}
+
+#notes_rendered p, pre {
+    padding: 0px;
+    margin: 0px;
+    text-align: left;
+}
+
+#notes_rendered h1, #notes_rendered h2, #notes_rendered h3, #notes_rendered h4, #notes_rendered h5, #notes_rendered h6 {
+    margin: 0px;
+    padding-bottom: 10px;
+    padding-top: 5px;
+    font-weight: bolder;
+    border-bottom: 1px solid #30303072;
+}
+
+#notes_rendered blockquote {
+    padding-right: 10px;
+    margin: 0px;
+    margin-bottom: 5px;
+    padding-left: 5px;
+    border-left: 5px dodgerblue solid;
+}
+
+#notes_rendered table td {
+    border: 1px #303030 solid;
+    margin: 5px;
+    border-radius: 2.5px;
+    padding: 5px;
+}
+
+#notes_rendered code, p:has(code) {
+    color: #eace43;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+#notes_rendered a, #notes_rendered a:hover, #notes_rendered a:active {
+    color: #ffa200;
+    text-decoration: none;
+    padding: 2.5px;
+    transition: ease-in-out 0.25s;
+}
+
+#notes_rendered a:hover {
+    background-color: #ffa20040;
+    border-radius: 2.5px;
+    filter: brightness(1.1);
+}
+
+#notes_rendered a:active {
+    filter: brightness(1.4);
+    outline: 2px solid #ffa200;
+}
+
+#notes_rendered hr {
+    border-style: solid;
+    border-color: white;
+}
+
+#notes_editor button {
+    padding: 5px;
+    border-radius: 2.5px;
+    border-width: 0px;
+    background-color: transparent;
+    border: 1px #303030 solid;
+    margin-left: 5px;
+    margin-bottom: 5px;
+}
+
+#notes_editor button img {
+    height: 12px;
+    transform: scale(1.5);
+}
+
+#notes_rendered::-webkit-scrollbar {
+    display: none;
+}
+
+#locationNote {
+    padding-left: 10px;
+    opacity: 60%;
+}
+
+#notes_view select {
+    padding: 5px;
+    border-radius: 2.5px;
+    border-width: 0px;
+    background-color: transparent;
+    border: 1px #303030 solid;
+    margin-left: 5px;
+    margin-bottom: 5px;
+    color: white;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+    transition: 0.25px;
+}
+
+#notes_view select:focus {
+    outline: none;
+}
+
+#notes_view select:hover {
+    filter: brightness(1.1);
+}
+
+option {
+    color: white;
+    background-color: black;
+    border-radius: 0px;
+    padding: 5px;
+}
+
+@keyframes gradient {
+    75% {
+        filter: hue-rotate(1deg);
+    }
+}
+
+#loading_wheel {
+    height: 2px;
+    background-color: dodgerblue;
+    animation-name: gradient;
+    animation-duration: 250s;
+    animation-iteration-count: infinite;
+}
+
+.syn_bracket {
+    color: rgb(89, 255, 0);
+}
+
+.syn_operator {
+    color: rgb(0, 102, 255);
+}
+
+.syn_char {
+    color: rgb(255, 68, 0);
+}
