@@ -28,7 +28,7 @@
     }
 }
 
-body {
+body, html {
     background: #191919;
     color: white;
     font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
