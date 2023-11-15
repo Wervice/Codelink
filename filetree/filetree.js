@@ -1,15 +1,11 @@
 const fs = require("fs");
 const os = require("os");
 const crypto = require('crypto');
-const internal = require("stream");
-const compression = require("node:zlib")
+const zip = require("jszip")
+const hljs = require('highlight.js');
+const { exec } = require("child_process");
 const fse = require("fs-extra");
 const path = require("path");
-const { exec } = require("child_process");
-const tar = require("tar")
-const zip = require("jszip")
-const { pipeline } = require('node:stream');
-const { cursorTo } = require("readline");
 const marked = require('marked');
 const bad_link_detect = /(?!```)\[([^\]]+)\]\(([^)]+)\)(?![^`]*```)/gm
 const to_dir_link = /(?<!`[^`]*?)#([A-Za-z0-9]+)/g
@@ -18,6 +14,7 @@ const fontFamilies = {
     "sans-serif": '"Arial", "Calibri", "Ubuntu", sans-serif',
     "serif": 'serif'
 }
+var cachedSyntax = {}
 
 extensionSort = {
     "png": "image",
@@ -40,7 +37,7 @@ extensionSort = {
     "cs": "code",
     "cpp": "code",
     "txt": "code",
-    "md": "code",
+    "bashrc": "code",
     "gitignore": "code",
     "LICENSE": "code",
     "Makefile": "code",
@@ -117,7 +114,24 @@ function renderContentView(location) {
     selected_file_id = 0
     renderNotes(location)
     s = ""
+    cachedSyntax = {}
     document.getElementById("preview_window").innerText = ""
+    document.getElementById("browser_window").style.width = "calc(100vw - 300px)"
+    document.getElementById("preview_window").hidden = true
+    try {
+        fs.accessSync(location, fs.constants.W_OK);
+        canRW = true
+    } catch (err) {
+        canRW = false
+    }
+    if (!canRW) {
+        document.getElementById("pathInput").style.background = "#ab0d0dff"
+        document.getElementById("pathInput").title = "You can not write in this folder"
+    }
+    else {
+        document.getElementById("pathInput").style.background = "#232323"
+        document.getElementById("pathInput").title = ""
+    }
     for (file of fs.readdirSync(location)) {
         try {
             if (fs.statSync(path.join(location, file)).isFile()) {
@@ -164,38 +178,29 @@ function renderContentView(location) {
 
 function showPreview(name) {
     if (extensionSort[path.basename(name).split(".")[1]] == "code" && fs.statSync(path.join(currentLocation, name)).size < 1024 * 1024) {
+        document.getElementById("browser_window").style.width = "calc(70vw - 300px)"
         document.getElementById("preview_window").hidden = false
-        highlighted_string = fs.readFileSync(path.join(currentLocation, name)).toString()
-            .replaceAll("<", "&lt")
-            .replaceAll(">", "&gt")
-            .replaceAll("=", "<b class='syn_operator'>=</b>")
-            .replaceAll(";", "<b class='syn_char'>;</b>")
-            .replaceAll("|", "<b class='syn_operator'>|</b>")
-            .replaceAll(",", "<b class='syn_char'>,</b>")
-            .replaceAll(":", "<b class='syn_char'>:</b>")
-            .replaceAll("!", "<b class='syn_operator'>!</b>")
-            .replaceAll("(", "<b class='syn_bracket'>(</b>")
-            .replaceAll(")", "<b class='syn_bracket'>)</b>")
-            .replaceAll("{", "<b class='syn_bracket'>{</b>")
-            .replaceAll("}", "<b class='syn_bracket'>}</b>")
-            .replaceAll("[", "<b class='syn_bracket'>[</b>")
-            .replaceAll("]", "<b class='syn_bracket'>]</b>")
-            .replaceAll("&lt", "<b class='syn_operator'>&lt</b>")
-            .replaceAll("&gt", "<b class='syn_operator'>&gt</b>")
-            .replaceAll("\n", "<br>")
-            .replaceAll("\t", "    ")
+        if (cachedSyntax[name] == null) {
+            highlighted_string = "<pre><code style=font-size:large;word-wrap:break-word;>" + hljs.highlightAuto(fs.readFileSync(path.join(currentLocation, name)).toString().replace("\n", "\n\r")).value + "</code></pre>"
+            cachedSyntax[name] = highlighted_string
+        } else {
+            highlighted_string = cachedSyntax[name]
+        }
         document.getElementById("preview_window").innerHTML = highlighted_string
     }
     else if (extensionSort[path.basename(name).split(".")[1]] == "code" && fs.statSync(path.join(currentLocation, name)).size > 1024 * 1024) {
+        document.getElementById("browser_window").style.width = "calc(70vw - 300px)"
         document.getElementById("preview_window").innerHTML = "File is to big for preview"
     }
     else if (extensionSort[path.basename(name).split(".")[1]] == "image" && path.basename(name).split(".")[1] != "gif") {
+        document.getElementById("browser_window").style.width = "calc(70vw - 300px)"
         document.getElementById("preview_window").hidden = false
-        document.getElementById("preview_window").innerHTML = "<img src=\"" + path.join(currentLocation, name) + "\" alt=\"" + name + "\" onerror=this.src='../images/file_icons/image.png'>"
+        document.getElementById("preview_window").innerHTML = "<img src=\"" + "data:image/" + path.basename(name).split(".")[1] + ";base64," + fs.readFileSync(path.join(currentLocation, name)).toString("base64") + "\" alt=\"" + name + "\" onerror=this.src='../images/file_icons/image.png'>"
     }
     else {
         document.getElementById("preview_window").innerText = ""
         document.getElementById("preview_window").hidden = true
+        document.getElementById("browser_window").style.width = "calc(100vw - 300px)"
     }
 }
 
@@ -762,7 +767,14 @@ function openTerminalHere() {
         exec(localStorage.getItem("terminalCommand"), { "cwd": currentLocation })
     }
     else {
-        exec("cmd", { "cwd": currentLocation })
+        if (os.platform() == "win32") {
+            exec("wt", { "wt": currentLocation })
+        } else {
+            inputModal(function () {
+                localStorage.setItem("terminalCommand", document.getElementById("inputModalInput").value)
+                exec(localStorage.getItem("terminalCommand"), { "cwd": currentLocation })
+            }, "Command to run terminal")
+        }
     }
 } // ? Launches the terminal (localStorage)
 

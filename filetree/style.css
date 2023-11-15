@@ -16,8 +16,7 @@
 }
 
 ::selection {
-    background-color: white;
-    color: black;
+    background-color: transparent;
 }
 
 @keyframes pop_open {
@@ -28,65 +27,76 @@
     }
 }
 
-body, html {
-    background: #191919;
+*:focus {
+    outline: none;
+}
+
+body,
+html {
+    background: #121212;
     color: white;
     font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
     margin: 0px;
     overflow: hidden;
-}
-
-input:focus, button:focus {
-    outline: #303030 solid 1px;
+    cursor: default;
 }
 
 nav {
     padding: 10px;
     border-bottom: 1px solid #303030;
-    background: #171717;
+    background: #141414;
+    align-items: center;
+    align-self: center;
+    align-content: center;
+    text-align: center;
 }
 
 nav input {
-    border-radius: 5px;
-    border: 1px solid #303030;
-    background: #191919;
+    border-radius: 8px;
+    background: #232323;
+    border-width: 0px;
     color: white;
-    padding: 5px;
-    width: 250px;
+    padding: 8px;
+    width: calc(85vw - 500px);
+    min-width: 250px;
     font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
-    transition: filter ease-in-out 0.125s;
+    transition: filter ease-in-out 0.25s;
+    cursor: default;
 }
 
 nav input:focus {
-    filter: brightness(0.9);
+    filter: brightness(1.2);
 }
 
 nav button {
-    padding: 7px;
+    border-radius: 8px;
+    background: transparent;
+    border-width: 0px;
+    color: white;
+    padding: 8px;
     width: 49px;
-    border-radius: 5px;
-    border: 1px solid #303030;
-    background: #191919;
-    transition: ease-in-out 0.125s;
+    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+    transition: background ease-in-out 0.25s;
 }
 
 nav button:hover {
-    filter: brightness(1.1);
+    background-color: #2a2a2a;
 }
 
 nav button:active {
     transition: ease-in-out 0.125;
-    filter: brightness(0.9);
+    filter: brightness(0.8);
 }
 
 nav img {
     height: 12px;
-    scale: 1.35;
+    scale: 1.5;
+    margin-bottom: -2px;
 }
 
 section#folder_list {
     border-right: 1px solid #303030;
-    background: #191919;
+    background: #171717;
     min-width: 130px;
     padding: 20px;
     height: calc(100vh - 97px);
@@ -95,7 +105,7 @@ section#folder_list {
 
 section#folder_list button {
     max-width: 250px;
-    background-color: #252525;
+    background-color: #1f1f1f;
     color: white;
     border-width: 0px;
     border-radius: 10px;
@@ -112,14 +122,13 @@ section#folder_list button {
 
 section#folder_list button:hover {
     filter: brightness(1.1);
-    box-shadow: 0px 5px 5px #0000004e;
 }
 
 section#browser_window {
     height: calc(100vh - 97px);
     padding: 20px;
     overflow-y: scroll;
-    width: calc(80vw - 300px);
+    width: calc(100vw - 300px);
 }
 
 section#browser_window::-webkit-scrollbar {
@@ -127,7 +136,7 @@ section#browser_window::-webkit-scrollbar {
 }
 
 section#browser_window button {
-    width:  9vw;
+    width: 9vw;
     height: 6vw;
     min-width: 120px;
     min-height: 100px;
@@ -135,10 +144,10 @@ section#browser_window button {
     max-height: 300px;
     padding: 10px;
     border-radius: 5px;
-    background-color: #191919;
+    background-color: transparent;
     color: white;
+    border-width: 0px;
     font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
-    border: 1px solid #303030;
     margin: 5px;
     overflow: hidden;
     white-space: nowrap;
@@ -153,19 +162,25 @@ section#browser_window button img {
 
 #browser_window button:focus {
     outline: #303030 solid 2px;
-    filter: brightness(1.1);
+    background: #ffffff09;
 }
 
 div#preview_window {
+    background-color: #111111;
     position: fixed;
-    width: 20vw;
+    width: 30vw;
     right: 0px;
-    top: 51px;
+    top: 55px;
     padding: 10px;
     height: calc(100vh - 71px);
     border-left: 1px solid #303030;
     overflow-x: scroll;
-    color: #ccd1d4
+    color: #ccd1d4;
+    z-index: 300;
+}
+
+div#preview_window::selection {
+    background-color: #ffffff23;
 }
 
 div#preview_window::-webkit-scrollbar {
@@ -178,13 +193,13 @@ div#preview_window img {
 }
 
 button.list {
-    width: 51vw !important;
-    height: 10px !important;
-    max-width: 51vw !important;
-    min-height: 30px !important;
-    margin: 0px !important;
-    padding: 5px !important;
-    border-radius: 0px !important;
+    width: 300px !important;
+    height: 30px !important;
+    max-height: 30px !important;
+    min-height: 40px !important;
+    margin: 5px !important;
+    padding: 10px !important;
+    border-radius: 2.5px !important;
     border-width: 0px !important;
     text-align: left;
 }
@@ -206,8 +221,7 @@ td {
     width: 150px;
     padding: 10px;
     border-radius: 10px;
-    background-color: #1414143c;
-    backdrop-filter: blur(10px);
+    background-color: #1f1f1f;
     border-color: #2b2b2b;
     border-width: 1px;
     border-style: solid;
@@ -259,8 +273,7 @@ td {
     animation-name: fly-in;
     animation-duration: 0.25s;
     z-index: 100;
-    background-color: rgba(19, 19, 19, 0.381);
-    backdrop-filter: blur(10px);
+    background-color: #191919;
 }
 
 #inputModalDropdown {
@@ -451,13 +464,12 @@ td {
     height: calc(100vh - 20px);
     padding: 10px;
     border-radius: 5px;
-    background-color: #131313dc;
+    background-color: #131313;
     border: 1px solid #303030;
     box-shadow: 0px 5px 5px #00000031, 0px 0px 0px 100vw #0000007c;
     z-index: 200;
     animation: pop_open;
     animation-duration: 250ms;
-    backdrop-filter: blur(10px);
 }
 
 #notes_view table {
@@ -523,7 +535,8 @@ td {
     filter: brightness(1.1);
 }
 
-#notes_list button#initNotes:hover, #notes_list button.notes {
+#notes_list button#initNotes:hover,
+#notes_list button.notes {
     filter: brightness(0.9);
 }
 
@@ -596,13 +609,19 @@ td {
     outline: none;
 }
 
-#notes_rendered p, pre {
+#notes_rendered p,
+pre {
     padding: 0px;
     margin: 0px;
     text-align: left;
 }
 
-#notes_rendered h1, #notes_rendered h2, #notes_rendered h3, #notes_rendered h4, #notes_rendered h5, #notes_rendered h6 {
+#notes_rendered h1,
+#notes_rendered h2,
+#notes_rendered h3,
+#notes_rendered h4,
+#notes_rendered h5,
+#notes_rendered h6 {
     margin: 0px;
     padding-bottom: 10px;
     padding-top: 5px;
@@ -625,7 +644,8 @@ td {
     padding: 5px;
 }
 
-#notes_rendered code, p:has(code) {
+#notes_rendered code,
+p:has(code) {
     color: #eace43;
     padding-top: 5px;
     padding-bottom: 5px;
@@ -633,7 +653,9 @@ td {
     letter-spacing: 1px;
 }
 
-#notes_rendered a, #notes_rendered a:hover, #notes_rendered a:active {
+#notes_rendered a,
+#notes_rendered a:hover,
+#notes_rendered a:active {
     color: #ffa200;
     text-decoration: none;
     padding: 2.5px;
