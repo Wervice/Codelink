@@ -16,7 +16,7 @@
   "license": "MIT",
   "chromiumArgs": "--enable-transparent-visuals",
   "nwjs-packager": {
-    "nwVersion": "0.80.0",
+    "nwVersion": "0.81.0",
     "appFriendlyName": "Codelink",
     "appMacIcon": "images/icon.icns",
     "appWinIcon": "images/icon.ico",
