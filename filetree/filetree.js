@@ -158,10 +158,20 @@ function renderContentView(location) {
                 catch {
                     img_path = "../images/file.png"
                 }
-                s = s + "<button data-filename=\"" + file + "\" oncontextmenu=makeContext(\"" + file + "\") onclick=handleFile(\"" + file + "\") onfocus=showPreview(\"" + file + "\")><img src=\"" + img_path + "\" onerror=this.src='../images/file_icons/image.png' height=16>" + file + "</button>"
+                if (file[0] == "." || file[0] == "$") {
+                    if (localStorage.getItem("showIddenFiles") == "true") {
+                        console.log("Hidden added; " + file)
+                        s = "<button data-filename=\"" + file + "\" oncontextmenu=makeContext(\"" + encodeURIComponent(file) + "\") onclick=handleFile(\"" + encodeURIComponent(file) + "\") onfocus=showPreview(\"" + file + "\")><img src=\"" + img_path + "\" onerror=this.src='../images/file_icons/image.png' height=16>" + file + "</button>"
+                    }
+                }
+                else {
+                    s = s + "<button data-filename=\"" + file + "\" oncontextmenu=makeContext(\"" + encodeURIComponent(file) + "\") onclick=handleFile(\"" + encodeURIComponent(file) + "\") onfocus=showPreview(\"" + file + "\")><img src=\"" + img_path + "\" onerror=this.src='../images/file_icons/image.png' height=16>" + file + "</button>"
+
+                }
             }
         }
-        catch {
+        catch (e) {
+            console.warn("Fail in renderContentView()" + e)
             img_path = "../images/adminfile.png"
             s = s + "<button data-filename=\"" + file + "\"> <img src=\"" + img_path + "\" height=16>" + file + "</button>"
         }
@@ -171,7 +181,6 @@ function renderContentView(location) {
     if (list) {
         for (e of document.querySelectorAll("#browser_window button")) {
             e.classList.add("list")
-            console.log(e)
         }
     }
 } // ? Render the content for the folder content view
@@ -196,6 +205,39 @@ function showPreview(name) {
         document.getElementById("browser_window").style.width = "calc(70vw - 300px)"
         document.getElementById("preview_window").hidden = false
         document.getElementById("preview_window").innerHTML = "<img src=\"" + "data:image/" + path.basename(name).split(".")[1] + ";base64," + fs.readFileSync(path.join(currentLocation, name)).toString("base64") + "\" alt=\"" + name + "\" onerror=this.src='../images/file_icons/image.png'>"
+    }
+    else if (path.basename(name).split(".")[1] == "md") {
+        document.getElementById("browser_window").style.width = "calc(70vw - 300px)"
+        document.getElementById("preview_window").hidden = false
+        var parser = new DOMParser()
+        var par_obj = parser.parseFromString(fs.readFileSync(path.join(currentLocation, name)).toString(), "text/html")
+        par_obj.querySelectorAll('*').forEach(element => {
+            Array.from(element.attributes).forEach(attribute => {
+                if (attribute.name.startsWith('on')) {
+                    element.removeAttribute(attribute.name);
+                    contained_js = true
+                }
+            });
+        });
+        html_code = par_obj.body.innerHTML
+        document.getElementById("preview_window").innerHTML = marked.marked(html_code.replace(bad_link_detect, "$1").replace(to_dir_link, "[$1](javascript:goToNote('$1'))"))
+        for (e of document.querySelectorAll("#preview_window a")) {
+            e.href = "javascript:alert('This link was blocked.')"
+        }
+        for (e of document.querySelectorAll("#preview_window script")) {
+            e.remove()
+        }
+        for (e of document.querySelectorAll("#preview_window img")) {
+            try {
+                e.src = "data:image/" + e.src.split(".")[1] + ";base64," + fs.readFileSync(path.join(currentLocation, e.attributes.src.nodeValue)).toString("base64")
+            }
+            catch {
+                e.remove()
+            }
+        }
+        for (e of document.querySelectorAll("#preview_window code")) {
+            e.innerHTML = hljs.highlightAuto(e.innerHTML.replaceAll("&lt;", "<").replaceAll("&gt;", ">")).value
+        }
     }
     else {
         document.getElementById("preview_window").innerText = ""
@@ -237,13 +279,11 @@ function toggleView() {
     if (list) {
         for (e of document.querySelectorAll("#browser_window button")) {
             e.classList.add("list")
-            console.log(e)
         }
     }
     else {
         for (e of document.querySelectorAll("#browser_window button")) {
             e.classList.remove("list")
-            console.log(e)
         }
     }
     fs.writeFileSync("toggle_view.txt", list.toString())
@@ -251,7 +291,7 @@ function toggleView() {
 
 function renderMDtoHTML() {
     document.getElementById("notes_textarea").hidden = true
-    document.getElementById("notes_rendered").innerHTML = marked.marked(document.getElementById("notes_textarea").value.replace(bad_link_detect, "$1").replace(to_dir_link, "[$1](javascript:goToNote('$1'))"))
+    document.getElementById("notes_rendered").innerHTML = marked.marked(document.getElementById("notes_textarea").value.replace(bad_link_detect, "$1").replace(to_dir_link, "[$1](javascript:goToNote('$1'))")).replace("<a ", "&lt;a ")
     document.getElementById("notes_rendered").hidden = false
 }
 
@@ -615,7 +655,6 @@ function commandLine() {
                 file_list_html = ""
                 folder_list_html = ""
                 query = newPathFromInput.split("find ")[1]
-                console.log(query)
                 for (file of fs.readdirSync(currentLocation)) {
                     try {
                         if (fs.statSync(path.join(currentLocation, file)).isFile()) {
@@ -789,7 +828,6 @@ function isEncryptedFile(filepath) {
         })
         try {
             fcontent_metadata = fcontent.split("HEAD\n")[1].split("\nNOHEAD\n")[0].split(";")
-            console.log(fcontent_metadata)
             return (fcontent_metadata[0] == "codelink");
         }
         catch {
@@ -933,13 +971,11 @@ window.addEventListener("load", function () {
     if (list) {
         for (e of document.querySelectorAll("#browser_window button")) {
             e.classList.add("list")
-            console.log(e)
         }
     }
     else {
         for (e of document.querySelectorAll("#browser_window button")) {
             e.classList.remove("list")
-            console.log(e)
         }
     }
     document.getElementById("notes_rendered").style.fontFamily = fontFamilies[fs.readFileSync("notes_font.txt").toString()]

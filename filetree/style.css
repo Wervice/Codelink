@@ -19,6 +19,15 @@
     background-color: transparent;
 }
 
+@font-face {
+    font-family: "Work Sans";
+    src: url(../assets/WorkSans.ttf);
+}
+
+:root {
+    --font-sans: "Work Sans", "Segoe UI", "Cantarell Regular", "Droid Sans", "Noto Sans", sans-serif
+}
+
 @keyframes pop_open {
     0% {
         overflow: hidden;
@@ -31,11 +40,15 @@
     outline: none;
 }
 
+* {
+    letter-spacing: 0.75px;
+}
+
 body,
 html {
     background: #121212;
     color: white;
-    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+    font-family: var(--font-sans);
     margin: 0px;
     overflow: hidden;
     cursor: default;
@@ -59,9 +72,14 @@ nav input {
     padding: 8px;
     width: calc(85vw - 500px);
     min-width: 250px;
-    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+    font-family: var(--font-sans);
     transition: filter ease-in-out 0.25s;
     cursor: default;
+    margin-left: 5px;
+}
+
+nav input::selection {
+    background-color: #ffffff33 !important;
 }
 
 nav input:focus {
@@ -75,7 +93,7 @@ nav button {
     color: white;
     padding: 8px;
     width: 49px;
-    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+    font-family: var(--font-sans);
     transition: background ease-in-out 0.25s;
 }
 
@@ -91,7 +109,6 @@ nav button:active {
 nav img {
     height: 12px;
     scale: 1.5;
-    margin-bottom: -2px;
 }
 
 section#folder_list {
@@ -112,7 +129,7 @@ section#folder_list button {
     padding: 10px;
     margin: 2.5px;
     margin-bottom: 5px;
-    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+    font-family: var(--font-sans);
     text-align: left;
     overflow: hidden;
     white-space: nowrap;
@@ -147,7 +164,7 @@ section#browser_window button {
     background-color: transparent;
     color: white;
     border-width: 0px;
-    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+    font-family: var(--font-sans);
     margin: 5px;
     overflow: hidden;
     white-space: nowrap;
@@ -179,8 +196,22 @@ div#preview_window {
     z-index: 300;
 }
 
+div#preview_window blockquote {
+    background-color: #ffffff20;
+}
+
+div#preview_window a, div#preview_window a:active, div#preview_window a:focus {
+    color: dodgerblue;
+}
+
+div#preview_window code {
+    font-family: "Fira Code", monospace;
+    letter-spacing: 1px;
+    color: white;
+}
+
 div#preview_window::selection {
-    background-color: #ffffff23;
+    background-color: #ffffff33 !important;
 }
 
 div#preview_window::-webkit-scrollbar {
@@ -239,8 +270,8 @@ td {
     color: white;
     transition: 0.125s ease-in-out;
     text-align: left;
-    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
-    font-size: 12px;
+    font-family: var(--font-sans);
+    font-size: 13px;
     margin-bottom: 5px;
 }
 
@@ -300,7 +331,7 @@ td {
 #inputModalDropdown button {
     font-size: large;
     color: white;
-    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+    font-family: var(--font-sans);
     background-color: transparent;
     border-style: none;
     width: 100%;
@@ -322,7 +353,7 @@ td {
     color: white;
     border-width: 0px;
     font-size: 15px;
-    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+    font-family: var(--font-sans);
     padding: 10px;
 
 }
@@ -373,7 +404,7 @@ td {
     background-color: dodgerblue;
     color: white;
     font-size: 12px;
-    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+    font-family: var(--font-sans);
     bottom: 2.5px;
     right: 2.5px;
     position: fixed;
@@ -427,7 +458,7 @@ td {
     background: #191919;
     transition: ease-in-out 0.125s;
     color: white;
-    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+    font-family: var(--font-sans);
 }
 
 #compression_manager {
@@ -453,7 +484,7 @@ td {
     background: #191919;
     transition: ease-in-out 0.125s;
     color: white;
-    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+    font-family: var(--font-sans);
 }
 
 #notes_view {
@@ -497,7 +528,7 @@ td {
     box-shadow: 0px 5px 10px #00000052;
     padding: 7px;
     border-radius: 2.5px;
-    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+    font-family: var(--font-sans);
     border-width: 0px;
     width: calc(100% - 10px);
     transition: ease-in-out 0.25s;
@@ -508,7 +539,7 @@ td {
     color: #ffffff;
     padding: 7px;
     border-radius: 2.5px;
-    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+    font-family: var(--font-sans);
     border-width: 0px;
     border-bottom: 1px solid #2e2e2e;
     width: calc(100% - 30px);
@@ -545,7 +576,7 @@ td {
     border-radius: 2.5px;
     border: 1px #edd400 solid;
     background-color: transparent;
-    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+    font-family: var(--font-sans);
     color: white;
     font-size: 16px;
     transition: ease-in-out 0.25s;
@@ -566,7 +597,7 @@ td {
     background-color: transparent;
     font-size: larger;
     color: rgba(255, 255, 255, 0.778);
-    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+    font-family: var(--font-sans);
     font-weight: bolder;
     padding: 10px;
 }
@@ -582,7 +613,7 @@ td {
     padding: 10px;
     padding-left: 9px;
     background-color: transparent;
-    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+    font-family: var(--font-sans);
     border: none;
     font-size: 20px;
     font-weight: 100;
@@ -644,9 +675,8 @@ pre {
     padding: 5px;
 }
 
-#notes_rendered code,
-p:has(code) {
-    color: #eace43;
+#notes_rendered code {
+    color: rgb(169, 177, 180);
     padding-top: 5px;
     padding-bottom: 5px;
     font-weight: bold;
@@ -711,7 +741,7 @@ p:has(code) {
     margin-left: 5px;
     margin-bottom: 5px;
     color: white;
-    font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
+    font-family: var(--font-sans);
     transition: 0.25px;
 }
 
