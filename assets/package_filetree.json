@@ -1,0 +1,64 @@
+{
+  "main": "filetree/filetree.html",
+  "name": "filetree",
+  "window": {
+    "frame": true,
+    "toolbar": false,
+    "icon": "images/filetree_colored_sys.png",
+    "transparent": false
+  },
+  "version": "1.6.1",
+  "scripts": {
+    "dev": "nwp -r",
+    "build": "nwp"
+  },
+  "author": "",
+  "license": "MIT",
+  "chromiumArgs": "--enable-transparent-visuals",
+  "nwjs-packager": {
+    "nwVersion": "0.81.0",
+    "appFriendlyName": "FileTree",
+    "appMacIcon": "images/filetree_colored_sys.ico",
+    "appWinIcon": "images/filetree_colored_sys.ico",
+    "files": [
+      "images/**",
+      "./animations.css",
+      "./modal.css",
+      "./help.html",
+      "./animations.js",
+      "./modal.js",
+      "./fsextra_license.txt",
+      "./nwjs_license.txt",
+      "./LICENSE",
+      "./filetree/*",
+      "./mhl_license.txt",
+      "./marked_license.txt",
+      "./notes_font.txt",
+      "./toggle_view.txt"
+    ],
+    "builds": {
+      "linux": {
+        "tar.gz": true
+      },
+      "osx": {
+        "zip": true
+      },
+      "win": {
+        "zip": false
+      }
+    },
+    "appPackageName": "FileTree",
+    "appVersion": "1.6.1",
+    "appDescription": "FileTree",
+    "appCopyright": "Wervice (Constantin Volke)"
+  },
+  "dependencies": {
+    "fs-extra": "^11.1.1",
+    "jszip": "^3.10.1",
+    "marked": "^9.1.5",
+    "tar": "^6.2.0"
+  },
+  "devDependencies": {
+    "nwjs-packager": "^1.5.1"
+  }
+}
