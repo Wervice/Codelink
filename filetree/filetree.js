@@ -112,7 +112,6 @@ function renderFolderList(location) {
 
 function renderContentView(location) {
     selected_file_id = 0
-    renderNotes(location)
     s = ""
     cachedSyntax = {}
     document.getElementById("preview_window").innerText = ""
@@ -246,31 +245,9 @@ function showPreview(name) {
     }
 }
 
-function renderNotes(location) {
-    notes_list_dom = document.getElementById("notes_list")
-    if (fs.existsSync(path.join(location, "codebook"))) {
-        html_code = "<button id=new_note onclick=newNote()><img src=../images/new.png> New note</button><br><br>"
-        for (e of fs.readdirSync(path.join(location, "codebook"))) {
-            html_code += "<button class='notes' onclick=showNote(this) oncontextmenu=addLinkToNote(this)>" + e.split(".")[0] + "</button><button class=activity onclick=deleteNote(this) data-filename=" + encodeURIComponent(e) + "><img src=../images/delete.png height=15></button><br>"
-        }
-        notes_list_dom.innerHTML = html_code
-    }
-    else {
-        notes_list_dom.innerHTML = "<button id=initNotes title='Setup an instance of Codebooks in this folder&NewLine;This will create an sub directory and some markdown files.&NewLine;You can also gitignore it.' onclick=initNotes()>Init notes in this folder</button>"
-    }
-} // ? Renders the notes section
 
-function deleteNote(e) {
-    confirmModalWarning("Delete note", "Do you want to remove this note?<br>" + decodeURIComponent(e.dataset.filename.split(".")[0]), function () {
-        fs.unlinkSync(path.join(currentLocation, "codebook", decodeURIComponent(e.dataset.filename)))
-        renderNotes(currentLocation)
-        if (decodeURIComponent(e.dataset.filename) == document.getElementById("notes_textarea").value) {
-            document.getElementById("notes_title").value = null
-            document.getElementById("notes_textarea").value = null
-            showMD()
-        }
-    })
-}
+
+
 
 list = false
 function toggleView() {
@@ -289,99 +266,7 @@ function toggleView() {
     fs.writeFileSync("toggle_view.txt", list.toString())
 }
 
-function renderMDtoHTML() {
-    document.getElementById("notes_textarea").hidden = true
-    document.getElementById("notes_rendered").innerHTML = marked.marked(document.getElementById("notes_textarea").value.replace(bad_link_detect, "$1").replace(to_dir_link, "[$1](javascript:goToNote('$1'))")).replace("<a ", "&lt;a ")
-    document.getElementById("notes_rendered").hidden = false
-}
-
-function showMD() {
-    document.getElementById("notes_rendered").hidden = true
-    document.getElementById("notes_textarea").hidden = false
-    document.getElementById("notes_textarea").focus()
-}
-
-function newNote() {
-    if (document.getElementById("notes_title").value != null && document.getElementById("notes_title").value != "") {
-        fs.writeFileSync(path.join(currentLocation, "codebook", document.getElementById("notes_title").value + ".md"), document.getElementById("notes_textarea").value)
-    }
-    document.getElementById("notes_title").value = null
-    document.getElementById("notes_textarea").value = null
-    showMD()
-    renderNotes(currentLocation)
-}
-
-function addLinkToNote(e) {
-    document.getElementById("notes_textarea").value += "#" + e.innerHTML
-    showMD()
-}
-
-function showNote(e) {
-    saveNote()
-    document.getElementById("notes_rendered").innerHTML = marked.marked(fs.readFileSync(path.join(currentLocation, "codebook", e.innerText + ".md"), {
-        "encoding": "utf8"
-    }).replace(bad_link_detect, "$1").replace(to_dir_link, "[$1](javascript:goToNote('$1'))"))
-    document.getElementById("notes_textarea").value = fs.readFileSync(path.join(currentLocation, "codebook", e.innerText + ".md"), {
-        "encoding": "utf8"
-    })
-
-    document.getElementById("notes_title").value = e.innerText
-    document.getElementById("notes_rendered").hidden = false
-    document.getElementById("notes_textarea").hidden = true
-}
-
-function goToNote(source) {
-    try {
-        document.getElementById("notes_rendered").innerHTML = marked.marked(fs.readFileSync(path.join(currentLocation, "codebook", source + ".md"), {
-            "encoding": "utf8"
-        }).replace(bad_link_detect, "$1").replace(to_dir_link, "[$1](javascript:goToNote('$1'))"))
-
-
-        document.getElementById("notes_textarea").value = fs.readFileSync(path.join(currentLocation, "codebook", source + ".md"), {
-            "encoding": "utf8"
-        })
-        document.getElementById("notes_title").value = source
-        document.getElementById("notes_rendered").hidden = true
-        document.getElementById("notes_textarea").hidden = false
-    }
-    catch {
-        renderMDtoHTML()
-        errorModal("Note not found", "This note does not exist", function () {
-
-        })
-    }
-}
-
-function saveNote() {
-    if (document.getElementById("notes_title").value != null && document.getElementById("notes_title").value != "") {
-        fs.writeFileSync(path.join(currentLocation, "codebook", document.getElementById("notes_title").value + ".md"), document.getElementById("notes_textarea").value)
-    } else if (document.getElementById("notes_textarea").value != "") {
-        fs.writeFileSync(path.join(currentLocation, "codebook", "Untitled note" + ".md"), document.getElementById("notes_textarea").value)
-    }
-    renderNotes(currentLocation)
-}
-
-function initNotes() {
-    if (fs.existsSync(path.join(currentLocation, ".gitignore"))) {
-        confirmModal("Gitignore", "Do you want to gitignore codebooks?", function () {
-            fs.appendFileSync(path.join(currentLocation, ".gitignore"), "\ncodebook")
-        })
-    }
-    codebook_l = path.join(currentLocation, "codebook")
-    fs.mkdirSync(codebook_l)
-    fs.writeFileSync(path.join(codebook_l, "main.md"), "", {
-        "encoding": "utf-8"
-    })
-    renderNotes(currentLocation)
-    renderFolderList(currentLocation)
-}
-
-function changeFontNotes() {
-    font = document.getElementById("font_notes").value
-    fs.writeFileSync("notes_font.txt", font)
-    document.getElementById("notes_rendered").style.fontFamily = fontFamilies[font]
-    document.getElementById("notes_textarea").style.fontFamily = fontFamilies[font]
-}
+f
 
 function makeContext(filename) {
     filename = decodeURIComponent(filename)
@@ -695,14 +580,7 @@ function commandLine() {
                     document.getElementById("folder_list").innerHTML = folder_list_html
                 }, 100)
             }
-            else if (newPathFromInput.match("^[$]notes") != null && newPathFromInput[0] == "$") {
-                if (newPathFromInput == "$notes" || newPathFromInput == "$notes open") {
-                    document.getElementById("notes_view").hidden = false
-                }
-                // ! Dependency list
-                // ! Bug tracker
-                // ! Use markdown
-            }
+
             else if (newPathFromInput == "$editCss") {
                 if (localStorage.getItem("codeEditor") != null) {
                     exec(localStorage.getItem("codeEditor") + " customCSS.css")
@@ -714,7 +592,6 @@ function commandLine() {
             else if (newPathFromInput == "$reload") {
                 renderContentView(currentLocation)
                 renderFolderList(currentLocation)
-                renderNotes(currentLocation)
             }
             else if (newPathFromInput == "$terminal") {
                 openTerminalHere()
@@ -779,7 +656,6 @@ function commandLine() {
         }, "Enter command or filename", true, [
         "$rm",
         "$find",
-        "$notes",
         "b from a",
         "$reload",
         "$terminal",
@@ -978,23 +854,7 @@ window.addEventListener("load", function () {
             e.classList.remove("list")
         }
     }
-    document.getElementById("notes_rendered").style.fontFamily = fontFamilies[fs.readFileSync("notes_font.txt").toString()]
-    document.getElementById("notes_textarea").style.fontFamily = fontFamilies[fs.readFileSync("notes_font.txt").toString()]
-    document.getElementById('notes_textarea').addEventListener('keydown', function (e) {
-        if (e.key == 'Tab') {
-            e.preventDefault();
-            var start = this.selectionStart;
-            var end = this.selectionEnd;
 
-            // set textarea value to: text before caret + tab + text after caret
-            this.value = this.value.substring(0, start) +
-                "\t" + this.value.substring(end);
-
-            // put caret at right position again
-            this.selectionStart =
-                this.selectionEnd = start + 1;
-        }
-    });
     this.document.getElementById('pathInput').onkeydown = function (e) {
         if (e.key == "Enter") {
             if (this.value[0] != "?")
@@ -1078,7 +938,6 @@ window.addEventListener("keydown", function (e) {
         setTimeout(function () { document.getElementById("inputModalInput").value = "" }, 600)
         this.document.getElementById("contextmenu").hidden = true
         fadeOut("inputModalDropdown", 250)
-        fadeOut("notes_view", 250)
     }
     else if (e.key == "+" && e.ctrlKey) {
         commandLine()
@@ -1094,29 +953,27 @@ window.addEventListener("keydown", function (e) {
         this.location.reload()
     }
     else if (e.key == "ArrowDown") {
-        if (this.document.getElementById("notes_view").hidden) {
-            selected_file_id = selected_file_id + 1
-            if (selected_file_id < 0 || this.document.querySelectorAll("#browser_window button").length < selected_file_id) {
-                selected_file_id = 0
-            }
-            for (e of this.document.querySelectorAll("#browser_window button")) {
-                e.style.background = "#191919"
-            }
-            this.document.querySelector("#browser_window button:nth-child(" + selected_file_id + ")").style.background = "#0570db"
-            this.document.querySelector("#browser_window button:nth-child(" + selected_file_id + ")").focus()
+        selected_file_id = selected_file_id + 1
+        if (selected_file_id < 0 || this.document.querySelectorAll("#browser_window button").length < selected_file_id) {
+            selected_file_id = 0
         }
+        for (e of this.document.querySelectorAll("#browser_window button")) {
+            e.style.background = "#191919"
+        }
+        this.document.querySelector("#browser_window button:nth-child(" + selected_file_id + ")").style.background = "#0570db"
+        this.document.querySelector("#browser_window button:nth-child(" + selected_file_id + ")").focus()
+
     }
     else if (e.key == "ArrowUp") {
-        if (this.document.getElementById("notes_view").hidden) {
-            selected_file_id = selected_file_id - 1
-            if (selected_file_id < 0 || this.document.querySelectorAll("#browser_window button").length < selected_file_id) {
-                selected_file_id = 0
-            }
-            for (e of this.document.querySelectorAll("#browser_window button")) {
-                e.style.background = "#191919"
-            }
-            this.document.querySelector("#browser_window button:nth-child(" + selected_file_id + ")").style.background = "#0570db"
-            this.document.querySelector("#browser_window button:nth-child(" + selected_file_id + ")").focus()
+        selected_file_id = selected_file_id - 1
+        if (selected_file_id < 0 || this.document.querySelectorAll("#browser_window button").length < selected_file_id) {
+            selected_file_id = 0
         }
+        for (e of this.document.querySelectorAll("#browser_window button")) {
+            e.style.background = "#191919"
+        }
+        this.document.querySelector("#browser_window button:nth-child(" + selected_file_id + ")").style.background = "#0570db"
+        this.document.querySelector("#browser_window button:nth-child(" + selected_file_id + ")").focus()
+
     }
 })

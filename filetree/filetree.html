@@ -16,33 +16,6 @@
 
 <body oncontextmenu="return false;">
     <div id="preview_window" hidden></div>
-    <div id="notes_view" hidden>
-        <b>Codebooks</b> <img src="../images/times.png" alt="X" onclick="fadeOut('notes_view', 250); saveNote()"
-            height="16" width="16" style="margin-bottom: -2.5px;">
-        <br><br>
-        <table style="width: 100%; height: calc(100% - 40px);">
-            <tr>
-                <td>
-                    <div id="notes_list">
-                    </div>
-                </td>
-                <td>
-                    <div id="notes_editor">
-                        <button onclick="saveNote()"><img src="../images/save.png" alt="Save"
-                                title="Save note"></button><em id="locationNote"></em>
-                        <select id="font_notes" onchange="changeFontNotes()">
-                            <option value="monospace">Monospace</option>
-                            <option value="sans-serif">Sans Serif</option><br>
-                        </select>
-                        <input type="text" id="notes_title" placeholder="Untitled note">
-                        <textarea id="notes_textarea" placeholder="Here is the textarea"
-                            onblur="renderMDtoHTML()"></textarea>
-                    </div>
-                    <div id="notes_rendered" hidden onclick="showMD()"></div>
-                </td>
-            </tr>
-        </table>
-    </div>
     <div id="compression_manager" hidden>
         <h2 style="margin: 0px; padding: 5px;">Compression <img src="../images/times.png" alt="X" height="16"
                 onclick="fadeOut('compression_manager', 125)"></h2>
