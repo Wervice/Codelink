@@ -7,4 +7,3 @@ jsenc_test.js
 decryptedDumpTest*
 cache/
 codebook
-*.css linguist-vendored=false
