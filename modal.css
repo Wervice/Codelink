@@ -12,14 +12,13 @@
     left: calc(25vw - 40px);
     border-radius: 5px;
     padding: 20px;
-    background-color: #23232356;
+    background-color: #232323;
     box-shadow: 0px 5px 15px #00000057;
     outline: rgb(64, 64, 64) solid 1px;
     color: white;
     font-family: "Fira Code", "Fira Mono", "Consolas", "Ubuntu Mono", monospace;
     animation-name: fly-in;
     animation-duration: 0.25s;
-    backdrop-filter: blur(10px);
     z-index: 300;
 }
 
