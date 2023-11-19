@@ -1,0 +1,407 @@
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-button {
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: white;
+    border-radius: 10px;
+}
+
+::selection {
+    background-color: transparent;
+}
+
+@font-face {
+    font-family: "Work Sans";
+    src: url(../assets/WorkSans.ttf);
+}
+
+:root {
+    --font-sans: "Work Sans", "Segoe UI", "Cantarell Regular", "Droid Sans", "Noto Sans", sans-serif;
+    --accent-color: #E0AC0F;
+}
+
+*:focus {
+    outline: none;
+}
+
+* {
+    letter-spacing: 0.75px;
+}
+
+body,
+html {
+    background: #121212;
+    color: white;
+    font-family: var(--font-sans);
+    margin: 0px;
+    overflow: hidden;
+    cursor: default;
+    max-height: 100vh;
+}
+
+/* !Manuscript not-specific */
+
+nav {
+    padding: 12.5px;
+    border-bottom: 1px solid #303030;
+    background: #141414;
+}
+
+nav input {
+    border-radius: 8px;
+    background: #232323;
+    border-width: 0px;
+    color: white;
+    padding: 8px;
+    width: calc(85vw - 500px);
+    min-width: 250px;
+    font-family: var(--font-sans);
+    transition: filter ease-in-out 0.25s;
+    cursor: default;
+    margin-left: 5px;
+    position: fixed;
+    left: calc(50vw - ((85vw - 500px)/2));
+    top: 5px;
+}
+
+nav input::selection {
+    background-color: #ffffff33 !important;
+}
+
+nav input:focus {
+    filter: brightness(1.2);
+}
+
+nav button {
+    border-radius: 8px;
+    background: transparent;
+    border-width: 0px;
+    color: white;
+    padding: 8px;
+    width: 49px;
+    font-family: var(--font-sans);
+    transition: background ease-in-out 0.25s;
+}
+
+nav button:hover {
+    background-color: #2a2a2a;
+}
+
+nav button:active {
+    transition: ease-in-out 0.125;
+    filter: brightness(0.8);
+}
+
+nav img {
+    height: 12px;
+    scale: 1.5;
+}
+
+#contextmenu {
+    width: 150px;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #1f1f1f;
+    border-color: #2b2b2b;
+    border-width: 1px;
+    border-style: solid;
+    box-shadow: 0px 5px 10px 2px rgba(0, 0, 0, 0.184);
+    position: fixed;
+    z-index: 200;
+}
+
+#contextmenu button {
+    width: 100%;
+    border-radius: 5px;
+    padding: 10px;
+    border: none;
+    background-color: #00000000;
+    color: white;
+    transition: 0.125s ease-in-out;
+    text-align: left;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+#contextmenu button:hover {
+    background-color: #0080ff;
+}
+
+#contextmenu_delete:hover {
+    background-color: rgb(225, 22, 4) !important;
+}
+
+@keyframes fly-in {
+    0% {
+        top: -50px;
+        opacity: 0%;
+    }
+}
+
+#inputModal {
+    --width: 500px;
+    position: fixed;
+    left: calc(50vw - (var(--width) / 2));
+    top: 50px;
+    width: var(--width);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0px 5px 10px #00000032;
+    height: 42px;
+    outline: #2F2F2F 2px solid;
+    animation-name: fly-in;
+    animation-duration: 0.25s;
+    z-index: 100;
+    background-color: #191919;
+}
+
+#inputModalDropdown {
+    position: fixed;
+    top: 100px;
+    width: 500px;
+    left: calc(50vw - 255px);
+    background-color: #191919;
+    border: 1px #303030 solid;
+    box-shadow: 0px 5px 10px #00000032;
+    padding: 5px;
+    z-index: 200;
+    border-radius: 5px;
+    animation-name: fly-in;
+    animation-duration: 0.25s;
+    max-height: 200px;
+    overflow-x: scroll;
+}
+
+#inputModalDropdown::-webkit-scrollbar {
+    display: none;
+}
+
+#inputModalDropdown button {
+    font-size: large;
+    color: white;
+    font-family: var(--font-sans);
+    background-color: transparent;
+    border-style: none;
+    width: 100%;
+    text-align: left;
+    transition: 0.25s ease-in-out;
+    border-radius: 2.5px;
+    margin: 2.5px;
+    padding: 5px;
+}
+
+#inputModalDropdown button:hover {
+    background-color: #2e2e2e;
+}
+
+#inputModal input {
+    height: 20px;
+    width: var(--width);
+    background-color: rgba(19, 19, 19, 0.339);
+    color: white;
+    border-width: 0px;
+    font-size: 15px;
+    font-family: var(--font-sans);
+    padding: 10px;
+
+}
+
+#inputModal input:focus {
+    outline: none;
+}
+
+/* !Manuscript specific */
+
+table {
+    height: 100%;
+}
+
+table td {
+    height: 100%;
+}
+
+table td tr {
+    height: 100%;
+}
+
+#notes_list {
+    width: calc(20vw - 43px);
+    float: left;
+    padding: 10px;
+    border-right: 1px #303030 solid;
+    height: calc(100vh - 20px);
+    overflow-y: scroll;
+}
+
+#notes_list::-webkit-scrollbar {
+    display: none;
+}
+
+#notes_list button.noteButton {
+    border: none;
+    color: white;
+    background-color: transparent;
+    font-family: var(--font-sans);
+    font-size: 16px;
+    width: calc(100% - 21px);
+    text-align: left;
+    padding: 5px;
+    border-radius: 2.5px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    transition: ease-in-out 0.125s;
+    margin-bottom: 5px;
+    margin-right: 5px;
+}
+
+#notes_list button.noteButton:hover {
+    background-color: #232323;
+}
+
+#notes_list img {
+    height: 14px;
+    width: 14px;
+    margin-bottom: -2px;
+}
+
+#notes_list button.selected {
+    outline: 1px solid var(--accent-color);
+    color: var(--accent-color);
+}
+
+#notes_view_rendered,
+#notes_view_source {
+    width: 80vw;
+    max-width: 80vw;
+    line-break: anywhere;
+    float: right;
+    height: calc(100vh - 60px);
+    padding: 10px;
+}
+
+#notes_view_rendered::selection,
+#notes_view_source::selection {
+    color: white;
+    background-color: #414141;
+}
+
+#notes_view_source {
+    background-color: #181818;
+    border: 0px;
+    resize: none;
+    caret-color: white;
+    font-size: 18px;
+    font-family: "Fira Mono", "Space Mono", "Ubuntu Mono", "Consolas", monospace;
+    color: white;
+}
+
+#notes_view_rendered p {
+    padding-top: 0px;
+    margin-top: 0px;
+}
+
+#notes_view_rendered {
+    overflow-y: scroll;
+    font-size: 18px;
+    font-family: "Fira Mono", "Space Mono", "Ubuntu Mono", "Consolas", monospace;
+    background-color: #252525;
+}
+
+#newNoteButton {
+    border-radius: 8px;
+    background: transparent;
+    border-width: 0px;
+    color: white;
+    padding: 8px;
+    width: 100%;
+    font-family: var(--font-sans);
+    transition: background ease-in-out 0.25s;
+    margin-bottom: 5px;
+    text-align: left;
+}
+
+#newNoteButton:hover {
+    background-color: #2a2a2a;
+}
+
+#newNoteButton:active {
+    transition: ease-in-out 0.25;
+    filter: brightness(0.8);
+}
+
+#newNoteButton img {
+    height: 12px;
+    scale: 1.5;
+    margin-bottom: -2px;
+}
+
+/* !Markdown Styling */
+
+#notes_view_rendered h1,
+#notes_view_rendered h2,
+#notes_view_rendered h3,
+#notes_view_rendered h4,
+#notes_view_rendered h5,
+#notes_view_rendered h6 {
+    margin: 0px;
+    padding-bottom: 8px;
+    padding-top: 5px;
+    color: var(--accent-color);
+}
+
+#notes_view_rendered h1 {
+    margin-bottom: 10px;
+}
+
+#notes_view_rendered code {
+    font-family: "Fira Mono", "Space Mono", "Ubuntu Mono", "Consolas", monospace;
+    display: block;
+    width: fit-content;
+    background-color: #121212;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+#notes_view_rendered button.noteLink {
+    background-color: transparent;
+    border: 0px;
+    color: var(--accent-color) !important;
+    font-family: "Fira Mono", "Space Mono", "Ubuntu Mono", "Consolas", monospace;
+    cursor: pointer;
+    padding: 0px;
+    margin: 0px;
+    font-size: 16px;
+}
+
+#notes_view_rendered button {
+    color: red;
+}
+
+#notes_view_rendered a {
+    color: var(--accent-color) !important;
+}
+
+#notes_view_rendered blockquote {
+    background-color: #121212;
+    margin: 0px;
+    margin-bottom: 0px !important;
+    padding: 10px;
+    border-radius: 5px;
+    font-family: "Work Sans", sans-serif;
+}
+
+#notes_view_rendered blockquote > p {
+    margin-bottom: 0px !important;
+    margin-left: 10px;
+}
