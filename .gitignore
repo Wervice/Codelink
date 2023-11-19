@@ -7,4 +7,4 @@ jsenc_test.js
 decryptedDumpTest*
 cache/
 codebook
-*.css linguist-vendored
+*.css linguist-vendored=true
