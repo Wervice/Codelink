@@ -80,12 +80,6 @@ win.height = 500
 function renderFolderList(location) {
     s = ""
     for (file of fs.readdirSync(location)) {
-        /* if (location[location.length - 1] == "\/" || location[location.length - 1] == "\\") {
-            location = location
-        }
-        else {
-            location = location + "/"
-        }*/
         try {
             if (fs.statSync(path.join(location, file)).isFile()) {
 
@@ -184,7 +178,7 @@ function renderContentView(location) {
     }
 } // ? Render the content for the folder content view
 
-function showPreview(name) {
+function show   (name) {
     if (extensionSort[path.basename(name).split(".")[1]] == "code" && fs.statSync(path.join(currentLocation, name)).size < 1024 * 1024) {
         document.getElementById("browser_window").style.width = "calc(70vw - 300px)"
         document.getElementById("preview_window").hidden = false
@@ -265,8 +259,6 @@ function toggleView() {
     }
     fs.writeFileSync("toggle_view.txt", list.toString())
 }
-
-f
 
 function makeContext(filename) {
     filename = decodeURIComponent(filename)
