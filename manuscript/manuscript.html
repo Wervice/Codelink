@@ -17,10 +17,32 @@
     <nav>
         Manuscript
         <input type="text" id="noteName" placeholder="Untitled Note">
-        
+        <img src="../images/settings.svg" alt="Settings" onclick="openSettings()"
+            style="position: fixed;right: 20px;top:15px;">
     </nav>
     <div id="notes_list"></div>
-
+    <div id="settings">
+        <div id="settings_list"></div>
+        <div id="settings_editor">
+            <h3>Customization</h3>
+            <!-- * Theme, Font (Interface & Editor, H1-6), Size, Accent Color -->
+            <h4>Accent Color</h4>
+            <button class="color_picker red" onclick="setAccentColor(this)"></button>
+            <button class="color_picker orange" onclick="setAccentColor(this)"></button>
+            <button class="color_picker yellow selected" onclick="setAccentColor(this)"></button>
+            <button class="color_picker green" onclick="setAccentColor(this)"></button>
+            <button class="color_picker blue" onclick="setAccentColor(this)"></button>
+            <button class="color_picker purple" onclick="setAccentColor(this)"></button>
+            <button class="color_picker white" onclick="setAccentColor(this)"></button><br>
+            <h4>Font</h4>
+            <small>This font is used for the document and code blocks.</small><br><br>
+            <input type="text" id="fontNameText" placeholder="Monospace Font"><br>
+            <input type="text" id="fontNameInterface" placeholder="Interface Font">
+            <br><br>
+            <h3>Editor</h3>
+            <!-- * Syntax Highlighting, Note Links, Confirm file delitions, Spellchecking -->
+        </div>
+    </div>
     <div id="notes_view_rendered" hidden></div>
     <textarea id="notes_view_source"></textarea>
 </body>

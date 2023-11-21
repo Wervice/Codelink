@@ -4,7 +4,7 @@
   "window": {
     "frame": true,
     "toolbar": false,
-    "icon": "images/icon.png",
+    "icon": "images/manuscript.ico",
     "transparent": false
   },
   "version": "1.6.1",
@@ -18,8 +18,8 @@
   "nwjs-packager": {
     "nwVersion": "0.81.0",
     "appFriendlyName": "Codelink",
-    "appMacIcon": "images/icon.icns",
-    "appWinIcon": "images/icon.ico",
+    "appMacIcon": "images/manuscript.icns",
+    "appWinIcon": "images/manuscript.ico",
     "files": [
       "images/**",
       "./animations.css",
@@ -28,20 +28,14 @@
       "./modal.css",
       "./browser.html",
       "./help.html",
-      "./index.html",
       "./animations.js",
-      "./browser.js",
-      "./main.js",
       "./modal.js",
-      "./favs.js",
       "./fsextra_license.txt",
       "./nwjs_license.txt",
       "./LICENSE",
-      "./filetree/*",
       "./mhl_license.txt",
       "./marked_license.txt",
-      "./notes_font.txt",
-      "./toggle_view.txt"
+      "./manuscript/*"
     ],
     "builds": {
       "linux": {
@@ -61,6 +55,7 @@
   },
   "dependencies": {
     "fs-extra": "^11.1.1",
+    "highlight.js": "^11.9.0",
     "jszip": "^3.10.1",
     "marked": "^9.1.5",
     "tar": "^6.2.0"

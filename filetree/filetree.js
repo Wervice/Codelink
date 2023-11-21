@@ -178,7 +178,7 @@ function renderContentView(location) {
     }
 } // ? Render the content for the folder content view
 
-function show   (name) {
+function showPreview(name) {
     if (extensionSort[path.basename(name).split(".")[1]] == "code" && fs.statSync(path.join(currentLocation, name)).size < 1024 * 1024) {
         document.getElementById("browser_window").style.width = "calc(70vw - 300px)"
         document.getElementById("preview_window").hidden = false

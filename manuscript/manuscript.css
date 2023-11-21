@@ -1,5 +1,6 @@
 ::-webkit-scrollbar {
     width: 5px;
+    height: 0px;
 }
 
 ::-webkit-scrollbar-track {
@@ -11,7 +12,7 @@
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: white;
+    background-color: var(--color-foreground);
     border-radius: 10px;
 }
 
@@ -26,7 +27,19 @@
 
 :root {
     --font-sans: "Work Sans", "Segoe UI", "Cantarell Regular", "Droid Sans", "Noto Sans", sans-serif;
+    --font-monospace: "Fira Mono", "Space Mono", "Ubuntu Mono", "Consolas", monospace;
     --accent-color: #E0AC0F;
+    --grey-light: #282828;
+    --grey-light-2: #313131;
+    --grey-light-3: #414141;
+    --grey-light-4: #454545;
+    --grey-dark: #232323;
+    --grey-dark-2: #191919;
+    --grey-dark-3: #101010;
+    --grey-dark-4: #090909;
+    --nav-background: var(--grey-dark-3);
+    --border-color: var(--grey-light-2);
+    --color-foreground: white;
 }
 
 *:focus {
@@ -40,9 +53,10 @@
 body,
 html {
     background: #121212;
-    color: white;
+    color: var(--color-foreground);
     font-family: var(--font-sans);
     margin: 0px;
+    padding: 0px;
     overflow: hidden;
     cursor: default;
     max-height: 100vh;
@@ -52,29 +66,27 @@ html {
 
 nav {
     padding: 12.5px;
-    border-bottom: 1px solid #303030;
-    background: #141414;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--nav-background);
 }
 
 nav input {
     border-radius: 8px;
-    background: #232323;
+    background: var(--grey-dark);
     border-width: 0px;
-    color: white;
+    color: var(--color-foreground);
     padding: 8px;
+    margin: -4px;
     width: calc(85vw - 500px);
-    min-width: 250px;
     font-family: var(--font-sans);
     transition: filter ease-in-out 0.25s;
     cursor: default;
-    margin-left: 5px;
-    position: fixed;
-    left: calc(50vw - ((85vw - 500px)/2));
-    top: 5px;
+    position: relative;
+    left: calc(50vw - ((85vw - 450px)/2));
 }
 
 nav input::selection {
-    background-color: #ffffff33 !important;
+    background-color: var(--grey-light-3) !important;
 }
 
 nav input:focus {
@@ -85,7 +97,7 @@ nav button {
     border-radius: 8px;
     background: transparent;
     border-width: 0px;
-    color: white;
+    color: var(--color-foreground);
     padding: 8px;
     width: 49px;
     font-family: var(--font-sans);
@@ -93,7 +105,7 @@ nav button {
 }
 
 nav button:hover {
-    background-color: #2a2a2a;
+    background-color: var(--grey-light-2);
 }
 
 nav button:active {
@@ -125,7 +137,7 @@ nav img {
     padding: 10px;
     border: none;
     background-color: #00000000;
-    color: white;
+    color: var(--color-foreground);
     transition: 0.125s ease-in-out;
     text-align: left;
     font-family: var(--font-sans);
@@ -188,7 +200,7 @@ nav img {
 
 #inputModalDropdown button {
     font-size: large;
-    color: white;
+    color: var(--color-foreground);
     font-family: var(--font-sans);
     background-color: transparent;
     border-style: none;
@@ -208,7 +220,7 @@ nav img {
     height: 20px;
     width: var(--width);
     background-color: rgba(19, 19, 19, 0.339);
-    color: white;
+    color: var(--color-foreground);
     border-width: 0px;
     font-size: 15px;
     font-family: var(--font-sans);
@@ -220,25 +232,145 @@ nav img {
     outline: none;
 }
 
+#settings {
+    position: fixed;
+    width: 50vw;
+    height: calc(100vh - 200px);
+    top: 100px;
+    left: 25vw;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: var(--grey-dark-2);
+    box-shadow: 0px 0px 0px 100vw #0000004d, 0px 5px 12px #00000041;
+    overflow-y: scroll;
+}
+
+#settings::-webkit-scrollbar {
+    opacity: 50%;
+}
+
+#settings button.color_picker {
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    border-width: 0px;
+    margin-right: 5px;
+    margin-bottom: 10px;
+    transition: ease-in-out 0.125s;
+}
+
+#settings button.color_picker:hover {
+    filter: brightness(1.2);
+}
+
+#settings button.selected {
+    box-shadow: 0px 0px 0px 2px white inset;
+    filter: brightness(0.9);
+}
+
+#settings button.red {
+    background-color: #FF2525;
+}
+
+#settings button.orange {
+    background-color: #E76E0C;
+}
+
+#settings button.yellow {
+    background-color: #E0AC0F;
+}
+
+#settings button.green {
+    background-color: #15C629;
+}
+
+#settings button.blue {
+    background-color: #0B94D4;
+}
+
+#settings button.purple {
+    background-color: #B940FF;
+}
+
+#settings button.white {
+    background-color: #FFFFFF;
+}
+
+#settings h1,
+#settings h2,
+#settings h3,
+#settings h4,
+#settings h5 {
+    margin: 0px;
+    padding-bottom: 15px;
+    padding-top: 10px;
+}
+
+label {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: green;
+    display: inline-block;
+}
+
+#newNoteButton,
+#newMapButton {
+    background: transparent;
+    border-width: 0px;
+    color: var(--color-foreground);
+    padding: 4px;
+    font-family: var(--font-sans);
+    margin-bottom: 5px;
+}
+
+#newNoteButton img,
+#newMapButton img {
+    background: transparent;
+    border-width: 0px;
+    color: var(--color-foreground);
+    padding: 4px;
+    font-family: var(--font-sans);
+    margin-bottom: 5px;
+}
+
+
+#newNoteButton:active {
+    transition: ease-in-out 0.25;
+    filter: brightness(0.8);
+}
+
+#newNoteButton img {
+    height: 12px;
+    scale: 1.5;
+    margin-bottom: -2px;
+}
+
+#settings input[type="text"] {
+    border-radius: 8px;
+    background: transparent;
+    border-width: 0px;
+    color: var(--color-foreground);
+    padding: 7px;
+    font-family: var(--font-sans);
+    background-color: var(--grey-light);
+    font-size: 16px;
+    margin-bottom: 5px;
+    width: 200px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 /* !Manuscript specific */
-
-table {
-    height: 100%;
-}
-
-table td {
-    height: 100%;
-}
-
-table td tr {
-    height: 100%;
-}
 
 #notes_list {
     width: calc(20vw - 43px);
     float: left;
     padding: 10px;
-    border-right: 1px #303030 solid;
     height: calc(100vh - 20px);
     overflow-y: scroll;
 }
@@ -249,7 +381,7 @@ table td tr {
 
 #notes_list button.noteButton {
     border: none;
-    color: white;
+    color: var(--color-foreground);
     background-color: transparent;
     font-family: var(--font-sans);
     font-size: 16px;
@@ -266,7 +398,7 @@ table td tr {
 }
 
 #notes_list button.noteButton:hover {
-    background-color: #232323;
+    background-color: var(--grey-dark-4);
 }
 
 #notes_list img {
@@ -284,26 +416,34 @@ table td tr {
 #notes_view_source {
     width: 80vw;
     max-width: 80vw;
-    line-break: anywhere;
     float: right;
-    height: calc(100vh - 60px);
+    height: calc(100vh - 70px);
+    max-height: calc(100vh - 70px);
     padding: 10px;
+}
+
+#notes_view_rendered {
+    font-size: 18px;
+    font-family: var(--font-monospace);
+    background-color: var(--grey-dark-2);
+    line-break: anywhere;
+    overflow-y: scroll;
 }
 
 #notes_view_rendered::selection,
 #notes_view_source::selection {
-    color: white;
-    background-color: #414141;
+    color: var(--color-foreground) !important;
+    background-color: var(--grey-light-4) !important;
 }
 
 #notes_view_source {
-    background-color: #181818;
+    background-color: var(--grey-dark-2);
     border: 0px;
     resize: none;
-    caret-color: white;
+    caret-color: var(--color-foreground);
     font-size: 18px;
-    font-family: "Fira Mono", "Space Mono", "Ubuntu Mono", "Consolas", monospace;
-    color: white;
+    font-family: var(--font-monospace);
+    color: var(--color-foreground);
 }
 
 #notes_view_rendered p {
@@ -311,42 +451,14 @@ table td tr {
     margin-top: 0px;
 }
 
-#notes_view_rendered {
-    overflow-y: scroll;
-    font-size: 18px;
-    font-family: "Fira Mono", "Space Mono", "Ubuntu Mono", "Consolas", monospace;
-    background-color: #252525;
+#notes_view_rendered table th {
+    border-bottom: 1px solid var(--accent-color);
+    padding: 5px;
 }
 
-#newNoteButton {
-    border-radius: 8px;
-    background: transparent;
-    border-width: 0px;
-    color: white;
-    padding: 8px;
-    width: 100%;
-    font-family: var(--font-sans);
-    transition: background ease-in-out 0.25s;
-    margin-bottom: 5px;
-    text-align: left;
+#notes_view_rendered table td {
+    padding: 5px;
 }
-
-#newNoteButton:hover {
-    background-color: #2a2a2a;
-}
-
-#newNoteButton:active {
-    transition: ease-in-out 0.25;
-    filter: brightness(0.8);
-}
-
-#newNoteButton img {
-    height: 12px;
-    scale: 1.5;
-    margin-bottom: -2px;
-}
-
-/* !Markdown Styling */
 
 #notes_view_rendered h1,
 #notes_view_rendered h2,
@@ -365,19 +477,30 @@ table td tr {
 }
 
 #notes_view_rendered code {
-    font-family: "Fira Mono", "Space Mono", "Ubuntu Mono", "Consolas", monospace;
+    font-family: var(--font-monospace);
     display: block;
     width: fit-content;
-    background-color: #121212;
+    max-width: calc(90%);
+    background-color: var(--grey-dark-3);
     padding: 15px;
     border-radius: 5px;
+}
+
+#notes_view_rendered pre > code {
+    width: fit-content;
+    max-width: calc(90%);
+    line-break: anywhere;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+    overflow: auto;
 }
 
 #notes_view_rendered button.noteLink {
     background-color: transparent;
     border: 0px;
     color: var(--accent-color) !important;
-    font-family: "Fira Mono", "Space Mono", "Ubuntu Mono", "Consolas", monospace;
+    font-family: var(--font-monospace);
     cursor: pointer;
     padding: 0px;
     margin: 0px;
@@ -393,12 +516,16 @@ table td tr {
 }
 
 #notes_view_rendered blockquote {
-    background-color: #121212;
+    background-color: var(--grey-dark-3);
     margin: 0px;
-    margin-bottom: 0px !important;
+    margin-bottom: 15px !important;
     padding: 10px;
     border-radius: 5px;
-    font-family: "Work Sans", sans-serif;
+    font-family: var(--font-sans);
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+    border-left: 5px solid var(--accent-color);
+    width: calc(90% - 20px);
 }
 
 #notes_view_rendered blockquote > p {
