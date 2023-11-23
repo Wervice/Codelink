@@ -21,7 +21,7 @@
             style="position: fixed;right: 20px;top:15px;">
     </nav>
     <div id="notes_list"></div>
-    <div id="settings">
+    <div id="settings" hidden>
         <div id="settings_list"></div>
         <div id="settings_editor">
             <h3>Customization</h3>
@@ -34,17 +34,37 @@
             <button class="color_picker blue" onclick="setAccentColor(this)"></button>
             <button class="color_picker purple" onclick="setAccentColor(this)"></button>
             <button class="color_picker white" onclick="setAccentColor(this)"></button><br>
+            <select id="themeSelect">
+            <option value="dark">Dark</option>
+            <option value="light">Light</option>    
+            </select>
+            <br><br>
             <h4>Font</h4>
-            <small>This font is used for the document and code blocks.</small><br><br>
             <input type="text" id="fontNameText" placeholder="Monospace Font"><br>
             <input type="text" id="fontNameInterface" placeholder="Interface Font">
             <br><br>
             <h3>Editor</h3>
+            <label>
+                <input type="checkbox" id="enableSyntaxHighlighting" hidden checked>
+                <span class="toggle"></span>
+            </label>Enable Syntax Highlighting<br><br>
+            <label>
+                <input type="checkbox" id="enableLinkedNotes" hidden checked>
+                <span class="toggle"></span>
+            </label>Enable Linked Notes<br><br>
+            <label>
+                <input type="checkbox" id="enableEmbeddedFiles" hidden checked>
+                <span class="toggle"></span>
+            </label>Enable Embedded Files<br><br>
+            <label>
+                <input type="checkbox" id="enableDeleteConformation" hidden checked>
+                <span class="toggle"></span>
+            </label>Confirm deletion<br>
             <!-- * Syntax Highlighting, Note Links, Confirm file delitions, Spellchecking -->
         </div>
     </div>
     <div id="notes_view_rendered" hidden></div>
-    <textarea id="notes_view_source"></textarea>
+    <textarea id="notes_view_source" spellcheck="true"></textarea>
 </body>
 
 </html>

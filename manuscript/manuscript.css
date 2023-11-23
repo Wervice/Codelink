@@ -245,6 +245,21 @@ nav img {
     overflow-y: scroll;
 }
 
+#settings select {
+    padding: 5px;
+    margin: 5px;
+    border-radius: 2.5px;
+    background-color: var(--grey-light-4);
+    color: white;
+    font-family: var(--font-sans);
+    border: none;
+}
+
+#settings option {
+    color: white;
+    background-color: var(--grey-light-4);
+}
+
 #settings::-webkit-scrollbar {
     opacity: 50%;
 }
@@ -306,14 +321,6 @@ nav img {
     padding-top: 10px;
 }
 
-label {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background-color: green;
-    display: inline-block;
-}
-
 #newNoteButton,
 #newMapButton {
     background: transparent;
@@ -367,6 +374,28 @@ input::-webkit-inner-spin-button {
 
 /* !Manuscript specific */
 
+@keyframes toggle-fill {
+    0% {box-shadow: 0px 0px 0px 8px black inset;background-color: transparent;}
+    100% {box-shadow: 0px 0px 0px 2px black inset;}
+}
+
+:checked + span.toggle {
+    background: var(--accent-color);
+    box-shadow: 0px 0px 0px 2px black inset;
+    animation-name: toggle-fill;
+    animation-duration: 0.125s;
+}
+
+.toggle {
+    height: 17px;
+    width: 17px;
+    border-radius: 4px;
+    border: 2px solid var(--accent-color);
+    display: inline-block;
+    margin-bottom: -5px;
+    cursor: pointer;
+}
+
 #notes_list {
     width: calc(20vw - 43px);
     float: left;
@@ -395,6 +424,25 @@ input::-webkit-inner-spin-button {
     transition: ease-in-out 0.125s;
     margin-bottom: 5px;
     margin-right: 5px;
+}
+
+#notes_list button.graphViewButton {
+    border: none;
+    color: var(--color-foreground);
+    background-color: transparent;
+    font-family: var(--font-sans);
+    font-size: 16px;
+    width: calc(100% - 21px);
+    text-align: left;
+    padding: 5px;
+    border-radius: 2.5px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    transition: ease-in-out 0.125s;
+    margin-bottom: 5px;
+    margin-right: 10px;
+    border-bottom: 1px solid var(--grey-light-2);
 }
 
 #notes_list button.noteButton:hover {
@@ -478,7 +526,7 @@ input::-webkit-inner-spin-button {
 
 #notes_view_rendered code {
     font-family: var(--font-monospace);
-    display: block;
+    display: inline-block;
     width: fit-content;
     max-width: calc(90%);
     background-color: var(--grey-dark-3);
@@ -494,6 +542,10 @@ input::-webkit-inner-spin-button {
     word-wrap: break-word;
     hyphens: auto;
     overflow: auto;
+}
+
+#notes_view_rendered pre code {
+    display: block;
 }
 
 #notes_view_rendered button.noteLink {
@@ -531,4 +583,10 @@ input::-webkit-inner-spin-button {
 #notes_view_rendered blockquote > p {
     margin-bottom: 0px !important;
     margin-left: 10px;
+}
+
+#notes_view_rendered video {
+    max-width: 40vw;
+    max-height: 50vh;
+    border-radius: 10px;
 }
