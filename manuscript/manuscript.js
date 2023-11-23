@@ -539,18 +539,4 @@ window.addEventListener("load", function () {
     };
   this.document.getElementById("enableDeleteConformation").checked =
     localStorage.getItem("enableDeleteConformation") != "false";
-
-  // * Theme select
-  this.document.getElementById("themeSelect").onchange =
-    function () {
-      localStorage.setItem(
-        "selectedTheme",
-        document.getElementById("themeSelect").value
-      );
-    };
-  this.document.getElementById("themeSelect").value =
-    localStorage.getItem("selectedTheme");
-  if (localStorage.getItem("selectedTheme") == "light") {
-    
-  }
 });
