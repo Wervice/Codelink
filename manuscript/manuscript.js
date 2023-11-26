@@ -124,8 +124,14 @@ codeFilesExt = [
 imageFilesExt = ["png", "jpg", "jpeg", "gif", "tiff", "webp", "svg"];
 
 function replaceNoteLinks(inputString) {
-  return inputString.replace(
-    /(?<!<code>.*)(\[\[([^[\]]+)\]\])(?!.*<\/code>)/g,
+  parser_element = new DOMParser()
+  parser_document = parser_element.parseFromString(inputString, "text/html")
+  for (e of parser_document.querySelectorAll("code")) {
+    e.innerHTML = btoa(e.innerHTML)
+  }
+  inputString = parser_document.body.innerHTML
+  replace_code = inputString.replace(
+    /(\[\[([^[\]]+)\]\])/g,
     function (match, noteName) {
       if (noteName.replace("[[", "").replace("]]", "")[0] != "@") {
         if (localStorage.getItem("enableLinkedNotes") != "false") {
@@ -163,7 +169,7 @@ function replaceNoteLinks(inputString) {
               return "File not found (" + noteName + ")";
             }
           } else if (imageFilesExt.includes(noteName.split(".")[1])) {
-            // ! Embedd image
+            // ! Embed image
             try {
               return `<img src='${`data:image/${
                 noteName.split(".")[1]
@@ -200,7 +206,12 @@ function replaceNoteLinks(inputString) {
         }
       }
     }
-  );
+  ); 
+  parser_document = parser_element.parseFromString(replace_code, "text/html")
+  for (e of parser_document.querySelectorAll("code")) {
+    e.innerHTML = atob(e.innerHTML)
+  }
+  return parser_document.body.innerHTML 
 }
 
 function openNote(name) {
@@ -301,6 +312,7 @@ function deleteNote(name) {
 }
 
 function saveNote() {
+  fs.unlinkSync(path.join(manuDir, currentNote+".md"))
   currentNote = document.getElementById("noteName").value;
   if (
     document.getElementById("noteName").value != "" &&
@@ -425,6 +437,9 @@ window.addEventListener("load", function () {
     renderNotesList();
   } else {
     fs.mkdirSync(path.join(os.homedir(), "manuscript"));
+    fs.writeFileSync(path.join(os.homedir(), "manuscript", "Welcome.md"),
+    fs.readFileSync("welcome.md").toString()
+    )
     renderNotesList();
   }
   this.document

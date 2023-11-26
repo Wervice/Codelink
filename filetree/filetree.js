@@ -590,9 +590,14 @@ function commandLine() {
             }
             else if (newPathFromInput.split(" ")[0] == "$b64") {
                 if (newPathFromInput.split(" ")[1] != null) {
-                    navigator.clipboard.writeText(
-                        btoa(fs.readFileSync(path.join(currentLocation, newPathFromInput.split(" ")[1]))))
+                    try {navigator.clipboard.writeText(
+                        "data:"+require("mime-types").lookup(newPathFromInput.split(" ")[1].split(".")[1])+";base64"+","+fs.readFileSync(path.join(currentLocation, newPathFromInput.split(" ")[1])).toString("base64"))
                     confirmModal("Base64", "Copied string to clipboard", function () { })
+                    }
+                    catch (e) {
+                        errorModal("Base64", "Can't generate base64. Wrong filename.", function(){})
+                        console.error(e)
+                    }
                 }
                 else {
                     confirmModal("Base64", "Please enter a filename to get a base64 value of.")
@@ -611,6 +616,7 @@ function commandLine() {
                 if (newPathFromInput.split(" ")[1] != null) {
                     try {
                         needed_i = Number(newPathFromInput.split(" ")[1])
+                        if (!isNaN(needed_i)) {
                         i = 0
                         string = ""
                         while (i != needed_i) {
@@ -620,6 +626,9 @@ function commandLine() {
                         fs.writeFileSync(path.join(currentLocation, "random_file.txt"), string)
                         renderContentView(currentLocation)
                         renderFolderList(currentLocation)
+                    } else {
+                        errorModal("Generation failed", "Please enter a number, on how many bytes you want to generate.", function () { })
+                    }
                     } catch (e) {
                         console.error(e)
                         errorModal("Generation failed", "Unknown error", function () { })
