@@ -7,7 +7,7 @@
     "icon": "images/filetree_colored_sys.png",
     "transparent": false
   },
-  "version": "1.6.1",
+  "version": "1.7",
   "scripts": {
     "dev": "nwp -r",
     "build": "nwp"
@@ -48,14 +48,16 @@
       }
     },
     "appPackageName": "FileTree",
-    "appVersion": "1.6.1",
+    "appVersion": "1.7",
     "appDescription": "FileTree",
     "appCopyright": "Wervice (Constantin Volke)"
   },
   "dependencies": {
     "fs-extra": "^11.1.1",
+    "highlight.js": "^11.9.0",
     "jszip": "^3.10.1",
     "marked": "^9.1.5",
+    "mime-types": "^2.1.35",
     "tar": "^6.2.0"
   },
   "devDependencies": {

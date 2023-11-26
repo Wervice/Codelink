@@ -1,13 +1,13 @@
 {
   "main": "manuscript/manuscript.html",
-  "name": "codelink",
+  "name": "manuscript",
   "window": {
     "frame": true,
     "toolbar": false,
-    "icon": "images/manuscript.ico",
+    "icon": "images/manuscript.png",
     "transparent": false
   },
-  "version": "1.6.1",
+  "version": "1.7",
   "scripts": {
     "dev": "nwp -r",
     "build": "nwp"
@@ -17,25 +17,25 @@
   "chromiumArgs": "--enable-transparent-visuals",
   "nwjs-packager": {
     "nwVersion": "0.81.0",
-    "appFriendlyName": "Codelink",
+    "appFriendlyName": "manuscript",
     "appMacIcon": "images/manuscript.icns",
     "appWinIcon": "images/manuscript.ico",
     "files": [
       "images/**",
       "./animations.css",
-      "./browser.css",
       "./main.css",
       "./modal.css",
-      "./browser.html",
       "./help.html",
       "./animations.js",
       "./modal.js",
+      "./modal.css",
       "./fsextra_license.txt",
       "./nwjs_license.txt",
       "./LICENSE",
       "./mhl_license.txt",
       "./marked_license.txt",
-      "./manuscript/*"
+      "./manuscript/*",
+      "./welcome.md"
     ],
     "builds": {
       "linux": {
@@ -48,9 +48,9 @@
         "zip": false
       }
     },
-    "appPackageName": "Codelink",
-    "appVersion": "1.6.1",
-    "appDescription": "Codelink",
+    "appPackageName": "Manuscript",
+    "appVersion": "1.7",
+    "appDescription": "Manuscript",
     "appCopyright": "Wervice (Constantin Volke)"
   },
   "dependencies": {

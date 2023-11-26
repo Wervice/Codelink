@@ -1,5 +1,5 @@
 {
-  "main": "manuscript/manuscript.html",
+  "main": "index.html",
   "name": "codelink",
   "window": {
     "frame": true,

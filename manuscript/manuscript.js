@@ -162,7 +162,7 @@ function replaceNoteLinks(inputString) {
                 "')\" style='margin:5px;color:white !important;'>File from " +
                 noteName +
                 ": </button><code>" +
-                fs.readFileSync(path.join(manuDir, noteName)).toString() +
+                fs.readFileSync(path.join(manuDir, noteName)).toString("base64") +
                 "</code></pre>"
               );
             } catch {
@@ -209,6 +209,7 @@ function replaceNoteLinks(inputString) {
   ); 
   parser_document = parser_element.parseFromString(replace_code, "text/html")
   for (e of parser_document.querySelectorAll("code")) {
+    console.log(e)
     e.innerHTML = atob(e.innerHTML)
   }
   return parser_document.body.innerHTML 
@@ -312,7 +313,12 @@ function deleteNote(name) {
 }
 
 function saveNote() {
+  try {
   fs.unlinkSync(path.join(manuDir, currentNote+".md"))
+}
+catch {
+  errorModal("Saving file", "Manuscript has no writing permissions in your home directory", function () {})
+}
   currentNote = document.getElementById("noteName").value;
   if (
     document.getElementById("noteName").value != "" &&
