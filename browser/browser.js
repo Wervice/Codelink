@@ -70,8 +70,8 @@ window.onload = function () {
     })
     document.getElementById("webview").addEventListener("change", function () {
         document.getElementById("url").value = document.getElementById("webview").src
+        document.getElementById("webview")
     })
-
     document.getElementById("webview").addEventListener("newwindow", function (e) {
         document.getElementById("webview").src = e.targetUrl
     })
@@ -85,18 +85,18 @@ window.onload = function () {
         }
         urlb = document.getElementById("webview").src
         if (new URL(document.getElementById("webview").src).protocol == "https:") {
-            document.getElementById("sslIndicator").src = "images/ssl.png"
+            document.getElementById("sslIndicator").src = "../images/ssl.png"
         }
         else {
-            document.getElementById("sslIndicator").src = "images/nossl.png"
+            document.getElementById("sslIndicator").src = "../images/nossl.png"
         }
         if (fs.readFileSync("./favs.txt", {
             "encoding": "utf-8"
         }).split(";").includes(document.getElementById("webview").src)) {
-            document.getElementById("bookmarkIcon").src = "images/bookmark.png"
+            document.getElementById("bookmarkIcon").src = "../images/bookmark.png"
         }
         else {
-            document.getElementById("bookmarkIcon").src = "images/nobookmark.png"
+            document.getElementById("bookmarkIcon").src = "../images/nobookmark.png"
         }
     }, 100)
     document.getElementById("url").addEventListener("click", function () {
@@ -144,13 +144,13 @@ function addToFavs() {
         fs.writeFileSync("./favs.txt", fs.readFileSync("./favs.txt", {
             "encoding": "utf-8"
         }).replace(curl + ";", ""))
-        document.getElementById("bookmarkIcon").src = "images/nobookmark.png"
+        document.getElementById("bookmarkIcon").src = "../images/nobookmark.png"
     }
     else {
         fs.writeFileSync("./favs.txt", fs.readFileSync("./favs.txt", {
             "encoding": "utf-8"
         }) + curl + ";")
-        document.getElementById("bookmarkIcon").src = "images/bookmark.png"
+        document.getElementById("bookmarkIcon").src = "../images/bookmark.png"
     }
     reloadFav()
 }

@@ -33,13 +33,11 @@ input:focus, select:focus {
     border-width: 0px;
     background-color: transparent;
     color: white;
-    width: 20px;
+    width: 26px;
     transition: ease-in-out 0.25s;
 }
 
 #nav button:hover {
-    box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.617);
-    border-radius: 5px;
     background-color: #313131;
 }
 
@@ -48,8 +46,9 @@ input:focus, select:focus {
 }
 
 #nav button img {
-    height: 16px;
+    height: 14px;
     opacity: 80%;
+    margin-bottom: -2px;
 }
 
 #nav input {
@@ -60,7 +59,7 @@ input:focus, select:focus {
     color: white;
     border-radius: 5px;
     border-width: 0px;
-    padding: 2.5px;
+    padding: 4px;
     padding-left: 5px;
     top: 1px;
     width: calc(100vw - 200px);
@@ -69,13 +68,11 @@ input:focus, select:focus {
 }
 
 #nav input:focus {
-    box-shadow: 0px 0px 1px 1px rgb(45, 45, 45);
     background-color: #141414;
 }
 
 #nav input:focus {
     outline: none;
-    box-shadow: 0px 0px 1px 1px rgb(45, 45, 45);
     background-color: #282828;
 }
 
@@ -85,7 +82,7 @@ input:focus, select:focus {
 
 #webview {
     width: 100vw;
-    height: calc(100vh - 42px);
+    height: calc(100vh - 40px);
 }
 
 #favList {
