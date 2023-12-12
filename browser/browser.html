@@ -12,84 +12,16 @@
 </head>
 
 <body oncontextmenu="return false;" hidden>
-    <div id="intro" align="center" hidden>
-        <h1>Welcome to Codelink Browser</h1>
-        <br>
-        <div id="shortcuts" align="left">
-            <h2>Shortcuts</h2>
-            <br>
-            <table data-zoom="true">
-                <tr>
-                    <td class="shortcut"><button>CTRL</button><button>B</button></td>
-                    <td class="shortcut_description">Toggle Bookmarks <img src="../images/nobookmark.png" alt="🔖"></td>
-                </tr>
-                <tr>
-                    <td class="shortcut"><button>CTRL</button><button>W</button></td>
-                    <td class="shortcut_description">Open in main browser <img src="../images/link.png" alt="🔗"></td>
-                </tr>
-                <tr>
-                    <td class="shortcut"><button>CTRL</button><button>Q</button></td>
-                    <td class="shortcut_description">Close windows <img src="../images/times.png" alt="X"></td>
-                </tr>
-                <tr>
-                    <td class="shortcut"><button>CTRL</button><button>R</button></td>
-                    <td class="shortcut_description">Reload page</td>
-                </tr>
-            </table>
-            <br>
-            <button class="cta bottom right"
-                onclick="document.getElementById('shortcuts').hidden = true; document.getElementById('navigations').hidden = false;"><img src=../images/forward.png height=15></button>
-        </div>
-        <div id="navigations" align="left" hidden>
-            <h2>Navigation</h2>
-            <br>
-            Navigation works like in any other browser.<br>
-            Here is a list of all special commands for the URL bar: <br><br>
-            <table data-zoom="true">
-                <tr>
-                    <td>~</td>
-                    <td>Navigates to startpage.com</td>
-                </tr>
-                <tr>
-                    <td>~stack</td>
-                    <td>Navigates to stackoverflow.com</td>
-                </tr>
-                <tr>
-                    <td>~searchcode</td>
-                    <td>Navigates to searchcode.com</td>
-                </tr>
-            </table>
-            <br>
-            The <img src="../images/bookmark.png" alt="🔖" height="15"> Icon let's you bookmark a page.<br>
-            View all bookmarks by clicking the icon.<br>
-            <button class="cta bottom right"
-                onclick="document.getElementById('navigations').hidden = true; document.getElementById('assistant_help').hidden = false;"><img src=../images/forward.png height=15></button>
-
-        </div>
-        <div id="assistant_help" align="left" hidden>
-            <h2>Bug assistant</h2>
-            <br>
-            <div align="center">
-                <img src="../images/bug_screenshot.png" alt="🪲" style="border-radius: 2.5px; box-shadow: 0px 5px 5px black; height: 50vh;">
-            </div><br>
-            The key feature of this browser is the bug assistant. <br>
-            It helps you research bug fixes faster. <br>
-            You can check it out using the <img src="../images/bug.png" alt="🪲" height="20"> icon.
-            <button class="cta bottom right"
-                onclick="localStorage.setItem('browserSetup', 'done'); document.getElementById('intro').hidden = true">Done</button>
-        </div>
+    <div id="sideBar">
+        <button><img src="../images/back.png" alt="Back" title="Go back"
+                onclick="document.getElementById('webview').back()"></button>
+        <button><img src="../images/forward.png" alt="Forward" title="Go forward"
+                onclick="document.getElementById('webview').forward()"></button>
+        <input type="text" id="url">
     </div>
-
-    <div id="favList" align="left" hidden></div>
-    <div id="nav">
-        <button onclick="document.getElementById('webview').back()"><img src="../images/back.png" alt=""></button>
-        <button onclick="document.getElementById('webview').forward()"><img src="../images/forward.png" alt=""></button>
-        <!-- TODO <button onclick="addToFavs()" ondblclick="showFavs()" oncontextmenu="showFavs()"><img
-             TODO   src="../images/nobookmark.png" id="bookmarkIcon"></button> -->
-        <!-- ! Integrate in URL Bar !<img src="../images/nossl.png" id="sslIndicator"> -->
-        <input type="text" placeholder="Search or enter URL" id="url">
+    <div id="webviewWrapper">
+        <webview id="webview" src="https://www.startpage.com/" nwdisable></webview>
     </div>
-    <webview id="webview" src="https://www.startpage.com/" style="display:inline-flex;" nwdisable></webview>
 </body>
 
 </html>
