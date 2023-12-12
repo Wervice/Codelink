@@ -16,7 +16,7 @@
   "license": "MIT",
   "chromiumArgs": "--enable-transparent-visuals",
   "nwjs-packager": {
-    "nwVersion": "0.81.0",
+    "nwVersion": "0.82.0",
     "appFriendlyName": "manuscript",
     "appMacIcon": "images/manuscript.icns",
     "appWinIcon": "images/manuscript.ico",

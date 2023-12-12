@@ -1,13 +1,13 @@
 {
-  "main": "index.html",
-  "name": "codelink",
+  "main": "browser/browser.html",
+  "name": "browser",
   "window": {
     "frame": true,
     "toolbar": false,
-    "icon": "images/icon.png",
+    "icon": "images/browser.png",
     "transparent": false
   },
-  "version": "1.6.1",
+  "version": "1.7",
   "scripts": {
     "dev": "nwp -r",
     "build": "nwp"
@@ -16,32 +16,26 @@
   "license": "MIT",
   "chromiumArgs": "--enable-transparent-visuals",
   "nwjs-packager": {
-    "nwVersion": "0.81.0",
-    "appFriendlyName": "Codelink",
-    "appMacIcon": "images/icon.icns",
-    "appWinIcon": "images/icon.ico",
+    "nwVersion": "0.82.0",
+    "appFriendlyName": "browser",
+    "appMacIcon": "images/browser.icns",
+    "appWinIcon": "images/browser.ico",
     "files": [
       "images/**",
       "./animations.css",
-      "./browser.css",
       "./main.css",
       "./modal.css",
-      "./browser.html",
       "./help.html",
-      "./index.html",
       "./animations.js",
-      "./browser.js",
-      "./main.js",
       "./modal.js",
-      "./favs.js",
+      "./modal.css",
       "./fsextra_license.txt",
       "./nwjs_license.txt",
       "./LICENSE",
-      "./filetree/*",
       "./mhl_license.txt",
       "./marked_license.txt",
-      "./notes_font.txt",
-      "./toggle_view.txt"
+      "./manuscript/*",
+      "./welcome.md"
     ],
     "builds": {
       "linux": {
@@ -54,13 +48,14 @@
         "zip": false
       }
     },
-    "appPackageName": "Codelink",
-    "appVersion": "1.6.1",
-    "appDescription": "Codelink",
+    "appPackageName": "Manuscript",
+    "appVersion": "1.7",
+    "appDescription": "Manuscript",
     "appCopyright": "Wervice (Constantin Volke)"
   },
   "dependencies": {
     "fs-extra": "^11.1.1",
+    "highlight.js": "^11.9.0",
     "jszip": "^3.10.1",
     "marked": "^9.1.5",
     "tar": "^6.2.0"
