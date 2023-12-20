@@ -1,4 +1,3 @@
-http://mute.bradconte.com/mute.txt
 http://rickrolldb.com/ricklist.txt
 https://assets.windscribe.com/custom_blocklists/clickbait.txt
 https://bitbucket.org/nicktabick/adblock-rules/raw/master/nt-adblock.txt

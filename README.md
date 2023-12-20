@@ -4,20 +4,28 @@
 <h1 align=center>Codelink</h1>
 <br>
 
-### Codelink is a family of open source apps and tools for developers. At the time, it contains a file manager, a note taking application and a very small browser. To ensure cross-platform functionality, the apps are written in JavaScript. They're only tested on Linux & Windows.
+Codelink is a family of tools and apps designed to be used in development and for coding.
 
-## Usage
-Codelink apps are portable only.
+It's all free and open source. Codelink features a file manager, note taking app and browser at the moment.
 
-1. Download the latest version of Codelink, FileTree, Manuscript or the browser from the releases page.
-2. Extract the archive and run the executable
-3. A tutorial may appear
+It's all made using NW.js or Electron.
 
 ## The apps
-|Name|Function|
-|----|--------|
-[FileTree](#filetree)|Small filemanager with lots of features
-[Manuscript](#manuscript)|Note taking app based on Markdown
-[Browser](#browser)|Browser with bookmarks, no history & only 1 tab. Containing a bug searcher.
+### FileTree
 
-<img src="images/filetree_colored_sys.png" width=75 height=75>
+![]()
+
+*Screenshot of FileTree*
+
+FileTree is a fast and easy to use file manager. It has (a) ...
+- Command pallet
+- Content preview
+- Built-in simple encryption
+- File compression
+- Terminal launcher
+- Own icons
+- Different view modes
+
+
+### Manuscript
+![]()
