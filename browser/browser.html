@@ -4,27 +4,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Browser</title>
+    <title>Tin</title>
     <script src="browser_interface.js"></script>
     <script src="../animations.js"></script>
     <link rel="stylesheet" href="../animations.css">
     <link rel="stylesheet" href="browser.css">
 </head>
 
-<body oncontextmenu="return false;">
-    <button id="sideBarButton" onclick="document.getElementById('sideBar').hidden = false;this.hidden=true"><img src="../images/forward.png"></button>
-    <div id="sideBar" hidden>
-        <button><img src="../images/back.png" alt="Back" title="Go back"
-                onclick="document.getElementById('tab' + currentWorkingTabId).back()"></button>
-        <button><img src="../images/forward.png" alt="Forward" title="Go forward"
-                onclick="document.getElementById('tab' + currentWorkingTabId).forward()"></button>
-        <input type="text" id="url"><br>
-        <div id="tablist">
+<!-- TODO Render TabList on navigate -->
 
+<body oncontextmenu="return false;">
+    <button id="sideBarButton" onclick="document.getElementById('sideBar').hidden = false;this.hidden=true;document.getElementById('protectionOverlay').hidden = false;renderTabList()"><img
+            src="../images/forward.png"></button>
+    <div id="protectionOverlay" hidden></div>
+    <div id="sideBar" hidden>
+        <button onclick="toggleBookmark()"><img src="../images/nobookmark.png" alt="New" title="New tab"></button>
+        <button onclick="newTab()"><img src="../images/new.png" alt="New" title="New tab"></button>
+        <button onclick="document.getElementById('tab' + currentWorkingTabId).back();renderTabList()"><img src="../images/back.png"
+                alt="Back" title="Go back"></button>
+        <button onclick="document.getElementById('tab' + currentWorkingTabId).forward();renderTabList()"><img
+                src="../images/forward.png" alt="Forward" title="Go forward"></button>
+        <input type="text" id="url" autofill="false" autocomplete="off"><br>
+        <div id="tablist">
         </div>
     </div>
     <div id="webviewWrapper">
-        <webview src="https://www.startpage.com/" id="tab0"></webview>
+        <webview src="https://www.google.com" id="tab0" nwdisable></webview>
         <!-- ! Add id="webview" if you want to go back  -->
     </div>
 </body>

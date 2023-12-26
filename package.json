@@ -1,5 +1,5 @@
 {
-  "main": "browser/browser.js",
+  "main": "browser/browser.html",
   "name": "browser",
   "window": {
     "frame": true,
@@ -9,7 +9,7 @@
   },
   "version": "1.7",
   "scripts": {
-    "dev": "electron .",
+    "dev": "nwp -r",
     "build": "nwp"
   },
   "author": "",
