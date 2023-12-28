@@ -72,6 +72,7 @@ iframe::-webkit-scrollbar {
   background-color: var(--grey-dark-2);
   box-shadow: 0px 0px 0px 100vw #00000099, 0px 0px 25px black;
   animation: side_bar_move_in 0.125s;
+  width: 300px;
 
   & button {
     width: 25px;
@@ -93,7 +94,7 @@ iframe::-webkit-scrollbar {
   }
 
   & input {
-    width: 200px;
+    width: calc(100% - 140px);
     padding: 8px;
     border-radius: 2.5px;
     background-color: var(--grey-dark-1);
@@ -135,7 +136,7 @@ iframe::-webkit-scrollbar {
   }
 
   & #tablist {
-    height: 100%;
+    max-height: calc(100% - 70px);
     overflow: scroll;
 
     & img {
@@ -149,22 +150,33 @@ iframe::-webkit-scrollbar {
     display: none;
   }
 
+  & .tooltip {
+    position: fixed;
+    left: 10px;
+    bottom: 30px;
+  }
+
 }
 
 #sideBarButton {
-    padding: 5px;
+    padding: 2.5px;
     border-radius: 2.5px;
-    background-color: #00000088;
+    background-color: #000000;
     border: none;
-    width: 20px;
-    height: 20px;
+    width: 15px;
+    height: 15px;
     position: fixed;
     top: 20px;
     left: 20px;
+    transition: ease-in-out 0.125s;
+
+    &:hover {
+      transform: scale(1.2);
+    }
 
     & img {
-        height: 10px;
-        margin-bottom: 2px;
+        height: 8px;
+        margin-bottom: 3px;
     }
 }
 
@@ -174,4 +186,35 @@ iframe::-webkit-scrollbar {
   left: 0px;
   height: 100vh;
   width: 100vw;
+}
+
+
+div.tooltip {
+  animation: side_bar_move_in;
+  animation-duration: 0.25s;
+  font-size: 12px;
+  opacity: 60%;
+  padding: 5px;
+  transform: scale(0.8);
+}
+
+.keyTooltip {
+  padding: 4px;
+  border-radius: 2px;
+  background-color: #ffffff33;
+  border: 1px solid #ffffff99;
+}
+
+#bookmarkWindow {
+  position: absolute;
+  height: 300px;
+  width: 400px;
+  padding: 10px;
+  left: calc(50vw - 205px);
+  top: 50%;
+  transform:translateY(-50%);
+  background-color: var(--grey-dark-3);
+  border-radius: 5px;
+  border: 1px solid var(--grey-dark-2);
+  z-index: 100;
 }

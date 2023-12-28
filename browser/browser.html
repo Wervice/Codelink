@@ -14,6 +14,11 @@
 <!-- TODO Render TabList on navigate -->
 
 <body oncontextmenu="return false;">
+    <div id="bookmarkWindow" hidden>
+        <input type="text" placeholder="Search bookmarks"><br>
+        <div id="bookmarkList">
+        </div>
+    </div>
     <button id="sideBarButton" onclick="document.getElementById('sideBar').hidden = false;this.hidden=true;document.getElementById('protectionOverlay').hidden = false;renderTabList()"><img
             src="../images/forward.png"></button>
     <div id="protectionOverlay" hidden></div>
@@ -27,6 +32,7 @@
         <input type="text" id="url" autofill="false" autocomplete="off"><br>
         <div id="tablist">
         </div>
+        <div class="tooltip"><span class="keyTooltip">ESC</span> To close <span class="keyTooltip" style="margin-left: 5px;">B</span> Bookmarks</div>
     </div>
     <div id="webviewWrapper">
         <webview src="https://www.google.com" id="tab0" nwdisable></webview>

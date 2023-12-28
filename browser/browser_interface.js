@@ -1,4 +1,5 @@
 const fs = require("fs");
+const { setInterval } = require("timers/promises");
 
 win = nw.Window.get();
 
@@ -16,11 +17,22 @@ function toggleBookmark() {
     .toString("utf-8")
     .split(";");
   if (
-    bookmarkList.includes(
-      document.getElementById("tab" + currentWorkingTabId).src
-    )
+    fs
+      .readFileSync("browser/favs.txt")
+      .toString("utf-8")
+      .includes(
+        new URL(document.getElementById("tab" + currentWorkingTabId).src)
+          .hostname +
+          new URL(document.getElementById("tab" + currentWorkingTabId).src)
+            .pathname
+      )
   ) {
-    console.log("A");
+    bookmarkList.splice(
+      bookmarkList.indexOf(
+        document.getElementById("tab" + currentWorkingTabId).src
+      ),
+      1
+    );
   } else {
     bookmarkList.push(document.getElementById("tab" + currentWorkingTabId).src);
   }
@@ -33,29 +45,42 @@ function toggleBookmark() {
   fs.writeFileSync("browser/favs.txt", bookmarkListText.toString());
 }
 
-async function renderTabList() {
+function renderTabList() {
+  // ! "e" stays the same?
+
   renderedTabList = "";
-  for (e of tablist) {
+
+  for (element of tablist) {
     try {
-      renderedTabList +=
-        `<button class=tab onclick=changeTab(${e})>` +
-        (await magicTitle(document.getElementById("tab" + e).src)) +
-        `</button><img src=\"../images/times.png\" onclick=closeTab("${e}")><br>`;
-    } catch (e) {
-      console.log(e);
+      setupWebviewInteraction( // ! <- Function, Bro, you're messing something up here
+      // * The code is running multiple times
+      // * If you execute it wthout setupWebview..., it works just fine
+        
+        document.getElementById("tab" + element),
+        (receivedData) => {
+          renderedTabList +=
+            `<button class=tab onclick=changeTab(${element})>` +
+            new DOMParser().parseFromString(receivedData.doc, "text/html")
+              .title +
+            ` </button><img src=\"../images/times.png\" onclick=closeTab("${element}")><br>`;
+          document.getElementById("tablist").innerHTML = renderedTabList;
+        
+      }
+      );
+    } catch (err) {
+      console.log(err);
     }
   }
   document.getElementById("url").value = document.getElementById(
     "tab" + currentWorkingTabId
   ).src;
-  document.getElementById("tablist").innerHTML = renderedTabList;
 }
 
 snUrlsList = {
   newtab: "",
 };
 
-async function newTab() {
+function newTab() {
   try {
     document.getElementById("tab" + currentWorkingTabId).hidden = true;
   } catch {}
@@ -69,15 +94,12 @@ async function newTab() {
 
   tablist.push(String(currentWorkingTabId));
 
-  document.getElementById(
-    "tablist"
-  ).innerHTML += `<button class=tab onclick=changeTab("${currentWorkingTabId}")>Google (google.com)</button> <img src="../images/times.png" onclick=closeTab("${currentWorkingTabId}")>`;
-  await renderTabList();
+  renderTabList();
 
-  document.getElementById("url").onchange = async function () {
+  document.getElementById("url").onchange = function () {
     document.getElementById("tab" + currentWorkingTabId).src =
       document.getElementById("url").value;
-    await renderTabList();
+    renderTabList();
   };
 
   document
@@ -105,7 +127,7 @@ function changeTab(id) {
   return id;
 }
 
-async function closeTab(id) {
+function closeTab(id) {
   document.getElementById("tab" + id).hidden = true;
   if (tablist.length == 1) {
     newTab();
@@ -114,38 +136,86 @@ async function closeTab(id) {
   document.querySelector("#tab" + id).remove();
   document.getElementById("tab" + tablist[0]).hidden = false;
   currentWorkingTabId = tablist[0];
-  await renderTabList();
+  renderTabList();
 }
 
-async function magicTitle(str) {
-  url = new URL(str);
-  try {
-    response = await fetch(str.replace(url.search, "")).then();
-    if (await response.ok) {
-      rp = new DOMParser();
-      rpo = rp.parseFromString(await response.text(), "text/html");
-      title = rpo.querySelector("title").innerHTML;
-    }
-    if (new URLSearchParams(url.search).get("q") != null) {
-      title = new URLSearchParams(url.search).get("q");
-    }
-  } catch {
-    title = "Can't load page";
+// ! S**t start
+
+function setupWebviewInteraction(webviewElement, onDataReceived) {
+  // <webview> Content is loaded
+  function contentLoad() {
+    // The following will be injected into the webview
+    const webviewInjectScript = `
+      var data = {
+        doc: document.documentElement.innerHTML,
+      };
+
+      function respond(event) {
+        event.source.postMessage(data, '*');
+      }
+
+      window.addEventListener("message", respond, false);
+    `;
+
+    webviewElement.executeScript({
+      code: webviewInjectScript,
+    });
   }
 
-  if (title.length < 20) {
-    return (
-      title.replace("<", "&lt;").replace(">", "&gt;") +
-      " (" +
-      url.hostname
-        .replace("www.", "")
-        .replace("<", "&lt;")
-        .replace(">", "&gt;") +
-      ")"
-    );
-  } else {
-    return title.replace("<", "&lt;").replace(">", "&gt;");
+  // <webview> Loading has finished
+  function loadStop() {
+    webviewElement.contentWindow.postMessage("Send me your data!", "*"); // Send a request to the webview
   }
+
+  // Bind events
+  webviewElement.addEventListener("contentload", contentLoad);
+  webviewElement.addEventListener("loadstop", loadStop);
+
+  // Listen for response
+  window.addEventListener("message", receiveHandshake, false);
+
+  function receiveHandshake(event) {
+    // Data is accessible as event.data.*
+    // This is the custom object that was injected during contentLoad()
+    // i.e., event.data.title, event.data.url
+
+    // Invoke the provided callback with the received data
+    onDataReceived(event.data);
+
+    // Unbind EventListeners
+    removeListeners();
+  }
+
+  // Remove all event listeners
+  function removeListeners() {
+    webviewElement.removeEventListener("contentload", contentLoad);
+    webviewElement.removeEventListener("loadstop", loadStop);
+    window.removeEventListener("message", receiveHandshake);
+  }
+}
+
+// Usage example:
+
+// ! S**t end
+
+function renderBookmarkList() {
+  bookmarkList = fs
+    .readFileSync("browser/favs.txt")
+    .toString("utf-8")
+    .split(";");
+  bookmarkListRendered = "";
+  for (e of bookmarkList) {
+    if (e.length > 0) {
+      bookmarkListRendered +=
+        `<button onclick="document.getElementById('tab'+currentWorkingTabId).src = '${e}'"><b>` +
+        new URL(e).hostname.replace("www.", "") +
+        `</b>` +
+        new URL(e).pathname +
+        `</button><br>`;
+    }
+  }
+
+  return bookmarkListRendered;
 }
 
 window.onload = function () {
@@ -157,10 +227,10 @@ window.onload = function () {
 
   renderTabList();
 
-  document.getElementById("url").onchange = async function () {
+  document.getElementById("url").onchange = function () {
     document.getElementById("tab" + currentWorkingTabId).src =
       document.getElementById("url").value;
-    await renderTabList();
+    renderTabList();
   };
 
   window.addEventListener("keydown", function (e) {
@@ -175,6 +245,22 @@ window.onload = function () {
         document.getElementById("protectionOverlay").hidden = true;
         this.document.getElementById("sideBar").classList.remove("moveOut");
       }, 250);
+    } else if (
+      e.key == "Escape" &&
+      !this.document.getElementById("bookmarkWindow").hidden
+    ) {
+      this.document.getElementById("bookmarkWindow").hidden = true;
+      this.document.getElementById("protectionOverlay").hidden = true;
+    } else if (e.key == "b") {
+      if (this.document.getElementById("bookmarkWindow").hidden) {
+        this.document.getElementById("bookmarkList").innerHTML =
+          renderBookmarkList();
+        this.document.getElementById("bookmarkWindow").hidden = false;
+        this.document.getElementById("protectionOverlay").hidden = false;
+      } else {
+        this.document.getElementById("bookmarkWindow").hidden = true;
+        this.document.getElementById("protectionOverlay").hidden = true;
+      }
     }
   });
 };
