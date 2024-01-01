@@ -58,6 +58,12 @@ iframe::-webkit-scrollbar {
   }
 }
 
+@keyframes element_fade_in {
+  0% {
+    opacity: 0%;
+  }
+}
+
 .moveOut {
   animation: side_bar_move_out 0.25s !important;
 }
@@ -139,6 +145,7 @@ iframe::-webkit-scrollbar {
     max-height: calc(100% - 70px);
     overflow: scroll;
 
+
     & img {
       height: 20px;
       margin-bottom: -5px;
@@ -207,14 +214,53 @@ div.tooltip {
 
 #bookmarkWindow {
   position: absolute;
-  height: 300px;
-  width: 400px;
+  height: 30vh;
+  width: 60vw;
   padding: 10px;
-  left: calc(50vw - 205px);
+  left: calc(50vw - 30vw - 5px);
   top: 50%;
   transform:translateY(-50%);
   background-color: var(--grey-dark-3);
-  border-radius: 5px;
-  border: 1px solid var(--grey-dark-2);
+  border: 1px solid var(--grey-light-2);
   z-index: 100;
+  border-radius: 5px;
+  box-shadow: 0px 5px 10px #00000030, 0px 0px 0px 100vw #00000074;
+  font-family: var(--font-sans);
+  overflow-y: scroll;
+
+  & button {
+    border: none;
+    padding: 5px;
+    margin: 5px;
+    color: #ffffff66;
+    font-family: var(--font-sans);
+    background-color: transparent;
+    font-weight: lighter;
+    letter-spacing: 0.75px;
+    text-align: left;
+
+    & b {
+      color: white !important;
+    }
+  }
+
+  & input {
+    width: calc(100% - 140px);
+    padding: 8px;
+    border-radius: 2.5px;
+    background-color: var(--grey-dark-1);
+    border: none;
+    transition: ease-in-out 0.25s;
+    color: #ffffff99;
+    font-family: var(--font-sans);
+    outline: #00000000 1px solid;
+
+    &:focus {
+      color: #ffffff;
+    }
+  }
+}
+
+#bookmarkWindow::-webkit-scrollbar {
+  display: none;
 }

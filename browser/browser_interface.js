@@ -1,5 +1,4 @@
 const fs = require("fs");
-const { setInterval } = require("timers/promises");
 
 win = nw.Window.get();
 
@@ -46,34 +45,60 @@ function toggleBookmark() {
 }
 
 function renderTabList() {
-  // ! "e" stays the same?
+  
+  setTimeout(function () {
+    renderedTabList = "";
+    eid = 0;
+    for (element of tablist) {
+      console.log(element);
+      try {
+        console.log(element);
+        document.getElementById("tab" + element).executeScript(
+          {
+            code: `document.documentElement.innerHTML`,
+          },
+          (result) => {
+            if (
+              new DOMParser().parseFromString(result, "text/html").title == ""
+            ) {
+              titleToUse =
+                "Loading " + document.getElementById("tab" + element).src;
+            } else {
+              titleToUse = new DOMParser().parseFromString(
+                result,
+                "text/html"
+              ).title;
+              if (titleToUse.length > 35) {
+                titleToUse = titleToUse.slice(0, 32) + "...";
+              }
+            }
+            renderedTabList +=
+              `<button class=tab onclick=changeTab(` +
+              (function () {
+                return tablist[eid];
+              })() +
+              `)>` +
+              titleToUse +
+              ` </button><img src=\"../images/times.png\" onclick=closeTab("${tablist[eid]}")><br>`;
+            eid++;
 
-  renderedTabList = "";
-
-  for (element of tablist) {
-    try {
-      setupWebviewInteraction( // ! <- Function, Bro, you're messing something up here
-      // * The code is running multiple times
-      // * If you execute it wthout setupWebview..., it works just fine
-        
-        document.getElementById("tab" + element),
-        (receivedData) => {
-          renderedTabList +=
-            `<button class=tab onclick=changeTab(${element})>` +
-            new DOMParser().parseFromString(receivedData.doc, "text/html")
-              .title +
-            ` </button><img src=\"../images/times.png\" onclick=closeTab("${element}")><br>`;
-          document.getElementById("tablist").innerHTML = renderedTabList;
-        
+            console.log(result);
+            if (eid == tablist.length) {
+              document.getElementById("tablist").innerHTML = renderedTabList;
+            }
+          }
+        );
+      } catch (err) {
+        console.log(err);
       }
-      );
-    } catch (err) {
-      console.log(err);
     }
-  }
-  document.getElementById("url").value = document.getElementById(
-    "tab" + currentWorkingTabId
-  ).src;
+    if (document.activeElement != document.getElementById("url")) {
+      document.getElementById("url").value = document.getElementById(
+        "tab" + currentWorkingTabId
+      ).src;
+    }
+  }, 500);
+  // ! "e" stays the same?
 }
 
 snUrlsList = {
@@ -133,68 +158,21 @@ function closeTab(id) {
     newTab();
   }
   tablist.splice(tablist.indexOf(id), 1);
+  renderTabList();
   document.querySelector("#tab" + id).remove();
   document.getElementById("tab" + tablist[0]).hidden = false;
   currentWorkingTabId = tablist[0];
-  renderTabList();
 }
 
 // ! S**t start
 
-function setupWebviewInteraction(webviewElement, onDataReceived) {
-  // <webview> Content is loaded
-  function contentLoad() {
-    // The following will be injected into the webview
-    const webviewInjectScript = `
-      var data = {
-        doc: document.documentElement.innerHTML,
-      };
-
-      function respond(event) {
-        event.source.postMessage(data, '*');
-      }
-
-      window.addEventListener("message", respond, false);
-    `;
-
-    webviewElement.executeScript({
-      code: webviewInjectScript,
-    });
-  }
-
-  // <webview> Loading has finished
-  function loadStop() {
-    webviewElement.contentWindow.postMessage("Send me your data!", "*"); // Send a request to the webview
-  }
-
-  // Bind events
-  webviewElement.addEventListener("contentload", contentLoad);
-  webviewElement.addEventListener("loadstop", loadStop);
-
-  // Listen for response
-  window.addEventListener("message", receiveHandshake, false);
-
-  function receiveHandshake(event) {
-    // Data is accessible as event.data.*
-    // This is the custom object that was injected during contentLoad()
-    // i.e., event.data.title, event.data.url
-
-    // Invoke the provided callback with the received data
-    onDataReceived(event.data);
-
-    // Unbind EventListeners
-    removeListeners();
-  }
-
-  // Remove all event listeners
-  function removeListeners() {
-    webviewElement.removeEventListener("contentload", contentLoad);
-    webviewElement.removeEventListener("loadstop", loadStop);
-    window.removeEventListener("message", receiveHandshake);
-  }
-}
-
-// Usage example:
+/*
+document.getElementById("tab0").executeScript({
+        code: `document.title`
+      }, result => {
+        console.log(result)
+      })
+*/
 
 // ! S**t end
 
@@ -219,19 +197,51 @@ function renderBookmarkList() {
 }
 
 window.onload = function () {
+  setInterval(function () {
+    if (document.getElementById("sideBar").hidden == true) {
+      renderTabList();
+    }
+  }, 2000);
+
+  setInterval(function () {
+    renderTabList();
+  }, 6000);
   document
     .getElementById("tab" + currentWorkingTabId)
     .addEventListener("newwindow", (e) => {
       document.getElementById("tab" + currentWorkingTabId).src = e.targetUrl;
     });
 
-  renderTabList();
-
   document.getElementById("url").onchange = function () {
     document.getElementById("tab" + currentWorkingTabId).src =
       document.getElementById("url").value;
     renderTabList();
   };
+
+  document
+    .getElementById("bookmarkSearch")
+    .addEventListener("keyup", function () {
+      bookmarkList = fs
+        .readFileSync("browser/favs.txt")
+        .toString("utf-8")
+        .split(";");
+      bookmarkListRendered = "";
+      for (e of bookmarkList) {
+        if (
+          e.length > 0 &&
+          e.includes(document.getElementById("bookmarkSearch").value)
+        ) {
+          bookmarkListRendered +=
+            `<button onclick="document.getElementById('tab'+currentWorkingTabId).src = '${e}'"><b>` +
+            new URL(e).hostname.replace("www.", "") +
+            `</b>` +
+            new URL(e).pathname +
+            `</button><br>`;
+        }
+      }
+
+      document.getElementById("bookmarkList").innerHTML = bookmarkListRendered;
+    });
 
   window.addEventListener("keydown", function (e) {
     if (
@@ -251,7 +261,11 @@ window.onload = function () {
     ) {
       this.document.getElementById("bookmarkWindow").hidden = true;
       this.document.getElementById("protectionOverlay").hidden = true;
-    } else if (e.key == "b") {
+    } else if (
+      e.key == "b" &&
+      this.document.activeElement.tagName != "INPUT" &&
+      this.document.activeElement.tagName != "INPUT"
+    ) {
       if (this.document.getElementById("bookmarkWindow").hidden) {
         this.document.getElementById("bookmarkList").innerHTML =
           renderBookmarkList();

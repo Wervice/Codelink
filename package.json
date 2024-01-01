@@ -4,10 +4,10 @@
   "window": {
     "frame": true,
     "toolbar": false,
-    "icon": "images/browser.png",
+    "icon": "images/tinlogo.png",
     "transparent": false
   },
-  "version": "1.7",
+  "version": "1.8",
   "scripts": {
     "dev": "nwp -r",
     "build": "nwp"
@@ -18,24 +18,11 @@
   "nwjs-packager": {
     "nwVersion": "0.82.0",
     "appFriendlyName": "browser",
-    "appMacIcon": "images/browser.icns",
-    "appWinIcon": "images/browser.ico",
+    "appMacIcon": "images/tinlogo.icns",
+    "appWinIcon": "images/tinlogo.ico",
     "files": [
       "images/**",
-      "./animations.css",
-      "./main.css",
-      "./modal.css",
-      "./help.html",
-      "./animations.js",
-      "./modal.js",
-      "./modal.css",
-      "./fsextra_license.txt",
-      "./nwjs_license.txt",
-      "./LICENSE",
-      "./mhl_license.txt",
-      "./marked_license.txt",
-      "./manuscript/*",
-      "./welcome.md"
+      "browser/**"
     ],
     "builds": {
       "linux": {
@@ -49,18 +36,11 @@
       }
     },
     "appPackageName": "Codelink Browser",
-    "appVersion": "1.7",
+    "appVersion": "1.8",
     "appDescription": "Codelink Browser",
     "appCopyright": "Wervice (Constantin Volke)"
   },
-  "dependencies": {
-    "electron": "^28.0.0",
-    "fs-extra": "^11.2.0",
-    "highlight.js": "^11.9.0",
-    "jszip": "^3.10.1",
-    "marked": "^9.1.6",
-    "tar": "^6.2.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "nwjs-packager": "^1.5.1"
   }

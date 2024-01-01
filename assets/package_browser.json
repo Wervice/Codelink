@@ -1,66 +1,47 @@
 {
-    "main": "browser/browser.html",
-    "name": "browser",
-    "window": {
-      "frame": true,
-      "toolbar": false,
-      "icon": "images/browser.png",
-      "transparent": false
-    },
-    "version": "1.7",
-    "scripts": {
-      "dev": "nwp -r",
-      "build": "nwp"
-    },
-    "author": "",
-    "license": "MIT",
-    "chromiumArgs": "--enable-transparent-visuals",
-    "nwjs-packager": {
-      "nwVersion": "0.82.0",
-      "appFriendlyName": "browser",
-      "appMacIcon": "images/browser.icns",
-      "appWinIcon": "images/browser.ico",
-      "files": [
-        "images/**",
-        "./animations.css",
-        "./main.css",
-        "./modal.css",
-        "./help.html",
-        "./animations.js",
-        "./modal.js",
-        "./modal.css",
-        "./fsextra_license.txt",
-        "./nwjs_license.txt",
-        "./LICENSE",
-        "./mhl_license.txt",
-        "./marked_license.txt",
-        "./manuscript/*",
-        "./welcome.md"
-      ],
-      "builds": {
-        "linux": {
-          "tar.gz": true
-        },
-        "osx": {
-          "zip": true
-        },
-        "win": {
-          "zip": false
-        }
+  "main": "browser/browser.html",
+  "name": "browser",
+  "window": {
+    "frame": true,
+    "toolbar": false,
+    "icon": "images/tinlogo.png",
+    "transparent": false
+  },
+  "version": "1.8",
+  "scripts": {
+    "dev": "nwp -r",
+    "build": "nwp"
+  },
+  "author": "",
+  "license": "MIT",
+  "chromiumArgs": "--enable-transparent-visuals",
+  "nwjs-packager": {
+    "nwVersion": "0.82.0",
+    "appFriendlyName": "browser",
+    "appMacIcon": "images/tinlogo.icns",
+    "appWinIcon": "images/tinlogo.ico",
+    "files": [
+      "images/**",
+      "browser/**"
+    ],
+    "builds": {
+      "linux": {
+        "tar.gz": true
       },
-      "appPackageName": "Manuscript",
-      "appVersion": "1.7",
-      "appDescription": "Manuscript",
-      "appCopyright": "Wervice (Constantin Volke)"
+      "osx": {
+        "zip": true
+      },
+      "win": {
+        "zip": false
+      }
     },
-    "dependencies": {
-      "fs-extra": "^11.1.1",
-      "highlight.js": "^11.9.0",
-      "jszip": "^3.10.1",
-      "marked": "^9.1.5",
-      "tar": "^6.2.0"
-    },
-    "devDependencies": {
-      "nwjs-packager": "^1.5.1"
-    }
+    "appPackageName": "Codelink Browser",
+    "appVersion": "1.8",
+    "appDescription": "Codelink Browser",
+    "appCopyright": "Wervice (Constantin Volke)"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "nwjs-packager": "^1.5.1"
   }
+}

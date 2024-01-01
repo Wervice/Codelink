@@ -15,7 +15,7 @@
 
 <body oncontextmenu="return false;">
     <div id="bookmarkWindow" hidden>
-        <input type="text" placeholder="Search bookmarks"><br>
+        <input type="text" id="bookmarkSearch" placeholder="Search bookmarks"><br>
         <div id="bookmarkList">
         </div>
     </div>
@@ -23,7 +23,7 @@
             src="../images/forward.png"></button>
     <div id="protectionOverlay" hidden></div>
     <div id="sideBar" hidden>
-        <button onclick="toggleBookmark()"><img src="../images/nobookmark.png" alt="New" title="New tab"></button>
+        <button onclick="toggleBookmark()"><img src="../images/nobookmark.png" alt="New" title="New tab" id="bookmarkIndicator"></button>
         <button onclick="newTab()"><img src="../images/new.png" alt="New" title="New tab"></button>
         <button onclick="document.getElementById('tab' + currentWorkingTabId).back();renderTabList()"><img src="../images/back.png"
                 alt="Back" title="Go back"></button>
