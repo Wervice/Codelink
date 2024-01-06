@@ -1,5 +1,5 @@
 {
-  "main": "browser/browser.html",
+  "main": "tin/browser.html",
   "name": "browser",
   "window": {
     "frame": true,
@@ -40,8 +40,12 @@
     "appDescription": "Codelink Browser",
     "appCopyright": "Wervice (Constantin Volke)"
   },
-  "dependencies": {},
   "devDependencies": {
     "nwjs-packager": "^1.5.1"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "helmet": "^7.1.0",
+    "html": "^1.0.0"
   }
 }
