@@ -1,0 +1,74 @@
+@font-face {
+    font-family: "Work Sans";
+    src: url(WorkSansVar.ttf);
+}
+
+:root {
+    --accent-color: #57CFC8;
+}
+
+*:focus {
+    outline: none;
+    filter: brightness(1.2);
+}
+
+::placeholder {
+    color: #888;
+}
+
+* {
+    font-family: "Work Sans", sans-serif;
+}
+
+
+body {
+    background-color: #111;
+    padding: 0px;
+    margin: 0px;
+    margin-left: 10px;
+}
+
+h1 {
+    font-size: xx-large;
+    color: #ffffff;
+    margin: 10px;
+    margin-left: 0px;
+    font-weight: 500;
+}
+
+input {
+    margin: 10px;
+    margin-left: 0px;
+    padding: 12px;
+    font-size: large;
+    border-radius: 8px;
+    border: 1px solid #666;
+    color: white;
+    background-color: #111;
+    transition: ease-in-out 0.25s;
+}
+
+small {
+    color: #666;
+}
+
+span.caption  {
+    color: #888;
+    max-width: 200px;
+    font-size: 16px;
+}
+
+a {
+    color: dodgerblue;
+    text-decoration: none;
+    opacity: 40%;
+}
+
+button {
+    margin-top: 10px;
+    padding: 8px;
+    border-radius: 3px;
+    background-color: #57CFC8;
+    border: 0px;
+    transition: ease-in-out 0.25s;
+}

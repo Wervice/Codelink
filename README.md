@@ -1,6 +1,7 @@
 <div align=center>
 <img src="images/icon.svg" height=100>
 </div>
+
 <h1 align=center>Codelink</h1>
 <br>
 

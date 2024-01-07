@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zentrox</title>
+    <link rel="stylesheet" href="setup.css">
+    <script src="welcome.js"></script>
+</head>
+
+<body>
+    <h1>Setup</h1>
+    <form action="/dashboard" method="post">
+        <input type="text" placeholder="Admin Username*"><br>
+        <input type="password" placeholder="Admin Password*"><br>
+        <span class="caption">
+            This user can do anything on Xentrox. <br>
+            Please choose secure credentials. <br>
+            The password will be used to encrypt<br>
+            admin files and sensitive information. <br>
+            <a href="/information/adminaccount">Learn more</a>
+        </span>
+        <br><br>
+        <input type="password" placeholder="System Sudo Password"><br>
+        <span class="caption">
+            Xentrox needs this password to
+            run <br> processes
+            with high privileges. <br>
+            You can leave it empty, if you don't <br> want to run such tasks.
+        </span>
+        <br>
+        <br>
+        <button type="submit">Submit</button>
+    </form>
+
+</body>
+
+</html>
