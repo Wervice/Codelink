@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zentrox</title>
+    <link rel="stylesheet" href="welcome.css">
+</head>
+
+<body>
+    <div class="contentPage">
+        <h1>
+            <%= serverName %>
+        </h1>
+        <br>
+        <div style="text-align: center;">
+            <img src="Zentrox.png" alt="Server" width="100">
+        </div>
+        <br>
+        <div id="form">
+            <input type="text" placeholder="Username" id="usernameInput">
+            <br>
+            <input type="password" placeholder="Password" id="passwordInput"><br>
+            <button>Login</button>
+            <%- registrationButton %>
+        </div>
+    </div>
+</body>
+
+</html>
