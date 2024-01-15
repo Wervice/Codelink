@@ -9,13 +9,45 @@ const bodyParser = require('body-parser')
 const crypto = require("crypto")
 const cookieParser = require("cookie-parser")
 const session = require("express-session")
+const https = require("https")
 
+var key = fs.readFileSync(__dirname + '/selfsigned.key');
+var cert = fs.readFileSync(__dirname + '/selfsigned.crt');
+var options = {
+    key: key,
+    cert: cert
+};
 
 const zentroxInstPath = path.join(os.homedir(), "zentrox/")
 
+function auth(username, password, req) {
+    users = fs.readFileSync(path.join(zentroxInstPath, "users.txt")).toString().split("\n")
+    for (user of users) {
+        console.log(user)
+        console.log("_" + atob(user.split(": ")[0]) + "_")
+        if (atob(user.split(": ")[0]) == username) {
+            if (hash512(password) == user.split(": ")[1]) {
+                return true
+            }
+            else {
+                return false
+            }
+        }
+    }
+}
+
+function newUser(username, password, role = "user") {
+    if (role == null || role == "") role = user
+    userEntryString = btoa(username) + ": " + hash512(password) + ": " + role
+    fs.appendFileSync(path.join(zentroxInstPath, "users.txt"), "\n" + userEntryString)
+}
+
 if (!fs.existsSync(path.join(zentroxInstPath, "sessionSecret.txt"))) {
-    fs.mkdirSync(zentroxInstPath)
     fs.writeFileSync(path.join(zentroxInstPath, "sessionSecret.txt"), crypto.randomBytes(64).toString("ascii"))
+}
+
+if (!fs.existsSync(zentroxInstPath)) {
+    fs.mkdirSync(zentroxInstPath)
 }
 
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -24,7 +56,10 @@ app.use(cookieParser())
 app.use(session({
     secret: fs.readFileSync(path.join(zentroxInstPath, "sessionSecret.txt")).toString("utf8"),
     name: "sessionMangemenet",
+    saveUninitialized: true,
+    resave: true,
     cookie: {
+        sameSite: true,
         secure: true,
         httpOnly: true,
     }
@@ -35,14 +70,6 @@ app.set('views', __dirname + '/templates');
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'ejs');
 
-function auth(username, password, req) {
-    users = fs.readFileSync(path.join(zentroxInstPath, "users.txt")).toString().split("\n")
-    for (user of users) {
-        if (Buffer.from(user.split(": ")[0], "utf-8")) {
-            console.log("JEAH")
-        }
-    }
-}
 
 function startsetup() {
     fs.mkdirSync(zentroxInstPath)
@@ -83,7 +110,21 @@ app.get('/', (req, res) => {
 })
 
 app.post('/login', (req, res) => {
-    auth(req.body.username, req.body.password, req)
+    authTest = auth(req.body.username, req.body.password, req)
+    if (authTest == true) {
+        req.session.signedIn = true
+        req.session.username = req.body.username
+        res.send({
+            "status": "s"
+        })
+    }
+    else {
+        res.send({
+            "status": "f",
+            "message": "Wrong credentials"
+        })
+    }
+
 })
 
 app.get('/setup', (req, res) => {
@@ -99,7 +140,8 @@ app.post('/setup/registAdmin', (req, res) => {
     if (fs.existsSync(path.join(zentroxInstPath, "admin.txt"))) {
         res.status(403).send("This action is not allowed")
     } else {
-        fs.writeFileSync(path.join(zentroxInstPath, "users.txt"), Buffer.from(req.body.adminUsername, "base64") + ": " + hash512(req.body.adminPassword)+"\n")
+        newUser(req.body.adminUsername, req.body.adminPassword, "admin")
+        fs.writeFileSync(path.join(zentroxInstPath, "admin.txt"), req.body.adminUsername)
         res.send({
             "status": "s"
         })
@@ -135,7 +177,12 @@ app.post('/setup/custom', (req, res) => {
 
 app.get('/dashboard', (req, res) => {
     if (req.session.signedIn == true) {
-        res.render(path.join(zentroxInstPath, "dashboard.html"))
+        if (req.session.username == fs.readFileSync(path.join(zentroxInstPath, "admin.txt").toString("utf-8"))) {
+            res.render("dashboard_user.html")
+        }
+        else {
+            res.render("dashboard_user.html")
+        }
     }
     else {
         res.redirect("/")
@@ -179,6 +226,8 @@ app.get('/api', (req, res) => {
     }
 })
 
-app.listen(port, () => {
+server = https.createServer(options, app)
+
+server.listen(port, () => {
     console.log(`Zentrox running on port ${port}`)
 })

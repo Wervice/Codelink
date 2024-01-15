@@ -6,6 +6,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zentrox</title>
     <link rel="stylesheet" href="welcome.css">
+    <script>
+        function submitLogin() {
+            username = document.getElementById("usernameInput").value,
+            password = document.getElementById("passwordInput").value
+            fetch("/login", {
+                "method": "POST",
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "body": JSON.stringify({
+                    "username": username,
+                    "password": password
+                })
+            }).then((res) => res.json())
+                .then((data) => {
+                    if (data["status"] == "s") {
+                        location.href = "/dashboard"
+                    }
+                })
+        }
+    </script>
 </head>
 
 <body>
@@ -22,7 +43,7 @@
             <input type="text" placeholder="Username" id="usernameInput">
             <br>
             <input type="password" placeholder="Password" id="passwordInput"><br>
-            <button>Login</button>
+            <button onclick="submitLogin()">Login</button>
             <%- registrationButton %>
         </div>
     </div>
