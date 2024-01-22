@@ -1,15 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- Dashboard Admin  -->
+<!-- Dashboard Admin -->
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zentrox</title>
-    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="dashboard_admin.css">
+    <script src="dashboard_admin.js"></script>
 </head>
 
 <body>
-	
+    <div id="sideBar">
+        <h2>Zentrox</h2>
+        <button><img src="status.png" alt="status">Overview</button><br>
+        <button><img src="applications.png" alt="applications">Applications</button><br>
+        <button><img src="files.png" alt="files">Files</button><br>
+        <button><img src="shell.png" alt="shell">Shell</button><br>
+        <button><img src="shield.png" alt="shield">Securitry</button><br>
+        <button><img src="settings.png" alt="settings">Settings</button>
+    </div>
+    <div id="pages">
+        <div id="overview">
+            <details open>
+                <summary>
+                    <h3>Resources</h3>
+                </summary>
+                <div style="padding: 10px;">
+                    <div class="line_bar_chart">
+                        <div id="cpu_bar" style="width: 200px;">
+                            CPU
+                        </div>
+                    </div><br>
+                    <div class="line_bar_chart">
+                        <div id="ram_bar" style="width: 20px;">
+                            RAM
+                        </div>
+                    </div><br>
+                </div><br>
+            </details>
+            <details open>
+                <summary>
+                    <h3>Users</h3>
+                </summary>
+                <%- usersTable %>
+                <h3>Traffic</h3>
+                <div id="traffic_table">
+
+                </div>
+            </details>
+        </div>
+    </div>
 </body>
 
 </html>

@@ -1,0 +1,9 @@
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sda3       465G   47G  415G  11% /
+devtmpfs        4.0M     0  4.0M   0% /dev
+tmpfs           3.8G  7.1M  3.8G   1% /dev/shm
+tmpfs           1.5G  1.8M  1.5G   1% /run
+tmpfs           3.8G  3.1M  3.8G   1% /tmp
+/dev/sda3       465G   47G  415G  11% /home
+/dev/sda2       974M  324M  584M  36% /boot
+tmpfs           762M  204K  761M   1% /run/user/1000
