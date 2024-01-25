@@ -133,7 +133,7 @@ button {
 .line_bar_chart {
     width: 210px;
     height: 35px;
-    border-radius: 17.5px;
+    border-radius: 5px;
     background-color: #242424;
     overflow: hidden;
     display: inline-block;
@@ -145,6 +145,22 @@ button {
         font-size: 20px;
         background-color: dodgerblue;
         transition: width ease-in-out 0.125s;
-        border-radius: 17.5px;
+        border-radius: 5px;
     }
+}
+
+td {
+  padding: 10px;
+}
+
+td button {
+  background: transparent;
+  color: white;
+  padding: 0px;
+  margin: 0px;
+}
+
+td button:hover {
+  background: transparent;
+  opacity: 80%;
 }

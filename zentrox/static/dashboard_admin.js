@@ -43,16 +43,42 @@ function setDiskBar() {
         })
 }
 
+function deleteUser(username) {
+  if (confirm(`Do you want to delete ${username}?`)) {
+  fetch("/api", {
+      "method": "POST",
+      "headers": {
+          "Content-Type": "application/json"
+      },
+      "body": JSON.stringify({  
+        "username": username,
+        "r": "deleteUser"
+      })
+  }).then((res) => res.json())
+      .then((data) => {
+          if (data["status"] == "s") {
+             fetch("/api?r=userList").then((res) => res.json()).then((data) => {
+            if (data["status"] == "s") {
+              document.getElementById("usersTable").innerHTML = data["text"]
+            }
+          }) 
+          }
+          else {
+            alert("Can not delete user")
+          }
+      })
+
+} 
+}
+
 window.onload = function () {
     setCPUBar()
     setRAMBar()
-    setDiskBar()
 }
 
 setInterval(
     function () {
         setCPUBar()
         setRAMBar()
-        setDiskBar()
     }, 5000
 )

@@ -1,6 +1,5 @@
 const express = require("express");
 const port = 3000;
-
 const path = require("path");
 const app = express();
 const os = require("os");
@@ -12,7 +11,6 @@ const session = require("express-session");
 const https = require("https");
 var osu = require("node-os-utils");
 const chpr = require("child_process");
-const { stdout } = require("process");
 
 var key = fs.readFileSync(__dirname + "/selfsigned.key");
 var cert = fs.readFileSync(__dirname + "/selfsigned.crt");
@@ -28,13 +26,14 @@ function auth(username, password, req) {
     .readFileSync(path.join(zentroxInstPath, "users.txt"))
     .toString()
     .split("\n");
+  console.log("Auth \""+ username+ "\"")
   for (user of users) {
-    console.log(user);
-    console.log("_" + atob(user.split(": ")[0]) + "_");
     if (atob(user.split(": ")[0]) == username) {
       if (hash512(password) == user.split(": ")[1]) {
+        console.log(`Auth for user "${username}" success`)
         return true;
-      } else {
+        } else {
+        console.log(`Auth for user "${username}" failed`)
         return false;
       }
     }
@@ -42,15 +41,42 @@ function auth(username, password, req) {
 }
 
 function newUser(username, password, role = "user") {
+  console.log(`Adding new user: Name = ${username} | Role = ${role}`)
   if (role == null || role == "") role = user;
   userEntryString = btoa(username) + ": " + hash512(password) + ": " + role;
-  fs.appendFileSync(
-    path.join(zentroxInstPath, "users.txt"),
-    "\n" + userEntryString
-  );
+  alreadyExisting = false
+  for (line of fs.readFileSync(path.join(zentroxInstPath, "users.txt")).toString().split("\n")) {
+    if (line.split(": ")[0] == btoa(username)) {
+      alreadyExisting = true
+    }
+  }
+  if (!alreadyExisting) {
+    fs.appendFileSync(
+      path.join(zentroxInstPath, "users.txt"),
+      userEntryString+"\n"
+    );
+  }
+  fs.mkdirSync(path.join(zentroxInstPath, "users", btoa(username)))
+}
+
+function deleteUser(username) {
+  ostring = ""
+  for (line of fs.readFileSync(path.join(zentroxInstPath, "users.txt")).toString().split("\n")) {
+    if (line.split(": ")[0] != btoa(username)) {
+      ostring += line+"\n"
+    }
+  }
+  userfolder = path.join(zentroxInstPath, "users", btoa(username))
+  if (fs.existsSync(userfolder)) {
+   chpr.exec("rm -rf "+userfolder) 
+  }
+  fs.writeFileSync(path.join(zentroxInstPath, "users.txt"), ostring)
 }
 
 if (!fs.existsSync(path.join(zentroxInstPath, "sessionSecret.txt"))) {
+  if (!fs.existsSync(zentroxInstPath)) {
+    fs.mkdirSync(zentroxInstPath)
+  }
   fs.writeFileSync(
     path.join(zentroxInstPath, "sessionSecret.txt"),
     crypto.randomBytes(64).toString("ascii")
@@ -86,11 +112,12 @@ app.engine("html", require("ejs").renderFile);
 app.set("view engine", "ejs");
 
 function startsetup() {
-  fs.mkdirSync(zentroxInstPath);
+  if (!fs.existsSync(zentroxInstPath)) {
+    fs.mkdirSync(zentroxInstPath);
+  }
   fs.mkdirSync(path.join(zentroxInstPath, "users"));
   fs.writeFileSync(path.join(zentroxInstPath, "zentrox.txt"), "");
   fs.writeFileSync(path.join(zentroxInstPath, "users.txt"), "");
-  fs.writeFileSync(path.join(zentroxInstPath, ""));
 }
 
 function hash512(str) {
@@ -155,16 +182,18 @@ app.post("/login", (req, res) => {
 });
 
 app.get("/signup", (req, res) => {
-  if (fs.readFileSync(path.join(zentroxInstPath, "reqMode.txt")).toString() == "public") {
+  if (fs.readFileSync(path.join(zentroxInstPath, "regMode.txt")).toString() == "public") {
     if (req.session.signedIn == true) {
       res.redirect("/dashboard")
     }
     else {
-      res.render("signup.html")
+      res.render("signup.html", {
+        "serverName": fs.readFileSync(path.join(zentroxInstPath, "custom.txt")).toString().split("\n")[0]
+      })
     }
   }
   else {
-    res.status("403").send("Nice try ;)")
+    res.status(403).send("Nice try ;)")
   }
 })
 
@@ -175,9 +204,16 @@ app.post("/signup", (req, res) => {
       "text": "Already logged in"
     })
   }
+  else {
+    newUser(req.body.username, req.body.password)
+    res.send(
+      { "status": "s" }
+    )
+  }
 })
 
 app.get("/setup", (req, res) => {
+  startsetup()
   if (!fs.existsSync(path.join(zentroxInstPath, "setupDone.txt"))) {
     res.render(path.join(__dirname, "templates/setup.html"));
   } else {
@@ -194,8 +230,9 @@ app.post("/setup/registAdmin", (req, res) => {
       path.join(zentroxInstPath, "admin.txt"),
       req.body.adminUsername
     );
+    req.session.isAdmin = true
     res.send({
-      status: "s",
+      status: "s"
     });
   }
 });
@@ -209,7 +246,7 @@ app.post("/setup/regMode", (req, res) => {
       req.body.regMode
     );
     res.send({
-      status: "s",
+      status: "s"
     });
   }
 });
@@ -226,9 +263,9 @@ app.post("/setup/custom", (req, res) => {
     // ? Finish setup process
     fs.writeFileSync(path.join(zentroxInstPath, "setupDone.txt"), "true");
     req.session.signedIn = true;
-
+    req.session.isAdmin = true
     res.send({
-      status: "s",
+      status: "s"
     });
   }
 });
@@ -247,10 +284,10 @@ app.get("/dashboard", (req, res) => {
           userStatus = "<b>Admin</b>"
         }
         else {
-          userStatus = "User</tr><td><button>Delete</button></tr><td><button>Kick</button>"
+          userStatus = `User</td><td><button style='color:red' onclick="deleteUser('${atob(userList[i].split(": ")[0])}')">Delete</button></td><td><button>Kick</button>`
         }
         if (userList[i].split(": ")[0] != "") {
-          userTable += "<tr><td>" + atob(userList[i].split(": ")[0]) +"</td><td>"+userStatus+"</td></tr>"
+          userTable += "<tr><td>" + atob(userList[i].split(": ")[0]) + "</td><td>" + userStatus + "</td></tr>"
         }
         i++
       }
@@ -307,13 +344,58 @@ app.get("/api", (req, res) => {
         p: Number((os.totalmem() - os.freemem()) / os.totalmem()) * 100,
       });
     }
-  } else {
+  } else if (req.query["r"] == "userList") {
+      
+    if (req.session.isAdmin == true) {
+      userTable = "<table>"
+      userList = fs.readFileSync(path.join(zentroxInstPath, "users.txt")).toString().split("\n")
+      i = 0
+      while (i != userList.length) {
+      if (userList[i].split(": ")[2] == "admin") {
+          userStatus = "<b>Admin</b>"
+        }
+        else {
+          userStatus = `User</td><td><button style='color:red' onclick="deleteUser('${atob(userList[i].split(": ")[0])}')">Delete</button></td><td><button>Kick</button>`
+        }
+        if (userList[i].split(": ")[0] != "") {
+          userTable += "<tr><td>" + atob(userList[i].split(": ")[0]) + "</td><td>" + userStatus + "</td></tr>"
+        }
+        i++
+      }
+      userList += "</table>"
+      res.send({
+        "status": "s", 
+        "text": userTable
+      })
+    }
+  }
+  else {
     res.status("403").send({
       status: "f",
       text: "No supported command",
     });
   }
 });
+
+app.post("/api", (req, res) => {
+  if (req.body.r == "deleteUser") {
+    if (req.session.isAdmin == true) {
+      deleteUser(req.body.username)      
+      res.send(
+        {
+          "status": "s"
+        }
+      )
+    }
+    else {}
+  }
+})
+
+app.get("/logout", (req, res) => {
+  req.session.signedIn = false
+  req.session.isAdmin = false
+  res.redirect("/")
+})
 
 server = https.createServer(options, app);
 

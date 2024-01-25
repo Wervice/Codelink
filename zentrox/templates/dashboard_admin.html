@@ -18,7 +18,8 @@
         <button><img src="files.png" alt="files">Files</button><br>
         <button><img src="shell.png" alt="shell">Shell</button><br>
         <button><img src="shield.png" alt="shield">Securitry</button><br>
-        <button><img src="settings.png" alt="settings">Settings</button>
+        <button><img src="settings.png" alt="settings">Settings</button><br>
+        <button onclick="location.href='/logout'">Logout</button>
     </div>
     <div id="pages">
         <div id="overview">
@@ -43,10 +44,8 @@
                 <summary>
                     <h3>Users</h3>
                 </summary>
-                <%- usersTable %>
-                <h3>Traffic</h3>
-                <div id="traffic_table">
-
+                <div id="usersTable">
+                    <%- usersTable %>
                 </div>
             </details>
         </div>
