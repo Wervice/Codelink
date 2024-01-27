@@ -42,7 +42,7 @@ function auth(username, password, req) {
 
 function newUser(username, password, role = "user") {
   console.log(`Adding new user: Name = ${username} | Role = ${role}`)
-  if (role == null || role == "") role = user;
+  if (role == null || role == "") role = "user";
   userEntryString = btoa(username) + ": " + hash512(password) + ": " + role;
   alreadyExisting = false
   for (line of fs.readFileSync(path.join(zentroxInstPath, "users.txt")).toString().split("\n")) {
@@ -55,8 +55,8 @@ function newUser(username, password, role = "user") {
       path.join(zentroxInstPath, "users.txt"),
       userEntryString+"\n"
     );
+    fs.mkdirSync(path.join(zentroxInstPath, "users", btoa(username)))
   }
-  fs.mkdirSync(path.join(zentroxInstPath, "users", btoa(username)))
 }
 
 function deleteUser(username) {
@@ -271,6 +271,7 @@ app.post("/setup/custom", (req, res) => {
 });
 
 app.get("/dashboard", (req, res) => {
+  console.log("Dashboard "+req.body)
   if (req.session.signedIn == true) {
     if (
       req.session.username ==
@@ -284,7 +285,7 @@ app.get("/dashboard", (req, res) => {
           userStatus = "<b>Admin</b>"
         }
         else {
-          userStatus = `User</td><td><button style='color:red' onclick="deleteUser('${atob(userList[i].split(": ")[0])}')">Delete</button></td><td><button>Kick</button>`
+          userStatus = `User</td><td><button style='color:red' onclick="deleteUser('${atob(userList[i].split(": ")[0])}')">Delete</button>`
         }
         if (userList[i].split(": ")[0] != "") {
           userTable += "<tr><td>" + atob(userList[i].split(": ")[0]) + "</td><td>" + userStatus + "</td></tr>"
@@ -355,7 +356,7 @@ app.get("/api", (req, res) => {
           userStatus = "<b>Admin</b>"
         }
         else {
-          userStatus = `User</td><td><button style='color:red' onclick="deleteUser('${atob(userList[i].split(": ")[0])}')">Delete</button></td><td><button>Kick</button>`
+          userStatus = `User</td><td><button style='color:red' onclick="deleteUser('${atob(userList[i].split(": ")[0])}')">Delete</button>`
         }
         if (userList[i].split(": ")[0] != "") {
           userTable += "<tr><td>" + atob(userList[i].split(": ")[0]) + "</td><td>" + userStatus + "</td></tr>"
@@ -394,8 +395,9 @@ app.post("/api", (req, res) => {
 app.get("/logout", (req, res) => {
   req.session.signedIn = false
   req.session.isAdmin = false
-  res.redirect("/")
-})
+  console.log("Logout "+req.session)
+  setTimeout(function () {res.redirect("/")}, 1000)
+  })
 
 server = https.createServer(options, app);
 

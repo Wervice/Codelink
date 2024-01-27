@@ -67,9 +67,20 @@ function deleteUser(username) {
             alert("Can not delete user")
           }
       })
-
-} 
+  } 
 }
+
+function changePage(pageName) {
+  for (page of document.querySelectorAll("#pages > div")) {
+    console.log(page)
+    if (page.id != pageName) {
+      page.hidden = true
+    }
+    else {
+      page.hidden = false
+    }
+  }
+  }
 
 window.onload = function () {
     setCPUBar()

@@ -13,13 +13,13 @@
 <body>
     <div id="sideBar">
         <h2>Zentrox</h2>
-        <button><img src="status.png" alt="status">Overview</button><br>
-        <button><img src="applications.png" alt="applications">Applications</button><br>
+        <button onclick="changePage('overview')"><img src="status.png" alt="status">Overview</button><br>
+        <button onclick="changePage('applications')"><img src="applications.png" alt="applications">Applications</button><br>
         <button><img src="files.png" alt="files">Files</button><br>
         <button><img src="shell.png" alt="shell">Shell</button><br>
         <button><img src="shield.png" alt="shield">Securitry</button><br>
         <button><img src="settings.png" alt="settings">Settings</button><br>
-        <button onclick="location.href='/logout'">Logout</button>
+      <button onclick="location.href='/logout'"><img src="logout.png" alt="logout">Logout</button>
     </div>
     <div id="pages">
         <div id="overview">
@@ -48,6 +48,9 @@
                     <%- usersTable %>
                 </div>
             </details>
+        </div>
+        <div id="applications">
+          
         </div>
     </div>
 </body>
