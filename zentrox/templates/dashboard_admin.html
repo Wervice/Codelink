@@ -1,58 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- Dashboard Admin -->
+  <!-- Dashboard Admin -->
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Zentrox</title>
-    <link rel="stylesheet" href="dashboard_admin.css">
+    <link rel="stylesheet" href="dashboard_admin.css" />
     <script src="dashboard_admin.js"></script>
-</head>
+  </head>
 
-<body>
+  <body>
     <div id="sideBar">
-        <h2>Zentrox</h2>
-        <button onclick="changePage('overview')"><img src="status.png" alt="status">Overview</button><br>
-        <button onclick="changePage('applications')"><img src="applications.png" alt="applications">Applications</button><br>
-        <button><img src="files.png" alt="files">Files</button><br>
-        <button><img src="shell.png" alt="shell">Shell</button><br>
-        <button><img src="shield.png" alt="shield">Securitry</button><br>
-        <button><img src="settings.png" alt="settings">Settings</button><br>
-      <button onclick="location.href='/logout'"><img src="logout.png" alt="logout">Logout</button>
+      <h2>Zentrox</h2>
+      <button onclick="changePage('overview')">
+        <img src="status.png" alt="status" />Overview</button><br />
+      <button onclick="changePage('applications')">
+        <img src="applications.png" alt="applications" />Applications</button><br />
+      <button><img src="files.png" alt="files" />Files</button><br />
+      <button><img src="shell.png" alt="shell" />Shell</button><br />
+      <button><img src="shield.png" alt="shield" />Securitry</button><br />
+      <button><img src="settings.png" alt="settings" />Settings</button><br />
+      <button onclick="location.href='/logout'">
+        <img src="logout.png" alt="logout" />Logout
+      </button>
     </div>
     <div id="pages">
-        <div id="overview">
-            <details open>
-                <summary>
-                    <h3>Resources</h3>
-                </summary>
-                <div style="padding: 10px;">
-                    <div class="line_bar_chart">
-                        <div id="cpu_bar" style="width: 200px;">
-                            CPU
-                        </div>
-                    </div><br>
-                    <div class="line_bar_chart">
-                        <div id="ram_bar" style="width: 20px;">
-                            RAM
-                        </div>
-                    </div><br>
-                </div><br>
-            </details>
-            <details open>
-                <summary>
-                    <h3>Users</h3>
-                </summary>
-                <div id="usersTable">
-                    <%- usersTable %>
-                </div>
-            </details>
-        </div>
-        <div id="applications">
-          
-        </div>
-    </div>
-</body>
+      <div id="overview">
+        <details open>
+          <summary>
+            <h3>Resources</h3>
+          </summary>
+          <div style="padding: 10px">
+            <div class="line_bar_chart">
+              <div id="cpu_bar" style="width: 200px">CPU</div>
+            </div>
+            <br />
+            <div class="line_bar_chart">
+              <div id="ram_bar" style="width: 20px">RAM</div>
+            </div>
+            <br />
+          </div>
+          <br />
+        </details>
+        <details open>
+          <summary>
+            <h3>Users</h3>
+          </summary>
+          <div id="usersTable"><%- usersTable %></div>
+        </details>
+      </div>
 
+      <div id="applications" hidden>
+          <input type="text" placeholder="Search for app" />
+          <br />
+          <div id="installedApps"></div>
+      </div>
+    </div>
+  </body>
 </html>
