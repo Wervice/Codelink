@@ -11,7 +11,7 @@
 - FileTree: A simple file manager including several features for developement
 - Tin: A small browser built with Chrome
 
-## WHat is up next?
+## What is up next?
 - Zentrox: A full self hostable server interface for collaboration and managing a server
 
 ## Which technologies does Codelink use?
