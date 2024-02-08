@@ -2,8 +2,8 @@ const fs = require("fs");
 
 win = nw.Window.get();
 
-if (!fs.existsSync("browser/cookies.txt")) {
-  fs.writeFileSync("browser/cookies.txt", "[]");
+if (!fs.existsSync("tin/cookies.txt")) {
+  fs.writeFileSync("tin/cookies.txt", "[]");
 }
 
 currentWorkingTabId = 0;
@@ -12,18 +12,18 @@ tablist = ["0"];
 
 function toggleBookmark() {
   bookmarkList = fs
-    .readFileSync("browser/favs.txt")
+    .readFileSync("tin/favs.txt")
     .toString("utf-8")
     .split(";");
   if (
     fs
-      .readFileSync("browser/favs.txt")
+      .readFileSync("tin/favs.txt")
       .toString("utf-8")
       .includes(
         new URL(document.getElementById("tab" + currentWorkingTabId).src)
           .hostname +
-          new URL(document.getElementById("tab" + currentWorkingTabId).src)
-            .pathname
+        new URL(document.getElementById("tab" + currentWorkingTabId).src)
+          .pathname
       )
   ) {
     bookmarkList.splice(
@@ -41,11 +41,11 @@ function toggleBookmark() {
       bookmarkListText += e + ";";
     }
   }
-  fs.writeFileSync("browser/favs.txt", bookmarkListText.toString());
+  fs.writeFileSync("tin/favs.txt", bookmarkListText.toString());
 }
 
 function renderTabList() {
-  
+
   setTimeout(function () {
     renderedTabList = "";
     eid = 0;
@@ -108,7 +108,7 @@ snUrlsList = {
 function newTab() {
   try {
     document.getElementById("tab" + currentWorkingTabId).hidden = true;
-  } catch {}
+  } catch { }
   currentWorkingTabId = maxCurrentTabId + 1;
   maxCurrentTabId++;
   webviewElement = document.createElement("webview");
@@ -178,7 +178,7 @@ document.getElementById("tab0").executeScript({
 
 function renderBookmarkList() {
   bookmarkList = fs
-    .readFileSync("browser/favs.txt")
+    .readFileSync("tin/favs.txt")
     .toString("utf-8")
     .split(";");
   bookmarkListRendered = "";
@@ -249,17 +249,23 @@ window.onload = function () {
       this.document.getElementById("sideBar").hidden == false
     ) {
       this.document.getElementById("sideBar").classList.add("moveOut");
+      this.document.querySelector("#sideBar div.tooltip").classList.add("moveOut");
       this.setTimeout(function () {
         this.document.getElementById("sideBar").hidden = true;
         this.document.getElementById("sideBarButton").hidden = false;
         document.getElementById("protectionOverlay").hidden = true;
         this.document.getElementById("sideBar").classList.remove("moveOut");
+        this.document.querySelector("#sideBar div.tooltip").classList.remove("moveOut");
       }, 250);
     } else if (
       e.key == "Escape" &&
       !this.document.getElementById("bookmarkWindow").hidden
     ) {
-      this.document.getElementById("bookmarkWindow").hidden = true;
+      this.setTimeout(function () {
+        this.document.getElementById("bookmarkWindow").hidden = true;
+        this.document.getElementById("bookmarkWindow").classList.remove("fadeOut")
+      }, 250)
+      this.document.getElementById("bookmarkWindow").classList.add("fadeOut")
       this.document.getElementById("protectionOverlay").hidden = true;
     } else if (
       e.key == "b" &&
@@ -272,7 +278,11 @@ window.onload = function () {
         this.document.getElementById("bookmarkWindow").hidden = false;
         this.document.getElementById("protectionOverlay").hidden = false;
       } else {
-        this.document.getElementById("bookmarkWindow").hidden = true;
+        this.setTimeout(function () {
+          this.document.getElementById("bookmarkWindow").hidden = true;
+          this.document.getElementById("bookmarkWindow").classList.remove("fadeOut")
+        }, 250)
+        this.document.getElementById("bookmarkWindow").classList.add("fadeOut")
         this.document.getElementById("protectionOverlay").hidden = true;
       }
     }

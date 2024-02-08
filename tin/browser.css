@@ -46,14 +46,12 @@ iframe::-webkit-scrollbar {
 
 @keyframes side_bar_move_in {
   0% {
-    box-shadow: 0vw 0px 0px 100vw #00000000;
     left: -100vw;
   }
 }
 
 @keyframes side_bar_move_out {
   100% {
-    box-shadow: 100vw 0px 0px 100vw #00000000;
     left: -100vw;
   }
 }
@@ -64,8 +62,22 @@ iframe::-webkit-scrollbar {
   }
 }
 
+@keyframes element_fade_out {
+  0% {
+    opacity: 100%;
+  }
+
+  100% {
+    opacity: 0%;
+  }
+}
+
 .moveOut {
   animation: side_bar_move_out 0.25s !important;
+}
+
+.fadeOut {
+  animation: element_fade_out 0.3s !important;
 }
 
 #sideBar {
@@ -76,8 +88,8 @@ iframe::-webkit-scrollbar {
   top: 20px;
   border-radius: 5px;
   background-color: var(--grey-dark-2);
-  box-shadow: 0px 0px 0px 100vw #00000099, 0px 0px 25px black;
-  animation: side_bar_move_in 0.125s;
+  box-shadow: 0px 0px 0px 1000vw #00000099;
+  animation: side_bar_move_in 0.05s;
   width: 300px;
 
   & button {
@@ -227,6 +239,8 @@ div.tooltip {
   box-shadow: 0px 5px 10px #00000030, 0px 0px 0px 100vw #00000074;
   font-family: var(--font-sans);
   overflow-y: scroll;
+  animation-name: element_fade_in;
+  animation-duration: 0.25s;
 
   & button {
     border: none;
