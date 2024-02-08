@@ -44,43 +44,87 @@ function setDiskBar() {
 }
 
 function deleteUser(username) {
-  if (confirm(`Do you want to delete ${username}?`)) {
-  fetch("/api", {
-      "method": "POST",
-      "headers": {
-          "Content-Type": "application/json"
-      },
-      "body": JSON.stringify({  
-        "username": username,
-        "r": "deleteUser"
-      })
-  }).then((res) => res.json())
-      .then((data) => {
-          if (data["status"] == "s") {
-             fetch("/api?r=userList").then((res) => res.json()).then((data) => {
-            if (data["status"] == "s") {
-              document.getElementById("usersTable").innerHTML = data["text"]
-            }
-          }) 
-          }
-          else {
-            alert("Can not delete user")
-          }
-      })
-  } 
+    if (confirm(`Do you want to delete ${username}?`)) {
+        fetch("/api", {
+            "method": "POST",
+            "headers": {
+                "Content-Type": "application/json"
+            },
+            "body": JSON.stringify({
+                "username": username,
+                "r": "deleteUser"
+            })
+        }).then((res) => res.json())
+            .then((data) => {
+                if (data["status"] == "s") {
+                    fetch("/api?r=userList").then((res) => res.json()).then((data) => {
+                        if (data["status"] == "s") {
+                            document.getElementById("usersTable").innerHTML = data["text"]
+                        }
+                    })
+                }
+                else {
+                    alert("Can not delete user")
+                }
+            })
+    }
 }
 
 function changePage(pageName) {
-  for (page of document.querySelectorAll("#pages > div")) {
-    console.log(page)
-    if (page.id != pageName) {
-      page.hidden = true
+    for (page of document.querySelectorAll("#pages > div")) {
+        console.log(page)
+        if (page.id != pageName) {
+            page.hidden = true
+        }
+        else {
+            page.hidden = false
+        }
     }
-    else {
-      page.hidden = false
+}
+
+var currFPath = "/"
+
+function renderFiles(path) {
+    fetch("/api", {
+        "method": "POST",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "body": JSON.stringify({
+            "path": path,
+            "r": "filesRender"
+        })
+    }).then((res) => res.json())
+        .then((data) => {
+            if (data["status"] == "s") {
+                document.getElementById("filesContainer").innerHTML = data["content"]
+
+            }
+            else {
+                alert("Can not fetch files list")
+            }
+        })
+}
+
+function navigateFolder(file) {
+    currFPath = currFPath + file + "/"
+    renderFiles(currFPath)
+}
+
+function downloadFile(file) {
+    window.open("/api?r=callfile&file="+btoa(currFPath + file))
+}
+
+function goFUp() {
+    currFPathArr = currFPath.split("/")
+    currFPath = "/"
+    i = 0
+    while (i != currFPathArr.length-1) {
+        currFPath += currFPathArr[i]+"/"
+        i++
     }
-  }
-  }
+    renderFiles(currFPath)
+}
 
 window.onload = function () {
     setCPUBar()

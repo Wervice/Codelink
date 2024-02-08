@@ -149,6 +149,34 @@ button {
     }
 }
 
+#filesContainer {
+    overflow: scroll;
+    max-height: 90vh;
+    width: calc(100vw - 250px);
+}
+
+#filesContainer::-webkit-scrollbar {
+    display: none;
+}
+
+.fileButtons {
+    height: 80px;
+    max-height: 80px;
+    width: 160px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    padding: 5px;
+    border-radius: 2.5px;
+    border: 1px solid #333;
+    text-align: center;
+    align-content: center;
+    white-space: nowrap;
+    
+    &:hover {
+        background-color: #222 !important;
+    }
+}
+
 td {
   padding: 10px;
 }

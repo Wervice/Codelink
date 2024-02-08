@@ -11,6 +11,7 @@ const session = require("express-session");
 const https = require("https");
 var osu = require("node-os-utils");
 const chpr = require("child_process");
+const { file } = require("jszip");
 
 var key = fs.readFileSync(__dirname + "/selfsigned.key");
 var cert = fs.readFileSync(__dirname + "/selfsigned.crt");
@@ -26,13 +27,13 @@ function auth(username, password, req) {
     .readFileSync(path.join(zentroxInstPath, "users.txt"))
     .toString()
     .split("\n");
-  console.log("Auth \""+ username+ "\"")
+  console.log("Auth \"" + username + "\"")
   for (user of users) {
     if (atob(user.split(": ")[0]) == username) {
       if (hash512(password) == user.split(": ")[1]) {
         console.log(`Auth for user "${username}" success`)
         return true;
-        } else {
+      } else {
         console.log(`Auth for user "${username}" failed`)
         return false;
       }
@@ -53,7 +54,7 @@ function newUser(username, password, role = "user") {
   if (!alreadyExisting) {
     fs.appendFileSync(
       path.join(zentroxInstPath, "users.txt"),
-      userEntryString+"\n"
+      userEntryString + "\n"
     );
     fs.mkdirSync(path.join(zentroxInstPath, "users", btoa(username)))
   }
@@ -63,12 +64,12 @@ function deleteUser(username) {
   ostring = ""
   for (line of fs.readFileSync(path.join(zentroxInstPath, "users.txt")).toString().split("\n")) {
     if (line.split(": ")[0] != btoa(username)) {
-      ostring += line+"\n"
+      ostring += line + "\n"
     }
   }
   userfolder = path.join(zentroxInstPath, "users", btoa(username))
   if (fs.existsSync(userfolder)) {
-   chpr.exec("rm -rf "+userfolder) 
+    chpr.exec("rm -rf " + userfolder)
   }
   fs.writeFileSync(path.join(zentroxInstPath, "users.txt"), ostring)
 }
@@ -271,7 +272,7 @@ app.post("/setup/custom", (req, res) => {
 });
 
 app.get("/dashboard", (req, res) => {
-  console.log("Dashboard "+req.body)
+  console.log("Dashboard " + req.body)
   if (req.session.signedIn == true) {
     if (
       req.session.username ==
@@ -292,7 +293,7 @@ app.get("/dashboard", (req, res) => {
         }
         i++
       }
-      userList += "</table>"
+      userTable += "</table>"
       res.render("dashboard_admin.html", {
         "usersTable": userTable
       });
@@ -346,13 +347,13 @@ app.get("/api", (req, res) => {
       });
     }
   } else if (req.query["r"] == "userList") {
-      
+
     if (req.session.isAdmin == true) {
       userTable = "<table>"
       userList = fs.readFileSync(path.join(zentroxInstPath, "users.txt")).toString().split("\n")
       i = 0
       while (i != userList.length) {
-      if (userList[i].split(": ")[2] == "admin") {
+        if (userList[i].split(": ")[2] == "admin") {
           userStatus = "<b>Admin</b>"
         }
         else {
@@ -363,11 +364,21 @@ app.get("/api", (req, res) => {
         }
         i++
       }
-      userList += "</table>"
+      userTable += "</table>"
       res.send({
-        "status": "s", 
+        "status": "s",
         "text": userTable
       })
+    }
+  } else if (req.query["r"] == "callfile") {
+    if (req.session.isAdmin == true) {
+      res.set({
+        "Content-Disposition": `attachment; filename=${path.basename(atob(req.query["file"]))}`
+      }).sendFile(atob(req.query["file"]))
+    }
+    else {
+      res.send("This file can not be shown to you")
+      console.warn(`Somebody tried to access ${req.query["file"]} without the correct permissions.`)
     }
   }
   else {
@@ -381,23 +392,52 @@ app.get("/api", (req, res) => {
 app.post("/api", (req, res) => {
   if (req.body.r == "deleteUser") {
     if (req.session.isAdmin == true) {
-      deleteUser(req.body.username)      
+      deleteUser(req.body.username)
       res.send(
         {
           "status": "s"
         }
       )
     }
-    else {}
+    else { }
+  }
+  else if (req.body.r == "filesRender") {
+    if (req.session.isAdmin == true) {
+      filesHTML = ""
+      for (fileN of fs.readdirSync(req.body.path)) {
+        try {
+          if (fs.statSync(path.join(req.body.path, fileN)).isFile()) {
+            fileIcon = "file.png"
+            funcToUse = "downloadFile"
+          }
+          else {
+            fileIcon = "folder.png"
+            funcToUse = "navigateFolder"
+          }
+        }
+        catch {
+          fileIcon = "adminfile.png"
+          funcToUse = "alert"
+        }
+        filesHTML += `<button class='fileButtons' onclick="${funcToUse}('${fileN}')"><img src="${fileIcon}"><br>${fileN}</button>`
+      }
+      res.send(
+        {
+          "status": "s",
+          "content": filesHTML
+        }
+      )
+    }
+    else { }
   }
 })
 
 app.get("/logout", (req, res) => {
   req.session.signedIn = false
   req.session.isAdmin = false
-  console.log("Logout "+req.session)
-  setTimeout(function () {res.redirect("/")}, 1000)
-  })
+  console.log("Logout " + req.session)
+  setTimeout(function () { res.redirect("/") }, 1000)
+})
 
 server = https.createServer(options, app);
 
