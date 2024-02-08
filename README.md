@@ -3,30 +3,21 @@
 </div>
 
 <h1 align=center>Codelink</h1>
-<br>
 
-Codelink is a family of tools and apps designed to be used in development and for coding.
+<div align=center>Codelink is an open source family of applications, specialized for programming. Codelink supports Windows and Linux.</div>
 
-It's all free and open source. Codelink features a file manager, note taking app and browser at the moment.
+## Which apps does Codelink feature?
+- Nanuscript: A advanced note taking app using Markdown
+- FileTree: A simple file manager including several features for developement
+- Tin: A small browser built with Chrome
 
-It's all made using NW.js or Electron.
+## WHat is up next?
+- Zentrox: A full self hostable server interface for collaboration and managing a server
 
-## The apps
-### FileTree
+## Which technologies does Codelink use?
+Codelink uses NW.js for apps that run localy on your computer. NW.js is simmilar to Electron, but a whole lot faster and easier.   
+For Zentrox, I use ExpressJS and no front end libraries.
 
-![]()
-
-*Screenshot of FileTree*
-
-FileTree is a fast and easy to use file manager. It has (a) ...
-- Command pallet
-- Content preview
-- Built-in simple encryption
-- File compression
-- Terminal launcher
-- Own icons
-- Different view modes
-
-
-### Manuscript
-![]()
+## Bugs...
+When you find a bug, I would appreciate, if you'd open an issue on GitHub, or contact me at wervice@proton.me .    
+It may take a whole to fix a bug, but I'm happy about every report.
