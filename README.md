@@ -7,7 +7,7 @@
 <div align=center>Codelink is an open source family of applications, specialized for programming. Codelink supports Windows and Linux.</div>
 
 ## Which apps does Codelink feature?
-- Nanuscript: A advanced note taking app using Markdown
+- Manuscript: A advanced note taking app using Markdown
 - FileTree: A simple file manager including several features for developement
 - Tin: A small browser built with Chrome
 
