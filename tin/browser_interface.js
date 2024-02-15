@@ -9,7 +9,7 @@ if (process.platform == "linux"){
   }
   tinDir = path.join(homedir(), ".config", "tinBrowser")
 }
-else if (process.platform == "windows"){
+else if (process.platform == "win32"){
   if (!fs.existsSync(path.join(homedir(), "tinBrowser"))) {
     fs.mkdirSync(path.join(homedir(), "tinBrowser"))
   }
