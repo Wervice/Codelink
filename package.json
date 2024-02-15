@@ -14,7 +14,7 @@
   },
   "author": "",
   "license": "MIT",
-  "chromiumArgs": "--enable-transparent-visuals",
+  "chromiumArgs": "--enable-transparent-visuals --disable-gpu-compositing --force-cpu-draw",
   "nwjs-packager": {
     "nwVersion": "0.82.0",
     "appFriendlyName": "browser",
@@ -22,7 +22,8 @@
     "appWinIcon": "images/tinlogo.ico",
     "files": [
       "images/**",
-      "browser/**"
+      "tin/**",
+      "assets/**"
     ],
     "builds": {
       "linux": {
@@ -44,5 +45,8 @@
     "fs-extra": "^11.2.0",
     "mime-types": "^2.1.35",
     "node-os-utils": "^1.3.7"
+  },
+  "devDependencies": {
+    "nwjs-packager": "^1.5.1"
   }
 }

@@ -1,0 +1,14 @@
+:root {
+    --accent-color: #32cd32;
+    --light: #282828;
+    --light-2: #313131;
+    --light-3: #414141;
+    --light-4: #454545;
+    --dark: #232323;
+    --dark-2: #191919;
+    --dark-3: #101010;
+    --dark-4: #090909;
+    --nav-background: var(--dark-3);
+    --border-color: var(--light-2);
+    --color-foreground: white;
+}

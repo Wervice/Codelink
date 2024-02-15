@@ -1,29 +1,78 @@
 const fs = require("fs");
+const process = require("process")
+const path = require("path");
+const { homedir } = require("os");
+
+if (process.platform == "linux"){
+  if (!fs.existsSync(path.join(homedir(), ".config", "tinBrowser"))) {
+    fs.mkdirSync(path.join(homedir(), ".config", "tinBrowser"))
+  }
+  tinDir = path.join(homedir(), ".config", "tinBrowser")
+}
+else if (process.platform == "windows"){
+  if (!fs.existsSync(path.join(homedir(), "tinBrowser"))) {
+    fs.mkdirSync(path.join(homedir(), "tinBrowser"))
+  }
+  tinDir = path.join(homedir(), "tinBrowser")
+}
+
+if (!fs.existsSync(path.join(tinDir, "homepage.txt"))) {
+  fs.writeFileSync(path.join(tinDir, "homepage.txt"), "https://duckduckgo.com")
+}
+if (!fs.existsSync(path.join(tinDir, "favs.txt"))) {
+  fs.writeFileSync(path.join(tinDir, "favs.txt"), "https://wervice.github.io/;https://duckduckgo.com/;https://stackoverflow.com")
+}
+if (!fs.existsSync(path.join(tinDir, "theme.txt"))) {
+  fs.writeFileSync(path.join(tinDir, "theme.txt"), "gray")
+}
 
 win = nw.Window.get();
 
-if (!fs.existsSync("tin/cookies.txt")) {
-  fs.writeFileSync("tin/cookies.txt", "[]");
-}
+win.on("blur", function () {
+  window.document.getElementById("sideBarButton").focus()
+})
 
 currentWorkingTabId = 0;
 maxCurrentTabId = 0;
 tablist = ["0"];
+commandList = [
+  "New tab",
+  "Go back",
+  "Go next",
+  "Reload page",
+
+  "Toggle bookmark",
+  "List bookmarks",
+  "Open tablist",
+
+  "Always on top On",
+  "Always on top Off",
+
+  "Theme Nord",
+  "Theme Catppuccin",
+  "Theme Gray",
+  "Set homepage " + new URL(fs.readFileSync(path.join(tinDir, "homepage.txt")).toString()).hostname,
+
+  "Close app",
+  "Reload app",
+
+  "Help"
+]
+homepage = fs.readFileSync(path.join(tinDir, "homepage.txt")).toString()
 
 function toggleBookmark() {
-  bookmarkList = fs
-    .readFileSync("tin/favs.txt")
-    .toString("utf-8")
-    .split(";");
+  bookmarkList = fs.readFileSync(path.join(tinDir, "favs.txt")).toString("utf-8").split(";");
   if (
     fs
-      .readFileSync("tin/favs.txt")
+      .readFileSync(path.join(tinDir, "favs.txt"))
       .toString("utf-8")
       .includes(
         new URL(document.getElementById("tab" + currentWorkingTabId).src)
           .hostname +
         new URL(document.getElementById("tab" + currentWorkingTabId).src)
-          .pathname
+          .pathname +
+        new URL(document.getElementById("tab" + currentWorkingTabId).src)
+          .search
       )
   ) {
     bookmarkList.splice(
@@ -41,11 +90,10 @@ function toggleBookmark() {
       bookmarkListText += e + ";";
     }
   }
-  fs.writeFileSync("tin/favs.txt", bookmarkListText.toString());
+  fs.writeFileSync(path.join(tinDir, "favs.txt"), bookmarkListText.toString());
 }
 
 function renderTabList() {
-
   setTimeout(function () {
     renderedTabList = "";
     eid = 0;
@@ -64,28 +112,48 @@ function renderTabList() {
               titleToUse =
                 "Loading " + document.getElementById("tab" + element).src;
             } else {
-              titleToUse = new DOMParser().parseFromString(
+              websiteObject = new DOMParser().parseFromString(
                 result,
                 "text/html"
-              ).title;
-              if (titleToUse.length > 35) {
-                titleToUse = titleToUse.slice(0, 32) + "...";
+              )
+              titleToUse = websiteObject.title.replaceAll("<", "&lt").replaceAll(">", "&gt");
+              if (titleToUse.length > 33) {
+                titleToUse = titleToUse.slice(0, 23) + "...";
+              }
+
+              // TODO Icons dont work yet
+              /*
+              try {
+                iconURL = "https://" + new URL(document.getElementById("tab" + tablisteid).src).hostname + "/" + new URL(websiteObject.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"]')[0].href).pathname.replace("tin/", "").replace(null, "")
+              } catch (err) {
+                console.log(websiteObject)
+                console.log(err)
+                iconURL = "../images/file.png"
+              } */
+
+              renderedTabList +=
+                `<button class=tab onclick=changeTab(` +
+                (function () {
+                  return tablist[eid];
+                })() +
+                `)>` + // `<img src=${iconURL} onerror=this.src='../images/file.png'>  ` +
+                titleToUse +
+                ` </button><img src=\"../images/times.png\" onclick=closeTab("${tablist[eid]}")><br>`;
+              eid++;
+
+              console.log(result);
+              if (eid == tablist.length) {
+                document.getElementById("tablist").innerHTML = renderedTabList;
               }
             }
-            renderedTabList +=
-              `<button class=tab onclick=changeTab(` +
-              (function () {
-                return tablist[eid];
-              })() +
-              `)>` +
-              titleToUse +
-              ` </button><img src=\"../images/times.png\" onclick=closeTab("${tablist[eid]}")><br>`;
-            eid++;
-
+          }
+        );
+        document.getElementById("tab" + element).executeScript(
+          {
+            code: `window.onkeypress = function () {keyD = 'true'}`,
+          },
+          (result) => {
             console.log(result);
-            if (eid == tablist.length) {
-              document.getElementById("tablist").innerHTML = renderedTabList;
-            }
           }
         );
       } catch (err) {
@@ -113,18 +181,22 @@ function newTab() {
   maxCurrentTabId++;
   webviewElement = document.createElement("webview");
   webviewElement.id = "tab" + currentWorkingTabId;
-  webviewElement.src = "https://www.google.com";
+  webviewElement.src = homepage
   webviewElement.setAttribute("nwdisable", "");
   document.getElementById("webviewWrapper").appendChild(webviewElement);
 
   tablist.push(String(currentWorkingTabId));
 
-  renderTabList();
-
   document.getElementById("url").onchange = function () {
-    document.getElementById("tab" + currentWorkingTabId).src =
-      document.getElementById("url").value;
-    renderTabList();
+    if (!document.getElementById("url").value.includes("http")) {
+      document.getElementById("tab" + currentWorkingTabId).src =
+        "https://" + document.getElementById("url").value;
+      renderTabList();
+    } else {
+      document.getElementById("tab" + currentWorkingTabId).src =
+        document.getElementById("url").value;
+      renderTabList();
+    }
   };
 
   document
@@ -141,7 +213,7 @@ function newTab() {
         "tab" + currentWorkingTabId
       ).src;
     });
-
+  setTimeout(function () { renderTabList() }, 500)
   return webviewElement;
 }
 
@@ -164,48 +236,115 @@ function closeTab(id) {
   currentWorkingTabId = tablist[0];
 }
 
-// ! S**t start
-
-/*
-document.getElementById("tab0").executeScript({
-        code: `document.title`
-      }, result => {
-        console.log(result)
-      })
-*/
-
-// ! S**t end
-
 function renderBookmarkList() {
-  bookmarkList = fs
-    .readFileSync("tin/favs.txt")
-    .toString("utf-8")
-    .split(";");
+  bookmarkList = fs.readFileSync(path.join(tinDir, "favs.txt")).toString("utf-8").split(";");
   bookmarkListRendered = "";
+
   for (e of bookmarkList) {
     if (e.length > 0) {
+      if (new URLSearchParams(new URL(e).search).get("q") != null) {
+        searchQ = " (Search " + new URLSearchParams(new URL(e).search).get("q") + ") "
+      }
+      else {
+        searchQ = ""
+      }
+
       bookmarkListRendered +=
         `<button onclick="document.getElementById('tab'+currentWorkingTabId).src = '${e}'"><b>` +
         new URL(e).hostname.replace("www.", "") +
         `</b>` +
-        new URL(e).pathname +
+        new URL(e).pathname + searchQ +
         `</button><br>`;
     }
   }
-
+  document.getElementById("bookmarkSearch").focus()
   return bookmarkListRendered;
 }
 
+function hideOpenModals() {
+  if (this.document.getElementById("sideBar").hidden == false) {
+    this.document.getElementById("sideBar").classList.add("moveOut");
+    this.document
+      .querySelector("#sideBar div.tooltip")
+      .classList.add("moveOut");
+    this.setTimeout(function () {
+      this.document.getElementById("sideBar").hidden = true;
+      this.document.getElementById("sideBarButton").hidden = false;
+      document.getElementById("protectionOverlay").hidden = true;
+      this.document.getElementById("sideBar").classList.remove("moveOut");
+      this.document
+        .querySelector("#sideBar div.tooltip")
+        .classList.remove("moveOut");
+    }, 250);
+  } else if (!this.document.getElementById("bookmarkWindow").hidden) {
+    this.setTimeout(function () {
+      this.document.getElementById("bookmarkWindow").hidden = true;
+      this.document
+        .getElementById("bookmarkWindow")
+        .classList.remove("fadeOut");
+    }, 250);
+    this.document.getElementById("bookmarkWindow").classList.add("fadeOut");
+    this.document.getElementById("protectionOverlay").hidden = true;
+  }
+}
+
+const checkKeyPress = function () {
+  console.log("Triggered 200 Inrterval");
+  document
+    .getElementById("tab" + currentWorkingTabId)
+    .executeScript({ code: `keyD == "true"` }, (result) => {
+      console.log(result);
+    });
+};
+
+function changeTheme(theme) {
+  document.getElementById("themeLink").href = "themes/" + theme + ".css"
+}
+
+window.onclick = function () {
+}
+
+window.onblur = function () {
+}
+
 window.onload = function () {
+  if (!fs.existsSync(path.join(tinDir, "satUp.txt"))) {
+    document.getElementById("help").hidden = false
+    fs.writeFileSync(path.join(tinDir, "satUp.txt"), "yeah, 'f course")
+}
+
+  document.getElementById("tab0").src = homepage
+  changeTheme(fs.readFileSync(path.join(tinDir, "theme.txt")).toString())
+  commandPalletPickerI = -1
   setInterval(function () {
-    if (document.getElementById("sideBar").hidden == true) {
+    if (document.getElementById("sideBar").hidden) {
       renderTabList();
     }
   }, 2000);
 
   setInterval(function () {
-    renderTabList();
-  }, 6000);
+    document.getElementById("tab" + currentWorkingTabId).insertCSS(
+      {
+        code:
+          `
+      ::-webkit-scrollbar {
+        width: 5px;
+      }
+      
+      ::-webkit-scrollbar-track {
+        background: #222; 
+      }
+      
+      ::-webkit-scrollbar-thumb {
+        background: #444;
+        border-radius: 5px;
+      }
+      
+      ::-webkit-scrollbar-thumb:hover {
+        background: #777; 
+      }`}
+    )
+  }, 1000)
   document
     .getElementById("tab" + currentWorkingTabId)
     .addEventListener("newwindow", (e) => {
@@ -222,7 +361,7 @@ window.onload = function () {
     .getElementById("bookmarkSearch")
     .addEventListener("keyup", function () {
       bookmarkList = fs
-        .readFileSync("browser/favs.txt")
+        .readFileSync(path.join(tinDir, "favs.txt"))
         .toString("utf-8")
         .split(";");
       bookmarkListRendered = "";
@@ -244,18 +383,20 @@ window.onload = function () {
     });
 
   window.addEventListener("keydown", function (e) {
-    if (
-      e.key == "Escape" &&
-      this.document.getElementById("sideBar").hidden == false
-    ) {
+    console.log(e.key);
+    if (e.key == "Escape" && !this.document.getElementById("sideBar").hidden) {
       this.document.getElementById("sideBar").classList.add("moveOut");
-      this.document.querySelector("#sideBar div.tooltip").classList.add("moveOut");
+      this.document
+        .querySelector("#sideBar div.tooltip")
+        .classList.add("moveOut");
       this.setTimeout(function () {
         this.document.getElementById("sideBar").hidden = true;
         this.document.getElementById("sideBarButton").hidden = false;
         document.getElementById("protectionOverlay").hidden = true;
         this.document.getElementById("sideBar").classList.remove("moveOut");
-        this.document.querySelector("#sideBar div.tooltip").classList.remove("moveOut");
+        this.document
+          .querySelector("#sideBar div.tooltip")
+          .classList.remove("moveOut");
       }, 250);
     } else if (
       e.key == "Escape" &&
@@ -263,15 +404,13 @@ window.onload = function () {
     ) {
       this.setTimeout(function () {
         this.document.getElementById("bookmarkWindow").hidden = true;
-        this.document.getElementById("bookmarkWindow").classList.remove("fadeOut")
-      }, 250)
-      this.document.getElementById("bookmarkWindow").classList.add("fadeOut")
+        this.document
+          .getElementById("bookmarkWindow")
+          .classList.remove("fadeOut");
+      }, 250);
+      this.document.getElementById("bookmarkWindow").classList.add("fadeOut");
       this.document.getElementById("protectionOverlay").hidden = true;
-    } else if (
-      e.key == "b" &&
-      this.document.activeElement.tagName != "INPUT" &&
-      this.document.activeElement.tagName != "INPUT"
-    ) {
+    } else if (e.key == "b" && this.document.activeElement.tagName != "INPUT") {
       if (this.document.getElementById("bookmarkWindow").hidden) {
         this.document.getElementById("bookmarkList").innerHTML =
           renderBookmarkList();
@@ -280,11 +419,164 @@ window.onload = function () {
       } else {
         this.setTimeout(function () {
           this.document.getElementById("bookmarkWindow").hidden = true;
-          this.document.getElementById("bookmarkWindow").classList.remove("fadeOut")
-        }, 250)
-        this.document.getElementById("bookmarkWindow").classList.add("fadeOut")
+          this.document
+            .getElementById("bookmarkWindow")
+            .classList.remove("fadeOut");
+        }, 250);
+        this.document.getElementById("bookmarkWindow").classList.add("fadeOut");
         this.document.getElementById("protectionOverlay").hidden = true;
       }
+    } else if (
+      e.key == " " &&
+      this.document.activeElement.tagName != "INPUT" &&
+      this.document.getElementById("commandPallet").hidden
+    ) {
+      this.document.getElementById("commandPallet").hidden = false;
+      document.querySelector("#commandPallet input").focus()
+      setTimeout(function () {
+        document.querySelector("#commandPallet input").value = ""
+      }, 200)
+    } else if (
+      e.key == "Escape" &&
+      !this.document.getElementById("commandPallet").hidden
+    ) {
+      this.setTimeout(function () {
+        this.document.getElementById("commandPallet").hidden = true;
+        this.document
+          .getElementById("commandPallet")
+          .classList.remove("fadeOut");
+      }, 250);
+      this.document.getElementById("commandPallet").classList.add("fadeOut");
+      this.document.getElementById("protectionOverlay").hidden = true;
+    } else if (e.key == "t" && this.document.getElementById("sideBar").hidden && this.document.activeElement.tagName != "INPUT") {
+      document.getElementById("sideBar").hidden = false;
+      this.hidden = true;
+      document.getElementById("protectionOverlay").hidden = false;
+      renderTabList();
+    } else if (e.key == "ArrowDown" && !this.document.getElementById("commandPallet").hidden) {
+      try {
+        if (commandPalletPickerI > document.getElementById("commandList").children.length - 1) {
+          commandPalletPickerI = -1
+        }
+        commandPalletPickerI = commandPalletPickerI + 1
+        console.log(commandPalletPickerI)
+        items = document.getElementById('commandList').children
+        items.item(commandPalletPickerI).focus()
+      }
+      catch {
+        commandPalletPickerI = 0
+        items = document.getElementById('commandList').children
+        items.item(commandPalletPickerI).focus()
+      }
+
+    } else if (e.key == "ArrowUp" && !this.document.getElementById("commandPallet").hidden) {
+      try {
+        if (commandPalletPickerI < 1) {
+          commandPalletPickerI = commandList.length
+        }
+        commandPalletPickerI = commandPalletPickerI - 1
+        console.log(commandPalletPickerI)
+        items = document.getElementById('commandList').children
+        items.item(commandPalletPickerI).focus()
+      }
+      catch {
+        commandPalletPickerI = document.getElementById('commandList').children.length - 1
+        items = document.getElementById('commandList').children
+        items.item(commandPalletPickerI).focus()
+      }
+    }
+    else if (e.key == "Escape" && !this.document.getElementById("help").hidden) {
+      this.document.getElementById("help").hidden = true
     }
   });
+
+  document.querySelector("#commandPallet input").addEventListener("keyup", function (e) {
+    if (e.key != "Enter" && e.key != "ArrowDown" && e.key != "ArrowUp") {
+      html_list = ""
+      for (entry of commandList) {
+        if (entry.toLowerCase().includes(document.querySelector("#commandPallet input").value.toLowerCase())) {
+          html_list += `<button onclick="document.querySelector('#commandPallet input').value=this.innerText;document.querySelector('#commandPallet input').focus()">` + entry + "</button>"
+        }
+      }
+      document.getElementById("commandList").innerHTML = html_list
+    }
+    else if (e.key == "Enter") {
+      if (document.querySelector("#commandPallet input").value == "New tab") {
+        newTab()
+      }
+      else if (document.querySelector("#commandPallet input").value == "Close app") {
+        if (confirm("Do you want to close this tab?")) {
+          process.exit(0)
+        }
+      }
+      else if (document.querySelector("#commandPallet input").value.includes("Set homepage ")) {
+        if (document.querySelector("#commandPallet input").value.split("Set homepage ")[1].includes("http")) {
+          homepage = document.querySelector("#commandPallet input").value.split("Set homepage ")[1]
+          fs.writeFileSync(path.join(tinDir, "homepage.txt"), document.querySelector("#commandPallet input").value.split("Set homepage ")[1])
+        }
+        else {
+          homepage = "https://" + document.querySelector("#commandPallet input").value.split("Set homepage ")[1]
+          fs.writeFileSync(path.join(tinDir, "homepage.txt"), "https://" + document.querySelector("#commandPallet input").value.split("Set homepage ")[1])
+        }
+      }
+      else if (document.querySelector("#commandPallet input").value.match(new RegExp(/[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/)) != null) {
+        document.getElementById("tab" + currentWorkingTabId).src = document.querySelector("#commandPallet input").value
+      }
+      else if (document.querySelector("#commandPallet input").value == "Toggle bookmark") {
+        toggleBookmark()
+      }
+      else if (document.querySelector("#commandPallet input").value == "Go back") {
+        document.getElementById('tab' + currentWorkingTabId).back(); renderTabList()
+      }
+      else if (document.querySelector("#commandPallet input").value == "Go next") {
+        document.getElementById('tab' + currentWorkingTabId).forward(); renderTabList()
+      }
+      else if (document.querySelector("#commandPallet input").value == "Reload page") {
+        document.getElementById('tab' + currentWorkingTabId).reload();
+      }
+      else if (document.querySelector("#commandPallet input").value == "List bookmarks") {
+        document.getElementById("bookmarkList").innerHTML = renderBookmarkList();
+        document.getElementById("bookmarkWindow").hidden = false;
+        document.getElementById("protectionOverlay").hidden = false;
+      }
+      else if (document.querySelector("#commandPallet input").value == "Open tablist") {
+        document.getElementById("sideBar").hidden = false;
+        document.getElementById("protectionOverlay").hidden = false;
+        renderTabList();
+      }
+      else if (document.querySelector("#commandPallet input").value == "Reload app") {
+        location.reload()
+      }
+      else if (document.querySelector("#commandPallet input").value == "Always on top On") {
+        win.setAlwaysOnTop(true)
+      }
+      else if (document.querySelector("#commandPallet input").value == "Always on top Off") {
+        win.setAlwaysOnTop(false)
+      }
+      else if (document.querySelector("#commandPallet input").value == "Help") {
+        document.getElementById("help").hidden = false
+      }
+      else if (document.querySelector("#commandPallet input").value.includes("Theme ")) {
+        changeTheme(document.querySelector("#commandPallet input").value.split("Theme ")[1].toLowerCase().replace(" ", "_"))
+        fs.writeFileSync(path.join(tinDir, "theme.txt"), document.querySelector("#commandPallet input").value.split("Theme ")[1].toLowerCase().replace(" ", "_"))
+      }
+
+        setTimeout(function () {
+          document.getElementById("commandPallet").hidden = true;
+          document
+            .getElementById("commandPallet")
+            .classList.remove("fadeOut");
+        }, 250);
+        document.getElementById("commandPallet").classList.add("fadeOut");
+        document.getElementById("protectionOverlay").hidden = true;
+      
+    }
+  })
 };
+
+
+/*
+? Vim-ish small browser for quick and simple searches.
+? Content focused UI with shortcut support
+? No history => ⭐Privacy⭐
+*/

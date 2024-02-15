@@ -1,27 +1,20 @@
+@font-face {
+  font-family: "Work Sans";
+  src: url(/assets/WorkSans.ttf);
+}
+
 :root {
   --font-sans: "Work Sans", "Segoe UI", "Cantarell Regular", "Droid Sans",
     "Noto Sans", sans-serif;
   --font-monospace: "Fira Mono", "Space Mono", "Ubuntu Mono", "Consolas",
     monospace;
-  --accent-color: #32cd32;
-  --grey-light: #282828;
-  --grey-light-2: #313131;
-  --grey-light-3: #414141;
-  --grey-light-4: #454545;
-  --grey-dark: #232323;
-  --grey-dark-2: #191919;
-  --grey-dark-3: #101010;
-  --grey-dark-4: #090909;
-  --nav-background: var(--grey-dark-3);
-  --border-color: var(--grey-light-2);
-  --color-foreground: white;
 }
 
 body {
   font-family: var(--font-sans);
-  background-color: #121212;
+  background-color: var(--dark-3);
   color: var(--color-foreground);
-  padding: 10px;
+  padding: 5px;
   margin: 0px;
   overflow: hidden;
 }
@@ -38,10 +31,18 @@ iframe::-webkit-scrollbar {
 #webviewWrapper {
   border-radius: 5px;
   width: 100%;
-  height: calc(100vh - 20px);
+  height: calc(100vh - 10px);
   overflow: hidden;
   box-shadow: 0px 0px 0px transparent;
-  transition: box-shadow ease-in-out 0.125s;
+}
+
+input:focus {
+  outline: none;
+}
+
+button:focus {
+  outline: none;
+  color: var(--accent-color) !important;
 }
 
 @keyframes side_bar_move_in {
@@ -73,7 +74,7 @@ iframe::-webkit-scrollbar {
 }
 
 .moveOut {
-  animation: side_bar_move_out 0.25s !important;
+  animation: side_bar_move_out 0.3s !important;
 }
 
 .fadeOut {
@@ -87,35 +88,38 @@ iframe::-webkit-scrollbar {
   left: 20px;
   top: 20px;
   border-radius: 5px;
-  background-color: var(--grey-dark-2);
+  background-color: var(--dark-2);
   box-shadow: 0px 0px 0px 1000vw #00000099;
   animation: side_bar_move_in 0.05s;
   width: 300px;
+  max-width: calc(100vw - 60px);
+  cursor: default;
 
   & button {
-    width: 25px;
+    width: 20px;
     height: 33px;
     padding: 8px;
     border-radius: 2.5px;
-    background-color: var(--grey-light-1);
+    background-color: var(--light-1);
     border: none;
     transition: ease-in-out 0.25s;
 
     &:hover {
-      background-color: var(--grey-light-2);
+      background-color: #ffffff22;
     }
 
     & img {
       height: 10px;
-      transform: scale(1.3);
+      transform: scale(1.1);
+      margin-left: -3px;
     }
   }
 
   & input {
-    width: calc(100% - 140px);
+    width: calc(100% - 120px);
     padding: 8px;
     border-radius: 2.5px;
-    background-color: var(--grey-dark-1);
+    background-color: var(--dark-1);
     border: none;
     transition: ease-in-out 0.25s;
     color: #ffffff99;
@@ -130,8 +134,8 @@ iframe::-webkit-scrollbar {
   & button.tab {
     margin: 5px !important;
     margin-left: 0px !important;
-    background-color: var(--grey-dark) !important;
-    border: 1px solid var(--grey-light-2) !important;
+    background-color: var(--dark) !important;
+    border: 1px solid var(--light-2) !important;
     color: white !important;
     border-radius: 5px !important;
     width: calc(100% - 30px) !important;
@@ -142,6 +146,7 @@ iframe::-webkit-scrollbar {
     font-family: var(--font-sans);
     cursor: pointer;
     transition: ease-in-out 0.25s;
+
     &:hover {
       background-color: #ffffff11 !important;
     }
@@ -178,25 +183,27 @@ iframe::-webkit-scrollbar {
 }
 
 #sideBarButton {
-    padding: 2.5px;
-    border-radius: 2.5px;
-    background-color: #000000;
-    border: none;
-    width: 15px;
-    height: 15px;
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    transition: ease-in-out 0.125s;
+  padding: 2.5px;
+  border-radius: 2.5px;
+  background-color: #ffffff2c;
+  backdrop-filter: blur(2.5px);
+  border: 1px solid rgba(0, 0, 0, 0.327);
+  width: 15px;
+  height: 15px;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  transition: ease-in-out 0.125s;
 
-    &:hover {
-      transform: scale(1.2);
-    }
+  &:hover {
+    transform: scale(2);
+  }
 
-    & img {
-        height: 8px;
-        margin-bottom: 3px;
-    }
+  & img {
+    height: 8px;
+    margin-bottom: 4px;
+    margin-left: -2px;
+  }
 }
 
 #protectionOverlay {
@@ -231,9 +238,9 @@ div.tooltip {
   padding: 10px;
   left: calc(50vw - 30vw - 5px);
   top: 50%;
-  transform:translateY(-50%);
-  background-color: var(--grey-dark-3);
-  border: 1px solid var(--grey-light-2);
+  transform: translateY(-50%);
+  background-color: var(--dark-3);
+  border: 1px solid var(--light-2);
   z-index: 100;
   border-radius: 5px;
   box-shadow: 0px 5px 10px #00000030, 0px 0px 0px 100vw #00000074;
@@ -252,6 +259,7 @@ div.tooltip {
     font-weight: lighter;
     letter-spacing: 0.75px;
     text-align: left;
+    width: calc(100% - 20px);
 
     & b {
       color: white !important;
@@ -259,10 +267,10 @@ div.tooltip {
   }
 
   & input {
-    width: calc(100% - 140px);
+    width: calc(100% - 40px);
     padding: 8px;
     border-radius: 2.5px;
-    background-color: var(--grey-dark-1);
+    background-color: var(--dark-1);
     border: none;
     transition: ease-in-out 0.25s;
     color: #ffffff99;
@@ -277,4 +285,64 @@ div.tooltip {
 
 #bookmarkWindow::-webkit-scrollbar {
   display: none;
+}
+
+#commandPallet {
+  width: 80vw;
+  max-height: 250px;
+  overflow-y: scroll;
+  padding: 10px;
+  border-radius: 2.5px;
+  padding: 5px;
+  background-color: var(--dark-2);
+  border: 1px;
+  position: fixed;
+  top: 40px;
+  left: calc(10vw - 10px);
+  box-shadow: 0px 0px 0px 200vw #00000099;
+  animation-name: element_fade_in;
+  animation-duration: 0.25s;
+
+  & input {
+    background-color: transparent;
+    color: white;
+    border: 0px;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  & button {
+    border: 0px;
+    background-color: transparent;
+    color: white;
+    padding: 5px;
+    font-family: var(--font-sans);
+    display: block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    margin-bottom: 5px;
+
+    &:focus {
+      background-color: #ffffff22;
+    }
+  }
+}
+
+#commandPallet::-webkit-scrollbar {
+  display: none;
+}
+
+#help {
+  height: 100vh;
+  width: 100vw;
+  padding: 10px;
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  background-color: var(--dark-3);
+  overflow: scroll;
+  line-height: 25px;
 }

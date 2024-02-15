@@ -7,5 +7,7 @@ jsenc_test.js
 decryptedDumpTest*
 cache/
 codebook
+tin/example_folder_structure/
+nwjs/
 *.key
 *.crt

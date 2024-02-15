@@ -9,19 +9,75 @@
     <script src="../animations.js"></script>
     <link rel="stylesheet" href="../animations.css">
     <link rel="stylesheet" href="browser.css">
+    <link rel="stylesheet" href="themes/gray.css" id="themeLink">
 </head>
 
 <!-- TODO Render TabList on navigate -->
 
 <body oncontextmenu="return false;">
+    <div id="help" hidden>
+        <h1>Welcome to Tin</h1>
+        <small>You can <b style="color: var(--accent-color);">skip</b> this intro using <b style="color: var(--accent-color);">Escape key</b></small>
+        <h2>How to use</h2>
+        <p>
+            Tin is a browser specialized to run as a small tile on your screen while coding.<br>
+            It features two modes. The first mode is called <b>Browsing Mode</b>.<br>The second one is called <b>Keyboard Mode</b>.
+            <br><br>
+            <b>Browsing</b> Mode is for surfing the web.<br>
+            <b>Keyboard</b> Mode lets you access tabs, bookmarks and the command pallet. It mainly focuses around the keyboard.
+            <br><br>
+            You can swithch between the modes by either clicking the current website (open Browsing Mode) or clicking the edges of the window or the arrow button in the top left corner.
+        </p>
+        <h2>Shortcuts</h2>
+        <p>
+            <span class="keyTooltip">Escape</span> Close any popup <small>(Also this)</small><br><br>
+            <span class="keyTooltip">Space</span> Command Pallet<br><br>
+            <span class="keyTooltip">&darr;</span> Command Pallet Move down<br><br>
+            <span class="keyTooltip">&uarr;</span> Command Pallet Move up<br><br>
+            <span class="keyTooltip">t</span> Tab management<br><br>
+            <span class="keyTooltip">b</span> Bookmarks<br>
+        </p>
+        <h2>Command Pallet</h2>
+        <p>
+            The command pallet lets you access every feature of the browser.<br>
+            You can open it using the space key.<br>
+            The search input lets you look for commands.<br>
+            Now, you can select them using the arrow keys or using your mouse.<br>
+
+            <br>
+            Some good to know commands are:
+            <ul>
+                <li>New tab</li>
+                <li>Theme THEME NAME</li>
+                <li>Set homepage</li>
+                <li>Toggle bookmark</li>
+                <li>Help: Opens this</li>
+            </ul>
+        </p>
+        <h2>Themes</h2>
+        There are three themes:
+        <ul>
+            <li>Gray: Default Tin theme</li>
+            <li>Nord: Inoffical Nord theme</li>
+            <li>Catppuccin: Inoffical Catppuccin theme</li>
+        </ul>
+        They can be changed using <code>Set theme</code> from the command pallet.
+        <h2>Technical information</h2>
+        Tin stores its information here: <script>document.write(tinDir)</script>
+    </div>
     <div id="bookmarkWindow" hidden>
         <input type="text" id="bookmarkSearch" placeholder="Search bookmarks"><br>
         <div id="bookmarkList">
         </div>
     </div>
+    <div id="commandPallet" hidden>
+        <input type="text" placeholder="Search command">
+        <div id="commandList">
+        </div>
+    </div> <!-- TODO Finish this  -->
     <button id="sideBarButton" onclick="document.getElementById('sideBar').hidden = false;this.hidden=true;document.getElementById('protectionOverlay').hidden = false;renderTabList()"><img
             src="../images/forward.png"></button>
-    <div id="protectionOverlay" hidden></div>
+    <div id="protectionOverlay" hidden onclick="hideOpenModals()"></div>
     <div id="sideBar" hidden>
         <button onclick="toggleBookmark()"><img src="../images/nobookmark.png" alt="New" title="New tab" id="bookmarkIndicator"></button>
         <button onclick="newTab()"><img src="../images/new.png" alt="New" title="New tab"></button>
@@ -35,7 +91,7 @@
         <div class="tooltip"><span class="keyTooltip">ESC</span> To close <span class="keyTooltip" style="margin-left: 5px;">B</span> Bookmarks</div>
     </div>
     <div id="webviewWrapper">
-        <webview src="https://www.google.com" id="tab0" nwdisable></webview>
+        <webview src="https://duckduckgo.com/?kc=-1&k1=-1&kay=i&kak=-1&kax=-1&kv=-1&kau=-1&kaq=-1&kap=-1&k7" id="tab0" nwdisable></webview>
         <!-- ! Add id="webview" if you want to go back  -->
     </div>
 </body>
