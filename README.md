@@ -19,6 +19,9 @@ Codelink apps are portable, so you don't need to install them.
 You can download the latest builds for Linux and Windows here: [Releases](https://github.com/Wervice/Codelink/releases/)   
 The current release version is 1.9.
 
+Linux now also gets an installer script called `install.sh`. Please run this script using `sudo`.
+For Windows, please run `{appname}.exe`. I will create an installer for Windows soon.
+
 ## Which technologies does Codelink use?
 Codelink uses NW.js for apps that run localy on your computer. NW.js is simmilar to Electron, but a whole lot faster and easier.   
 For Zentrox, I use ExpressJS and no front end libraries.
