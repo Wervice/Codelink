@@ -14,6 +14,11 @@
 ## What is up next?
 - Zentrox: A full self hostable server interface for collaboration and managing a server
 
+## Installation 
+Codelink apps are portable, so you don't need to install them.   
+You can download the latest builds for Linux and Windows here: [Releases](https://github.com/Wervice/Codelink/releases/)   
+The current release version is 1.9.
+
 ## Which technologies does Codelink use?
 Codelink uses NW.js for apps that run localy on your computer. NW.js is simmilar to Electron, but a whole lot faster and easier.   
 For Zentrox, I use ExpressJS and no front end libraries.

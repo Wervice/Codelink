@@ -3,13 +3,13 @@ const process = require("process")
 const path = require("path");
 const { homedir } = require("os");
 
-if (process.platform == "linux"){
+if (process.platform == "linux") {
   if (!fs.existsSync(path.join(homedir(), ".config", "tinBrowser"))) {
     fs.mkdirSync(path.join(homedir(), ".config", "tinBrowser"))
   }
   tinDir = path.join(homedir(), ".config", "tinBrowser")
 }
-else if (process.platform == "win32"){
+else if (process.platform == "win32") {
   if (!fs.existsSync(path.join(homedir(), "tinBrowser"))) {
     fs.mkdirSync(path.join(homedir(), "tinBrowser"))
   }
@@ -94,9 +94,8 @@ function toggleBookmark() {
 }
 
 function renderTabList() {
-  setTimeout(function () {
-    renderedTabList = "";
-    eid = 0;
+    var renderedTabList = "";
+    var eid = 0;
     for (element of tablist) {
       console.log(element);
       try {
@@ -109,16 +108,16 @@ function renderTabList() {
             if (
               new DOMParser().parseFromString(result, "text/html").title == ""
             ) {
-              titleToUse =
+              var titleToUse =
                 "Loading " + document.getElementById("tab" + element).src;
             } else {
-              websiteObject = new DOMParser().parseFromString(
+              var websiteObject = new DOMParser().parseFromString(
                 result,
                 "text/html"
               )
-              titleToUse = websiteObject.title.replaceAll("<", "&lt").replaceAll(">", "&gt");
+              var titleToUse = websiteObject.title.replaceAll("<", "&lt").replaceAll(">", "&gt");
               if (titleToUse.length > 33) {
-                titleToUse = titleToUse.slice(0, 23) + "...";
+                var titleToUse = titleToUse.slice(0, 23) + "...";
               }
 
               // TODO Icons dont work yet
@@ -148,14 +147,7 @@ function renderTabList() {
             }
           }
         );
-        document.getElementById("tab" + element).executeScript(
-          {
-            code: `window.onkeypress = function () {keyD = 'true'}`,
-          },
-          (result) => {
-            console.log(result);
-          }
-        );
+        
       } catch (err) {
         console.log(err);
       }
@@ -165,13 +157,8 @@ function renderTabList() {
         "tab" + currentWorkingTabId
       ).src;
     }
-  }, 500);
   // ! "e" stays the same?
 }
-
-snUrlsList = {
-  newtab: "",
-};
 
 function newTab() {
   try {
@@ -184,18 +171,19 @@ function newTab() {
   webviewElement.src = homepage
   webviewElement.setAttribute("nwdisable", "");
   document.getElementById("webviewWrapper").appendChild(webviewElement);
-
   tablist.push(String(currentWorkingTabId));
 
   document.getElementById("url").onchange = function () {
-    if (!document.getElementById("url").value.includes("http")) {
-      document.getElementById("tab" + currentWorkingTabId).src =
-        "https://" + document.getElementById("url").value;
-      renderTabList();
-    } else {
-      document.getElementById("tab" + currentWorkingTabId).src =
-        document.getElementById("url").value;
-      renderTabList();
+    try {
+      if (!document.getElementById("url").value.includes("http")) {
+        document.getElementById("tab" + currentWorkingTabId).src =
+          "https://" + document.getElementById("url").value;
+      } else {
+        document.getElementById("tab" + currentWorkingTabId).src =
+          document.getElementById("url").value;
+      }
+    } catch (err) {
+      console.error(err)
     }
   };
 
@@ -213,9 +201,35 @@ function newTab() {
         "tab" + currentWorkingTabId
       ).src;
     });
-  setTimeout(function () { renderTabList() }, 500)
+
+  document.getElementById("tab" + currentWorkingTabId).onloadstop = function (e) {
+    document.getElementById("tab" + currentWorkingTabId).insertCSS(
+      {
+        code:
+          `
+      ::-webkit-scrollbar {
+        width: 5px;
+      }
+      
+      ::-webkit-scrollbar-track {
+        background: #222; 
+      }
+      
+      ::-webkit-scrollbar-thumb {
+        background: #444;
+        border-radius: 5px;
+      }
+      
+      ::-webkit-scrollbar-thumb:hover {
+        background: #777; 
+      }`}
+    )
+    renderTabList()
+  }
+  // setTimeout(function () { renderTabList() }, 500)
   return webviewElement;
 }
+
 
 function changeTab(id) {
   document.getElementById("tab" + currentWorkingTabId).hidden = true;
@@ -308,43 +322,39 @@ window.onblur = function () {
 }
 
 window.onload = function () {
+  document.getElementById("tab0").onloadstop = function () {
+    document.getElementById("tab0").insertCSS(
+      {
+        code:
+          `
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #222; 
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 5px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #777; 
+  }`}
+    )
+    renderTabList()
+  }
   if (!fs.existsSync(path.join(tinDir, "satUp.txt"))) {
     document.getElementById("help").hidden = false
     fs.writeFileSync(path.join(tinDir, "satUp.txt"), "yeah, 'f course")
-}
+  }
 
   document.getElementById("tab0").src = homepage
   changeTheme(fs.readFileSync(path.join(tinDir, "theme.txt")).toString())
   commandPalletPickerI = -1
-  setInterval(function () {
-    if (document.getElementById("sideBar").hidden) {
-      renderTabList();
-    }
-  }, 2000);
 
-  setInterval(function () {
-    document.getElementById("tab" + currentWorkingTabId).insertCSS(
-      {
-        code:
-          `
-      ::-webkit-scrollbar {
-        width: 5px;
-      }
-      
-      ::-webkit-scrollbar-track {
-        background: #222; 
-      }
-      
-      ::-webkit-scrollbar-thumb {
-        background: #444;
-        border-radius: 5px;
-      }
-      
-      ::-webkit-scrollbar-thumb:hover {
-        background: #777; 
-      }`}
-    )
-  }, 1000)
   document
     .getElementById("tab" + currentWorkingTabId)
     .addEventListener("newwindow", (e) => {
@@ -526,10 +536,10 @@ window.onload = function () {
         toggleBookmark()
       }
       else if (document.querySelector("#commandPallet input").value == "Go back") {
-        document.getElementById('tab' + currentWorkingTabId).back(); renderTabList()
+        document.getElementById('tab' + currentWorkingTabId).back(); // renderTabList()
       }
       else if (document.querySelector("#commandPallet input").value == "Go next") {
-        document.getElementById('tab' + currentWorkingTabId).forward(); renderTabList()
+        document.getElementById('tab' + currentWorkingTabId).forward(); // renderTabList()
       }
       else if (document.querySelector("#commandPallet input").value == "Reload page") {
         document.getElementById('tab' + currentWorkingTabId).reload();
@@ -561,15 +571,15 @@ window.onload = function () {
         fs.writeFileSync(path.join(tinDir, "theme.txt"), document.querySelector("#commandPallet input").value.split("Theme ")[1].toLowerCase().replace(" ", "_"))
       }
 
-        setTimeout(function () {
-          document.getElementById("commandPallet").hidden = true;
-          document
-            .getElementById("commandPallet")
-            .classList.remove("fadeOut");
-        }, 250);
-        document.getElementById("commandPallet").classList.add("fadeOut");
-        document.getElementById("protectionOverlay").hidden = true;
-      
+      setTimeout(function () {
+        document.getElementById("commandPallet").hidden = true;
+        document
+          .getElementById("commandPallet")
+          .classList.remove("fadeOut");
+      }, 250);
+      document.getElementById("commandPallet").classList.add("fadeOut");
+      document.getElementById("protectionOverlay").hidden = true;
+
     }
   })
 };

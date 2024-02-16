@@ -7,17 +7,21 @@
     "icon": "images/tinlogo.png",
     "transparent": false
   },
-  "version": "1.8",
+  "host_permissions": [
+    "https://*",
+    "http://*"
+  ], 
+  "version": "1.9",
   "scripts": {
     "dev": "nwp -r",
     "build": "nwp"
   },
   "author": "",
   "license": "MIT",
-  "chromiumArgs": "--enable-transparent-visuals --disable-gpu-compositing --force-cpu-draw",
+  "chromiumArgs": "--enable-transparent-visuals",
   "nwjs-packager": {
-    "nwVersion": "0.82.0",
-    "appFriendlyName": "browser",
+    "nwVersion": "0.84.0",
+    "appFriendlyName": "tin",
     "appMacIcon": "images/tinlogo.icns",
     "appWinIcon": "images/tinlogo.ico",
     "files": [
@@ -37,8 +41,8 @@
       }
     },
     "appPackageName": "tin",
-    "appVersion": "1.8",
-    "appDescription": "Codelink Browser",
+    "appVersion": "1.9",
+    "appDescription": "Tiled browser",
     "appCopyright": "Wervice (Constantin Volke)"
   },
   "dependencies": {

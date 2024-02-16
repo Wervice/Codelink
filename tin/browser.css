@@ -94,6 +94,7 @@ button:focus {
   width: 300px;
   max-width: calc(100vw - 60px);
   cursor: default;
+  animation-timing-function: linear;
 
   & button {
     width: 20px;
@@ -185,8 +186,8 @@ button:focus {
 #sideBarButton {
   padding: 2.5px;
   border-radius: 2.5px;
-  background-color: #ffffff2c;
-  backdrop-filter: blur(2.5px);
+  background-color: transparent;
+  backdrop-filter: blur(2.5px) brightness(0.6);
   border: 1px solid rgba(0, 0, 0, 0.327);
   width: 15px;
   height: 15px;
@@ -302,6 +303,7 @@ div.tooltip {
   box-shadow: 0px 0px 0px 200vw #00000099;
   animation-name: element_fade_in;
   animation-duration: 0.25s;
+  z-index: 100;
 
   & input {
     background-color: transparent;
