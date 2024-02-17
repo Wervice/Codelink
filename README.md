@@ -46,5 +46,5 @@ You can download the latest release here:
 |FileTree|[1.7](https://github.com/Wervice/Codelink/releases/tag/1.7)|
 
 # FAQ
-## Flagged as virus
+## Falsly Flagged as virus
 Some vendors may flag an app as a virus. This is due to NW.js getting false positive detected as a virus. There is a discussion going on on GitHub [here](https://github.com/nwjs/nw.js/issues/8054).
