@@ -92,6 +92,7 @@ function renderFiles(path) {
         },
         "body": JSON.stringify({
             "path": path,
+            "showHiddenFiles": document.getElementById("showHiddenFiles").checked,
             "r": "filesRender"
         })
     }).then((res) => res.json())
@@ -112,24 +113,89 @@ function navigateFolder(file) {
 }
 
 function downloadFile(file) {
-    window.open("/api?r=callfile&file="+btoa(currFPath + file))
+    window.open("/api?r=callfile&file=" + btoa(currFPath + file))
 }
 
 function goFUp() {
-    currFPathArr = currFPath.split("/")
-    currFPath = "/"
-    i = 0
-    while (i != currFPathArr.length-1) {
-        currFPath += currFPathArr[i]+"/"
-        i++
+    if (currFPath != "/") {
+        currFPathReps = currFPath.split("/")[currFPath.split("/").length - 2] + "/"
+        currFPath = currFPath.replace(currFPathReps, "")
+        renderFiles(currFPath)
     }
-    renderFiles(currFPath)
+}
+
+function contextMenuF(filename) {
+    document.getElementById("contextmenu").hidden = false
+    document.getElementById("contextmenu").style.top = mouseY + "px"
+    document.getElementById("contextmenu").style.left = mouseX + "px"
+    contextFMenuFile = currFPath + filename
 }
 
 window.onload = function () {
+    dataInit()
     setCPUBar()
     setRAMBar()
+    document.querySelector("#contextmenu #deleteButton").addEventListener("click", function () {
+        confirmModal("Delete", "Do you want to proceed", function () {
+            fetch("/api", {
+                "method": "POST",
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "body": JSON.stringify({
+                    "path": contextFMenuFile,
+                    "r": "deleteFile"
+                })
+            }).then((res) => res.json())
+                .then((data) => {
+                    if (data["status"] == "s") {
+                        renderFiles(currFPath)
+                    }
+                    else {
+                        alert("Can not delete this file")
+                    }
+                })
+            renderFiles(currFPath)
+        })
+    }
+    )
+
+    document.querySelector("#contextmenu #renameButton").addEventListener("click", function () {
+        confirmModal("Rename", "Filename<br><br><input type='text' id='renameNameInput'>", function () {
+            newFileName = document.getElementById("renameNameInput").value
+            fetch("/api", {
+                "method": "POST",
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "body": JSON.stringify({
+                    "path": contextFMenuFile,
+                    "newName": currFPath + newFileName,
+                    "r": "renameFile"
+                })
+            }).then((res) => res.json())
+                .then((data) => {
+                    if (data["status"] == "s") {
+                        renderFiles(currFPath)
+                    }
+                    else {
+                        alert("Can not rename this file")
+                    }
+                })
+            renderFiles(currFPath)
+        })
+    }
+    )
 }
+
+window.onclick = function () {
+    document.getElementById("contextmenu").hidden = true
+}
+
+window.addEventListener("mousemove", function (e) {
+    mouseX = e.pageX
+    mouseY = e.pageY
+})
 
 setInterval(
     function () {

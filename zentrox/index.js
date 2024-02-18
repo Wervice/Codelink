@@ -11,7 +11,6 @@ const session = require("express-session");
 const https = require("https");
 var osu = require("node-os-utils");
 const chpr = require("child_process");
-const { file } = require("jszip");
 
 var key = fs.readFileSync(__dirname + "/selfsigned.key");
 var cert = fs.readFileSync(__dirname + "/selfsigned.crt");
@@ -21,6 +20,8 @@ var options = {
 };
 
 const zentroxInstPath = path.join(os.homedir(), "zentrox/");
+
+
 
 function auth(username, password, req) {
   users = fs
@@ -405,21 +406,41 @@ app.post("/api", (req, res) => {
     if (req.session.isAdmin == true) {
       filesHTML = ""
       for (fileN of fs.readdirSync(req.body.path)) {
-        try {
-          if (fs.statSync(path.join(req.body.path, fileN)).isFile()) {
-            fileIcon = "file.png"
-            funcToUse = "downloadFile"
+        if (fileN.includes(".")) {
+          if (req.body.showHiddenFiles == true || req.body.showHiddenFiles == "on") {
+            try {
+              if (fs.statSync(path.join(req.body.path, fileN)).isFile()) {
+                fileIcon = "file.png"
+                funcToUse = "downloadFile"
+              }
+              else {
+                fileIcon = "folder.png"
+                funcToUse = "navigateFolder"
+              }
+            }
+            catch {
+              fileIcon = "adminfile.png"
+              funcToUse = "alert"
+            }
+            filesHTML += `<button class='fileButtons' onclick="${funcToUse}('${fileN}')" oncontextmenu="contextMenuF('${fileN}')"><img src="${fileIcon}"><br>${fileN}</button>`
           }
-          else {
-            fileIcon = "folder.png"
-            funcToUse = "navigateFolder"
+        } else {
+          try {
+            if (fs.statSync(path.join(req.body.path, fileN)).isFile()) {
+              fileIcon = "file.png"
+              funcToUse = "downloadFile"
+            }
+            else {
+              fileIcon = "folder.png"
+              funcToUse = "navigateFolder"
+            }
           }
+          catch {
+            fileIcon = "adminfile.png"
+            funcToUse = "alert"
+          }
+          filesHTML += `<button class='fileButtons' onclick="${funcToUse}('${fileN}')" oncontextmenu="contextMenuF('${fileN}')"><img src="${fileIcon}"><br>${fileN}</button>`
         }
-        catch {
-          fileIcon = "adminfile.png"
-          funcToUse = "alert"
-        }
-        filesHTML += `<button class='fileButtons' onclick="${funcToUse}('${fileN}')"><img src="${fileIcon}"><br>${fileN}</button>`
       }
       res.send(
         {
@@ -429,6 +450,39 @@ app.post("/api", (req, res) => {
       )
     }
     else { }
+  }
+  else if (req.body.r == "deleteFile") {
+    try {
+      if (req.session.isAdmin == true) {
+        fs.rmSync(req.body.path, { recursive: true, force: true })
+        res.send({
+          "status": "s"
+        })
+      }
+    }
+    catch (err) {
+      console.warn("Error: " + err)
+      res.send({
+        "status": "f"
+      })
+    }
+
+  }
+  else if (req.body.r == "renameFile") {
+    try {
+      if (req.session.isAdmin == true) {
+        fs.renameSync(req.body.path, req.body.newName)
+      }
+      res.send({
+        "status": "s"
+      })
+    }
+    catch (err) {
+      console.warn("Error: " + err)
+      res.send({
+        "status": "f"
+      })
+    }
   }
 })
 

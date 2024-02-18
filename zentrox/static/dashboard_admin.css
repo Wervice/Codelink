@@ -171,24 +171,89 @@ button {
     text-align: center;
     align-content: center;
     white-space: nowrap;
-    
+
     &:hover {
         background-color: #222 !important;
     }
 }
 
+#files #contextmenu {
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #222;
+    border: #111 1px solid;
+    position: fixed;
+    z-index: 300;
+
+    & button {
+        width: calc(100% - 5px);
+        display: block;
+        text-align: left;
+        padding: 5px;
+        margin: 5px;
+        transition: linear 0.125s;
+
+        &:hover {
+            background-color: #111;
+        }
+    }
+}
+
 td {
-  padding: 10px;
+    padding: 10px;
 }
 
 td button {
-  background: transparent;
-  color: white;
-  padding: 0px;
-  margin: 0px;
+    background: transparent;
+    color: white;
+    padding: 0px;
+    margin: 0px;
 }
 
 td button:hover {
-  background: transparent;
-  opacity: 80%;
+    background: transparent;
+    opacity: 80%;
+}
+
+h2 {
+    margin-bottom: 5px;
+}
+
+#renameNameInput {
+    padding: 8px;
+    background-color: #444;
+    border: 1px solid #333 !important;
+}
+
+input[type="checkbox"] {
+    appearance: none;
+    vertical-align: middle;
+    width: 15px;
+    height: 15px;
+    background: #ffffff22;
+    border-radius: 2px;
+    background-size: 0%;
+    background-position: center;
+    transition: ease-in-out 0.125s;
+}
+
+
+input[type="checkbox"]:checked {
+    animation-duration: 0.25s;
+    animation-iteration-count: 1;
+    background: rgb(31, 67, 103);
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAA0klEQVR4nO2XWwrCMBQF7w59oPRD9y4oqNAlVBgJtOqHSmrT5EbOfBUKzZyT9pKaCSGEEGJegBVwAVpgYzUBNEDHk9Yqlg9crWL5Dlibd4DtG/kbsDPvIPlCoOYLgZovhJr/y+aBBXAEDuE6iXHc8aBJtcB5lgfnkA/07SdfIIv8yyuUdKFs8gPhj+fDR7a3WkYlCUIUn/NMCFFcfkoIN/K/hHAnPyaEW/mYEO7lI2Z6vjk/0074bn5ECP/yX0LUIz8ALIFTfwhcPm4IIYQQwqK4A05/JpzKhHQ2AAAAAElFTkSuQmCC");
+    background-size: 50%;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+label[for="showHiddenFiles"] {
+    position: fixed;
+    right: 50px
+}
+
+#showHiddenFiles {
+    position: fixed;
+    right: 195px;
 }

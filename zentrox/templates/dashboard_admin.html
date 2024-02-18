@@ -8,6 +8,7 @@
   <title>Zentrox</title>
   <link rel="stylesheet" href="dashboard_admin.css" />
   <script src="dashboard_admin.js"></script>
+  <script src="modal.js"></script>
 </head>
 
 <body>
@@ -18,7 +19,7 @@
     <button onclick="changePage('applications')">
       <img src="applications.png" alt="applications" />Applications</button><br />
     <button onclick="changePage('files');renderFiles(currFPath)"><img src="files.png" alt="files" />Files</button><br />
-    <button><img src="shell.png" alt="shell" />Shell</button><br />
+    <button onclick="changePage('shell')"><img src="shell.png" alt="shell" />Shell</button><br />
     <button><img src="shield.png" alt="shield" />Securitry</button><br />
     <button><img src="settings.png" alt="settings" />Settings</button><br />
     <button onclick="location.href='/logout'">
@@ -57,10 +58,13 @@
       <br />
       <div id="installedApps"></div>
     </div>
-    <div id="files" hidden>
+    <div id="files" oncontextmenu="return false;" hidden>
+      <div id="contextmenu" hidden>
+        <button id="renameButton">Rename</button>
+        <button id="deleteButton">Delete</button>
+      </div>
       <h2>Files</h2>
-      <button onclick="goFUp()">Up</button>
-      <button>Down</button>
+      <button onclick="goFUp()">Up</button><span id="currPath"></span><input type="checkbox" id="showHiddenFiles" name="showHiddenFiles" onchange="renderFiles(currFPath)"><label for="showHiddenFiles">Show hidden files</label>
       <div id="filesContainer">
       </div>
     </div>
