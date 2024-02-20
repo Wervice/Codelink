@@ -5,7 +5,9 @@
 <img src="images/icon.svg" height=100>
 </div>
 
-<div align=center>Codelink is an open source family of applications, specialized for programming. Codelink supports Windows and Linux.</div>
+<div align=center>Codelink is an open source family of applications, specialized for programming. Codelink supports Windows and Linux.<br><br><img alt="GitHub Downloads (all assets, latest release)" src="https://img.shields.io/github/downloads/Wervice/Codelink/latest/total"></div>
+
+<br>
 
 <table>
 <tr>
