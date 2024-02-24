@@ -41,6 +41,10 @@ listInstalledPackages()
 
 The function will return an array with a list of packages. This may be very very long.
 
+## Erros in the terminal
+You'll get the entire stderr output of the child process for the installation and removal of a package.
+As long as the function returns `true`, you can ignore the errors.
+
 ## Questions / Bugs
 If you encounter a bug, please contact me in one of these ways:
 - E-Mail: wervice@proton.me
