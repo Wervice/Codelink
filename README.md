@@ -39,6 +39,10 @@ Manuscript also is a portable app.
 # Tin
 Tin is a small browser you can run as a tile, floating window or regular browser while working. It helps you improve productivity using features like Always on top or bookmarks.
 
+# Package Management Library
+This library lets you manage dnf, pacman and apt packages from NodeJS, by providing an easy wrapper for
+the terminal commands. [More here](pmlib.md)
+
 # Download
 You can download the latest release here:
 |App|Release|
