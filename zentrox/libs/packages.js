@@ -362,7 +362,7 @@ function installPackage(name, password) {
   try {
     data = chpr
       .execSync(
-        `echo "${password}" | sudo -S ` +
+        `echo "${password.replace("\"", "\\\"").replace("\'", "\\\'").replace("\`", "\\\`")}" | sudo -S ` +
         installedCommand.replace("PCKG", name),
       )
       .toString("utf-8");
@@ -381,7 +381,8 @@ function removePackage(name, password) {
   try {
     data = chpr
       .execSync(
-        `echo "${password}" | sudo -S ` + removeCommand.replace("PCKG", name),
+        `echo "${password.replace("\"", "\\\"").replace("\'", "\\\'").replace("\`", "\\\`")}" | sudo -S ` +
+        + removeCommand.replace("PCKG", name),
       )
       .toString("utf-8");
   } catch {
