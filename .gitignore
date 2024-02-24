@@ -11,3 +11,4 @@ tin/example_folder_structure/
 nwjs/
 *.key
 *.crt
+zentrox/libs/__pycache__/dnf.cpython-312.pyc

@@ -17,10 +17,10 @@ else if (process.platform == "win32") {
 }
 
 if (!fs.existsSync(path.join(tinDir, "homepage.txt"))) {
-  fs.writeFileSync(path.join(tinDir, "homepage.txt"), "https://duckduckgo.com")
+  fs.writeFileSync(path.join(tinDir, "homepage.txt"), "https://www.startpage.com/do/mypage.pl?prfe=a8ecf6b9d27d67a707d672f5dd887d6869535572440d9200dcee54295e95c58afbfbc555a4555d3cfd7d074401a17b7f6bb89dc9e8960f9927d706acd7986e57d6e0975984463cd4d2627973")
 }
 if (!fs.existsSync(path.join(tinDir, "favs.txt"))) {
-  fs.writeFileSync(path.join(tinDir, "favs.txt"), "https://wervice.github.io/;https://duckduckgo.com/;https://stackoverflow.com")
+  fs.writeFileSync(path.join(tinDir, "favs.txt"), "https://wervice.github.io/;https://www.startpage.com/do/mypage.pl?prfe=a8ecf6b9d27d67a707d672f5dd887d6869535572440d9200dcee54295e95c58afbfbc555a4555d3cfd7d074401a17b7f6bb89dc9e8960f9927d706acd7986e57d6e0975984463cd4d2627973;https://stackoverflow.com")
 }
 if (!fs.existsSync(path.join(tinDir, "theme.txt"))) {
   fs.writeFileSync(path.join(tinDir, "theme.txt"), "gray")
