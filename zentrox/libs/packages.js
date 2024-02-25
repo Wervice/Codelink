@@ -206,10 +206,8 @@ Apache License
 
 const chpr = require("child_process");
 const fs = require("fs");
-const path = require("path");
-const os = require("os");
 
-supported_os = true;
+supported_os = false;
 releaseInfo = fs.readFileSync("/etc/os-release").toString();
 
 if (releaseInfo.includes("debian") || releaseInfo.includes("ubuntu")) {
