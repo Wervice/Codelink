@@ -216,18 +216,21 @@ if (releaseInfo.includes("debian") || releaseInfo.includes("ubuntu")) {
   listCommand = "apt list";
   installedCommand = "apt install PCKG -y";
   removeCommand = "apt remove PCKG -y";
+  supported_os = true
 } else if (releaseInfo.includes("fedora") || releaseInfo.includes("centos")) {
   p_manager = "dnf";
   listInstalledCommand = "dnf list installed";
   listCommand = "dnf list";
   installedCommand = "dnf install PCKG -y";
   removeCommand = "dnf remove PCKG -y";
+  supported_os = true
 } else if (releaseInfo.includes("arch")) {
   p_manager = "pacman";
   listCommand = "pacman -Sl";
   listInstalledCommand = "pacman -Q";
   installedCommand = "pacman -S PCKG --noconfirm";
   removeCommand = "pacman -R PCKG --noconfirm";
+  supported_os = true
 }
 
 function listPackages(callback) {
@@ -345,3 +348,5 @@ function removePackage(name, password) {
     return false;
   }
 }
+
+console.log(listInstalledPackages())
