@@ -186,6 +186,29 @@ window.onload = function () {
         })
     }
     )
+
+    fetch("/api", {
+        "method": "POST",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "body": JSON.stringify({
+            "r": "listInstalledPacks"
+        })
+    }).then((res) => res.json())
+        .then((data) => {
+            if (data["status"] == "s") {
+                for (e of JSON.parse(data["content"])) {
+                    if (e != undefined) {
+                      var htmlCode = htmlCode + "<div class=package>" + e.split(".")[0].replace("-", " ") + "</div>"
+                    }
+                  }
+                document.getElementById("installedApps").innerHTML = htmlCode
+            }
+            else {
+                alert("Can not fetch pack list")
+            }
+        })
 }
 
 window.onclick = function () {

@@ -12,6 +12,9 @@ const https = require("https");
 var osu = require("node-os-utils");
 const chpr = require("child_process");
 
+eval(fs.readFileSync(path.join(__dirname, "libs", "packages.js")) + '');
+
+
 var key = fs.readFileSync(__dirname + "/selfsigned.key");
 var cert = fs.readFileSync(__dirname + "/selfsigned.crt");
 var options = {
@@ -20,8 +23,6 @@ var options = {
 };
 
 const zentroxInstPath = path.join(os.homedir(), "zentrox/");
-
-
 
 function auth(username, password, req) {
   users = fs
@@ -350,15 +351,15 @@ app.get("/api", (req, res) => {
   } else if (req.query["r"] == "userList") {
 
     if (req.session.isAdmin == true) {
-      userTable = "<table>"
-      userList = fs.readFileSync(path.join(zentroxInstPath, "users.txt")).toString().split("\n")
+      var userTable = "<table>"
+      var userList = fs.readFileSync(path.join(zentroxInstPath, "users.txt")).toString().split("\n")
       i = 0
       while (i != userList.length) {
         if (userList[i].split(": ")[2] == "admin") {
-          userStatus = "<b>Admin</b>"
+          var userStatus = "<b>Admin</b>"
         }
         else {
-          userStatus = `User</td><td><button style='color:red' onclick="deleteUser('${atob(userList[i].split(": ")[0])}')">Delete</button>`
+          var userStatus = `User</td><td><button style='color:red' onclick="deleteUser('${atob(userList[i].split(": ")[0])}')">Delete</button>`
         }
         if (userList[i].split(": ")[0] != "") {
           userTable += "<tr><td>" + atob(userList[i].split(": ")[0]) + "</td><td>" + userStatus + "</td></tr>"
@@ -367,8 +368,8 @@ app.get("/api", (req, res) => {
       }
       userTable += "</table>"
       res.send({
-        "status": "s",
-        "text": userTable
+        status: "s",
+        text: userTable
       })
     }
   } else if (req.query["r"] == "callfile") {
@@ -381,8 +382,7 @@ app.get("/api", (req, res) => {
       res.send("This file can not be shown to you")
       console.warn(`Somebody tried to access ${req.query["file"]} without the correct permissions.`)
     }
-  }
-  else {
+  } else {
     res.status("403").send({
       status: "f",
       text: "No supported command",
@@ -392,7 +392,7 @@ app.get("/api", (req, res) => {
 
 app.post("/api", (req, res) => {
   if (req.body.r == "deleteUser") {
-    if (req.session.isAdmin == true) {
+    if (req.session.isAdmin) {
       deleteUser(req.body.username)
       res.send(
         {
@@ -400,46 +400,48 @@ app.post("/api", (req, res) => {
         }
       )
     }
-    else { }
+    else {
+      res.status(403).send("You are not an admin")
+    }
   }
   else if (req.body.r == "filesRender") {
-    if (req.session.isAdmin == true) {
-      filesHTML = ""
+    if (req.session.isAdmin) {
+      var filesHTML = ""
       for (fileN of fs.readdirSync(req.body.path)) {
         if (fileN.includes(".")) {
           if (req.body.showHiddenFiles == true || req.body.showHiddenFiles == "on") {
             try {
               if (fs.statSync(path.join(req.body.path, fileN)).isFile()) {
-                fileIcon = "file.png"
-                funcToUse = "downloadFile"
+                var fileIcon = "file.png"
+                var funcToUse = "downloadFile"
               }
               else {
-                fileIcon = "folder.png"
-                funcToUse = "navigateFolder"
+                var fileIcon = "folder.png"
+                var funcToUse = "navigateFolder"
               }
             }
             catch {
-              fileIcon = "adminfile.png"
-              funcToUse = "alert"
+              var fileIcon = "adminfile.png"
+              var funcToUse = "alert"
             }
-            filesHTML += `<button class='fileButtons' onclick="${funcToUse}('${fileN}')" oncontextmenu="contextMenuF('${fileN}')"><img src="${fileIcon}"><br>${fileN}</button>`
+            var filesHTML = filesHTML + `<button class='fileButtons' onclick="${funcToUse}('${fileN}')" oncontextmenu="contextMenuF('${fileN}')"><img src="${fileIcon}"><br>${fileN.replace("<", "&lt;").replace(">", "&gt;")}</button>`
           }
         } else {
           try {
             if (fs.statSync(path.join(req.body.path, fileN)).isFile()) {
-              fileIcon = "file.png"
-              funcToUse = "downloadFile"
+              var fileIcon = "file.png"
+              var funcToUse = "downloadFile"
             }
             else {
-              fileIcon = "folder.png"
-              funcToUse = "navigateFolder"
+              var fileIcon = "folder.png"
+              var funcToUse = "navigateFolder"
             }
           }
           catch {
-            fileIcon = "adminfile.png"
-            funcToUse = "alert"
+            var fileIcon = "adminfile.png"
+            var funcToUse = "alert"
           }
-          filesHTML += `<button class='fileButtons' onclick="${funcToUse}('${fileN}')" oncontextmenu="contextMenuF('${fileN}')"><img src="${fileIcon}"><br>${fileN}</button>`
+          var filesHTML = filesHTML`<button class='fileButtons' onclick="${funcToUse}('${fileN}')" oncontextmenu="contextMenuF('${fileN}')"><img src="${fileIcon}"><br>${fileN.replace("<", "&lt;").replace(">", "&gt;")}</button>`
         }
       }
       res.send(
@@ -449,11 +451,13 @@ app.post("/api", (req, res) => {
         }
       )
     }
-    else { }
+    else {
+      res.status(403).send("'Are you an admin'\n\t- Teapot")
+    }
   }
   else if (req.body.r == "deleteFile") {
     try {
-      if (req.session.isAdmin == true) {
+      if (req.session.isAdmin) {
         fs.rmSync(req.body.path, { recursive: true, force: true })
         res.send({
           "status": "s"
@@ -466,11 +470,10 @@ app.post("/api", (req, res) => {
         "status": "f"
       })
     }
-
   }
   else if (req.body.r == "renameFile") {
     try {
-      if (req.session.isAdmin == true) {
+      if (req.session.isAdmin) {
         fs.renameSync(req.body.path, req.body.newName)
       }
       res.send({
@@ -482,6 +485,25 @@ app.post("/api", (req, res) => {
       res.send({
         "status": "f"
       })
+    }
+  }
+  else if (req.body.r == "listInstalledPacks") {
+    if (req.session.isAdmin) {
+      try {
+        res.send({
+          "status": "s",
+          "content": listInstalledPackages()
+        })
+      }
+      catch (err) {
+        console.warn("Error: " + err)
+        res.status(500).send({
+          "status": "f"
+        })
+      }
+    }
+    else {
+      res.status(403).send("If you are an admin, I'm a teapot.")
     }
   }
 })

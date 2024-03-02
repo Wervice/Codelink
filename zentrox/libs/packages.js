@@ -259,10 +259,10 @@ function listPackages(callback) {
     }
 
     if (packages[0] == "Installed" || packages[0] == "Last") {
-      delete packages[0];
+      packages.splice(0, 0)
     }
     if (packages[1] == "Installed" || packages[1] == "Last") {
-      delete packages[1];
+      packages.splice(1, 1)
     }
 
     return packages;
@@ -299,10 +299,10 @@ function listInstalledPackages() {
     }
 
     if (packages[0] == "Installed" || packages[0] == "Last") {
-      delete packages[0];
+      packages.splice(0, 0)
     }
     if (packages[1] == "Installed" || packages[1] == "Last") {
-      delete packages[1];
+      packages.splice(1, 1)
     }
 
     return packages;
@@ -348,5 +348,3 @@ function removePackage(name, password) {
     return false;
   }
 }
-
-console.log(listInstalledPackages())
