@@ -259,7 +259,7 @@ function listPackages(callback) {
     }
 
     if (packages[0] == "Installed" || packages[0] == "Last") {
-      packages.splice(0, 0)
+      packages.splice(0, 1)
     }
     if (packages[1] == "Installed" || packages[1] == "Last") {
       packages.splice(1, 1)
@@ -299,11 +299,13 @@ function listInstalledPackages() {
     }
 
     if (packages[0] == "Installed" || packages[0] == "Last") {
-      packages.splice(0, 0)
+      packages.splice(0, 1)
     }
     if (packages[1] == "Installed" || packages[1] == "Last") {
       packages.splice(1, 1)
     }
+
+    console.log(packages)
 
     return packages;
   } else {

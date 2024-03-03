@@ -257,3 +257,35 @@ label[for="showHiddenFiles"] {
     position: fixed;
     right: 195px;
 }
+
+.package {
+    height: 80px;
+    max-height: 80px;
+    width: 10%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    padding: 5px;
+    border-radius: 2.5px;
+    border: 1px solid #333;
+    text-align: center;
+    align-content: center;
+    white-space: nowrap;
+    display: inline-block;
+    margin: 5px;
+
+    &:hover {
+        background-color: #222 !important;
+    }
+}
+
+#installedApps {
+    overflow-x: scroll;
+    height: calc(100vh - 190px);
+    margin: 9px;
+    width: calc(100vw - 200px) !important;
+    padding: 10px;
+}
+
+#installedApps::-webkit-scrollbar {
+    display: none;
+}

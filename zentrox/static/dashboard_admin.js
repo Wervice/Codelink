@@ -162,7 +162,7 @@ window.onload = function () {
 
     document.querySelector("#contextmenu #renameButton").addEventListener("click", function () {
         confirmModal("Rename", "Filename<br><br><input type='text' id='renameNameInput'>", function () {
-            newFileName = document.getElementById("renameNameInput").value
+            var newFileName = document.getElementById("renameNameInput").value
             fetch("/api", {
                 "method": "POST",
                 "headers": {
@@ -198,11 +198,13 @@ window.onload = function () {
     }).then((res) => res.json())
         .then((data) => {
             if (data["status"] == "s") {
-                for (e of JSON.parse(data["content"])) {
+                console.log(Array.from(data["content"]))
+                var htmlCode = ""
+                for (e of Array.from(data["content"])) {
                     if (e != undefined) {
-                      var htmlCode = htmlCode + "<div class=package>" + e.split(".")[0].replace("-", " ") + "</div>"
+                        var htmlCode = htmlCode + "<div class=package>" + e.split(".")[0].replace("-", " ") + "</div>"
                     }
-                  }
+                }
                 document.getElementById("installedApps").innerHTML = htmlCode
             }
             else {
