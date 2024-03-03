@@ -495,14 +495,25 @@ app.post("/api", (req, res) => {
         }
     }
     else if (req.body.r == "listInstalledPacks") {
+        // * Early return if not admin
         if (!req.session.isAdmin) {
             res.status(403).send("If you are an admin, I'm a teapot.")
             return
         }
+
+        // * Get applications, that feature a GUI
+        var desktopFile = ""
+        var guiApplications = []
+        for (desktopFile of fs.readdirSync("/usr/share/applications")) {
+            guiApplications[guiApplications.length + 1] = desktopFile.split(".")[0]
+        }
+
+        // * Send results to front end
+
         try {
             res.send({
                 "status": "s",
-                "content": listInstalledPackages()
+                "content": {"gui":guiApplications ,"any": listInstalledPackages()} // * Sends GUI applications and installed packages as JSON
             })
         }
         catch (err) {
