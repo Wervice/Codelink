@@ -505,7 +505,20 @@ app.post("/api", (req, res) => {
         var desktopFile = ""
         var guiApplications = []
         for (desktopFile of fs.readdirSync("/usr/share/applications")) {
-            guiApplications[guiApplications.length + 1] = desktopFile.split(".")[0]
+            var pathForFile = path.join("/usr/share/applications/", desktopFile)
+            console.log(pathForFile)
+            if (fs.statSync(pathForFile).isFile()) {
+                var desktopFileContent = fs.readFileSync(pathForFile).toString("utf-8")
+                var desktopFileContentLines = desktopFileContent.split("\n")
+                var nameFound = false
+                for (line of desktopFileContentLines) {
+                    if (line.split("=")[0] == "Name" && !nameFound) {
+                        var appName = line.split("=")[1]
+                        nameFound = true
+                    }
+                }
+                guiApplications[guiApplications.length] = appName
+            }
         }
 
         // * Send results to front end
@@ -513,7 +526,7 @@ app.post("/api", (req, res) => {
         try {
             res.send({
                 "status": "s",
-                "content": {"gui":guiApplications ,"any": listInstalledPackages()} // * Sends GUI applications and installed packages as JSON
+                "content": JSON.stringify({ "gui": guiApplications, "any": listInstalledPackages() }) // * Sends GUI applications and installed packages as JSON
             })
         }
         catch (err) {

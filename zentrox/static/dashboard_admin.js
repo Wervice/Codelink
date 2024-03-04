@@ -198,9 +198,12 @@ window.onload = function () {
     }).then((res) => res.json())
         .then((data) => {
             if (data["status"] == "s") {
-                console.log(Array.from(data["content"]))
+                var responseJSON = JSON.parse(data["content"])
+                var guiApps = responseJSON["gui"]
+                var anyApps = responseJSON["any"]
+                console.log(guiApps)
                 var htmlCode = ""
-                for (e of Array.from(data["content"])) {
+                for (e of Array.from(guiApps)) {
                     if (e != undefined) {
                         var htmlCode = htmlCode + "<div class=package>" + e.split(".")[0].replace("-", " ") + "</div>"
                     }
