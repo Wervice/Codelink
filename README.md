@@ -36,12 +36,12 @@ Tin is a simple browser that is optimized for tiling window managers, quick bug 
 ## FileTree
 FileTree is a powerful GUI based file manager that features several helpful built in tools, to simplify your workflow.
 
-[Learn more about FileTree](filetree/filetree.md)
+<!-- [Learn more about FileTree](filetree/filetree.md) -->
 
 ## Manuscript
 Manuscript is a feature rich note-taking app. It supports linked notes, embedded files and syntax highlighting for code.
 
-[Learn more about Manuscript](manuscript/manuscript.md) | [Website](https://wervice.github.io/manuscript)
+<!-- [Learn more about Manuscript](manuscript/manuscript.md) | [Website](https://wervice.github.io/manuscript) -->
 
 
 ## Package Management Library
@@ -69,3 +69,7 @@ You can download the latest release here:
 |Tin|[1.9](https://github.com/Wervice/Codelink/releases/tag/1.9)|
 |Manuscript|[1.7](https://github.com/Wervice/Codelink/releases/tag/1.7)|
 |FileTree|[1.7](https://github.com/Wervice/Codelink/releases/tag/1.7)|
+
+> [!NOTE]
+> Windows Defender or your browser may flag an app as a virus.
+> This is a false-positive. It happens, due to NW.js beeing recognized as supposed threat.
