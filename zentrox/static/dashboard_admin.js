@@ -57,11 +57,25 @@ function deleteUser(username) {
         }).then((res) => res.json())
             .then((data) => {
                 if (data["status"] == "s") {
-                    fetch("/api?r=userList").then((res) => res.json()).then((data) => {
-                        if (data["status"] == "s") {
-                            document.getElementById("usersTable").innerHTML = data["text"]
-                        }
-                    })
+                    // * Get list of users
+                    fetch("/api", {
+                        "method": "POST",
+                        "headers": {
+                            "Content-Type": "application/json"
+                        },
+                        "body": JSON.stringify({
+                            "r": "userList"
+                        })
+                    }).then((res) => res.json())
+                        .then((data) => {
+                            if (data["status"] == "s") {
+                                document.getElementById("usersTable").innerHTML = data["text"]
+
+                            }
+                            else {
+                                alert("Can not delete user")
+                            }
+                        })
                 }
                 else {
                     alert("Can not delete user")
@@ -69,6 +83,25 @@ function deleteUser(username) {
             })
     }
 }
+
+fetch("/api", {
+    "method": "POST",
+    "headers": {
+        "Content-Type": "application/json"
+    },
+    "body": JSON.stringify({
+        "r": "userList"
+    })
+}).then((res) => res.json())
+    .then((data) => {
+        if (data["status"] == "s") {
+            document.getElementById("usersTable").innerHTML = data["text"]
+
+        }
+        else {
+            alert("Can not delete user")
+        }
+    })
 
 function changePage(pageName) {
     for (page of document.querySelectorAll("#pages > div")) {
@@ -205,7 +238,8 @@ window.onload = function () {
                 var htmlCode = ""
                 for (e of Array.from(guiApps)) {
                     if (e != undefined) {
-                        var htmlCode = htmlCode + "<div class=package>" + e.split(".")[0].replace("-", " ") + "</div>"
+                        var htmlCode = htmlCode + "<div class=package><img src='" + e[1] + "'><br>" + e[0].split(".")[0].replace("-", " ") + "</div>"
+                        console.log(e[1])
                     }
                 }
                 document.getElementById("installedApps").innerHTML = htmlCode

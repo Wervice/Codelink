@@ -281,28 +281,8 @@ app.post("/setup/custom", (req, res) => {
 
 app.get("/dashboard", (req, res) => {
     if (req.session.signedIn == true) {
-        if (
-            req.session.isAdmin
-        ) {
-            var userTable = "<table>"
-            var userList = fs.readFileSync(path.join(zentroxInstPath, "users.txt")).toString().split("\n")
-            i = 0
-            while (i != userList.length) {
-                if (userList[i].split(": ")[2] == "admin") {
-                    var userStatus = "<b>Admin</b>"
-                }
-                else {
-                    var userStatus = `User</td><td><button style='color:red' onclick="deleteUser('${atob(userList[i].split(": ")[0])}')">Delete</button>`
-                }
-                if (userList[i].split(": ")[0] != "") {
-                    var userTable = userStatus + "<tr><td>" + atob(userList[i].split(": ")[0]) + "</td><td>" + userStatus + "</td></tr>"
-                }
-                i++
-            }
-            var userTable = userTable + "</table>"
-            res.render("dashboard_admin.html", {
-                "usersTable": userTable
-            });
+        if (req.session.isAdmin) {
+            res.render("dashboard_admin.html");
         } else {
             res.render("dashboard_user.html");
         }
@@ -355,30 +335,7 @@ app.get("/api", (req, res) => {
                 p: Number((os.totalmem() - os.freemem()) / os.totalmem()) * 100,
             });
         }
-    } else if (req.query["r"] == "userList") {
 
-        if (req.session.isAdmin == true) {
-            var userTable = "<table>"
-            var userList = fs.readFileSync(path.join(zentroxInstPath, "users.txt")).toString().split("\n")
-            i = 0
-            while (i != userList.length) {
-                if (userList[i].split(": ")[2] == "admin") {
-                    var userStatus = "<b>Admin</b>"
-                }
-                else {
-                    var userStatus = `User</td><td><button style='color:red' onclick="deleteUser('${atob(userList[i].split(": ")[0])}')">Delete</button>`
-                }
-                if (userList[i].split(": ")[0] != "") {
-                    userTable += "<tr><td>" + atob(userList[i].split(": ")[0]) + "</td><td>" + userStatus + "</td></tr>"
-                }
-                i++
-            }
-            var userTable = userTable + "</table>"
-            res.send({
-                status: "s",
-                text: userTable
-            })
-        }
     } else if (req.query["r"] == "callfile") {
         if (req.session.isAdmin == true) {
             res.set({
@@ -409,6 +366,30 @@ app.post("/api", (req, res) => {
         }
         else {
             res.status(403).send("You are not an admin")
+        }
+    }
+    else if (req.body.r == "userList") {
+        if (req.session.isAdmin == true) {
+            var userTable = "<table>"
+            var userList = fs.readFileSync(path.join(zentroxInstPath, "users.txt")).toString().split("\n")
+            i = 0
+            while (i != userList.length) {
+                if (userList[i].split(": ")[2] == "admin") {
+                    var userStatus = "<b>Admin</b>"
+                }
+                else {
+                    var userStatus = `User</td><td><button style='color:red' onclick="deleteUser('${atob(userList[i].split(": ")[0])}')">Delete</button>`
+                }
+                if (userList[i].split(": ")[0] != "") {
+                    userTable += "<tr><td>" + atob(userList[i].split(": ")[0]) + "</td><td>" + userStatus + "</td></tr>"
+                }
+                i++
+            }
+            var userTable = userTable + "</table>"
+            res.send({
+                status: "s",
+                text: userTable
+            })
         }
     }
     else if (req.body.r == "filesRender") {
@@ -511,13 +492,31 @@ app.post("/api", (req, res) => {
                 var desktopFileContent = fs.readFileSync(pathForFile).toString("utf-8")
                 var desktopFileContentLines = desktopFileContent.split("\n")
                 var nameFound = false
+                var iconFound = false
+                var appIconName = ""
+
                 for (line of desktopFileContentLines) {
                     if (line.split("=")[0] == "Name" && !nameFound) {
                         var appName = line.split("=")[1]
                         nameFound = true
                     }
                 }
-                guiApplications[guiApplications.length] = appName
+
+                for (line of desktopFileContentLines) {
+                    if (line.split("=")[0] == "Icon" && !iconFound) {
+                        var appIconName = line.split("=")[1].split(" ")[0]
+                        iconFound = true
+                    }
+                }
+
+                if (getIconForPackage(appIconName) != "") {
+                    var iconForPackage = "data:image/svg+xml;base64,"+fs.readFileSync(getIconForPackage(appIconName)).toString("base64")
+                }
+                else {
+                    var iconForPackage = "data:image/svg+xml;base64,"+fs.readFileSync("static/empty.svg").toString("base64")
+                }
+
+                guiApplications[guiApplications.length] = [appName, iconForPackage]
             }
         }
 
@@ -536,11 +535,12 @@ app.post("/api", (req, res) => {
             })
         }
     }
+
 })
 
 app.get("/logout", (req, res) => {
-    req.session.signedIn = false
-    req.session.isAdmin = false
+    req.session.signedIn = null
+    req.session.isAdmin = null
     console.log("Logout " + req.session)
     setTimeout(function () { res.redirect("/") }, 1000)
 })

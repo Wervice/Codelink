@@ -1,3 +1,5 @@
+// TODO Does Welcome.md still work? It was moved from / to /manuscript
+
 const fs = require("fs");
 const path = require("path");
 const os = require("os");

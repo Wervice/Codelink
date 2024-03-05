@@ -41,7 +41,7 @@ Tin is a small browser you can run as a tile, floating window or regular browser
 
 # Package Management Library
 This library lets you manage dnf, pacman and apt packages from NodeJS, by providing an easy wrapper for
-the terminal commands. [More here](pmlib.md)
+the terminal commands. [More here](zentrox/pmlib.md)
 
 # Download
 You can download the latest release here:

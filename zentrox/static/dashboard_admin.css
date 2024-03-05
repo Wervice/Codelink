@@ -264,17 +264,23 @@ label[for="showHiddenFiles"] {
     width: 10%;
     text-overflow: ellipsis;
     overflow: hidden;
-    padding: 5px;
+    padding: 10px;
+    vertical-align: middle;
     border-radius: 2.5px;
     border: 1px solid #333;
     text-align: center;
     align-content: center;
     white-space: nowrap;
     display: inline-block;
-    margin: 5px;
+    margin: 15px;
 
     &:hover {
         background-color: #222 !important;
+    }
+
+    & img {
+        height: 50px;
+        width: 50px;
     }
 }
 
