@@ -1,13 +1,9 @@
 
 <h1 align=center>Codelink</h1>
-
+<br>
 <div align=center>
 <img src="images/icon.svg" height=100>
 </div>
-
-<div align=center>Codelink is an open source family of applications, specialized for programming. Codelink supports Windows and Linux.<br><br><img alt="GitHub Downloads (all assets, latest release)" src="https://img.shields.io/github/downloads/Wervice/Codelink/latest/total"></div>
-
-<br>
 
 <table>
 <tr>
@@ -27,21 +23,21 @@
 </tr>
 </table>
 
-# FileTree
-FileTree is a simple file manager for Windows and Linux.   
-It includes several performance improving tools like a command pallet, encryption and more.
-FileTree run under Windows and Linux. It is a prograble app.
-
-# Manuscript
-Manuscript is a feature rich note taking application for Windows and Linux. It features linked notes, embedded files and customization options.
-Manuscript also is a portable app.
 
 # Tin
-Tin is a small browser you can run as a tile, floating window or regular browser while working. It helps you improve productivity using features like Always on top or bookmarks.
+Tin is a simple browser that is optimized for tiling window managers, quick bug fixing and small screens.
+Tools like a command pallet and bookmarks are integrated.
+
+# FileTree
+FileTree is a powerful GUI based file manager that features several helpful built in tools, to simplify your workflow.
+
+# Manuscript
+Manuscript is a feature rich note-taking app. It supports linked notes, embedded files and syntax highlighting for code.
+
 
 # Package Management Library
-This library lets you manage dnf, pacman and apt packages from NodeJS, by providing an easy wrapper for
-the terminal commands. [More here](zentrox/pmlib.md)
+PMLib provides a warapper around DNF, APT and PacMan. 
+This makes it easier to manage packages under Linux using NodeJS. [More here](zentrox/pmlib.md)
 
 # Download
 You can download the latest release here:
