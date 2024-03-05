@@ -25,13 +25,18 @@ You can them Tin with:
 - Gray (default)
 
 ## Shortcuts
-
+|Key|Description|
+|---|---|
+|Space|Command pallet|
+|t|Tab list|
+|b|Bookmarks|
+|Esc|Close popups|
 
 ## Downloading
 You can get Tin for Windows & Linux.   
 Please select your version from the link bellow.
 
-> [!INFO]
+> [!NOTE]
 > You can run `sudo install.sh` under Linux, to add Tin to your start menu. Otherwise, you can also run the `.elf`.
 
 [Release 1.9](https://github.com/Wervice/Codelink/releases/tag/1.9)
