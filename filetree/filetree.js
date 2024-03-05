@@ -1,3 +1,5 @@
+// TODO Does customCSS still work? It was moved from / to /filetree?
+
 const fs = require("fs");
 const os = require("os");
 const crypto = require("crypto");
