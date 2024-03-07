@@ -57,8 +57,8 @@ You can find [the documentation here](zentrox/pmlib.md).
 
 <!-- Demo | Benchmarks | ...  -->
 
-Zentrox is  a powerful and fast server interface. It helps you manage the system and create a fast cloud. 
-It is focused on simplicity and versatility.
+Zentrox provides you a robust and fast web portal for user applications and server administration.
+It is designed around simplicity and versatility.
 
 More on [r/Zentrox](https://www.reddit.com/r/Zentrox/).
 
