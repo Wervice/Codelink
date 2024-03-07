@@ -84,25 +84,6 @@ function deleteUser(username) {
     }
 }
 
-fetch("/api", {
-    "method": "POST",
-    "headers": {
-        "Content-Type": "application/json"
-    },
-    "body": JSON.stringify({
-        "r": "userList"
-    })
-}).then((res) => res.json())
-    .then((data) => {
-        if (data["status"] == "s") {
-            document.getElementById("usersTable").innerHTML = data["text"]
-
-        }
-        else {
-            alert("Can not delete user")
-        }
-    })
-
 function changePage(pageName) {
     for (page of document.querySelectorAll("#pages > div")) {
         console.log(page)
@@ -112,6 +93,10 @@ function changePage(pageName) {
         else {
             page.hidden = false
         }
+    }
+
+    if (pageName == "applications" && typeof allApps == 'undefined') {
+        renderApplicationManagerList()
     }
 }
 
@@ -219,35 +204,133 @@ window.onload = function () {
         })
     }
     )
+}
 
+function renderApplicationManagerList() {
     fetch("/api", {
         "method": "POST",
         "headers": {
             "Content-Type": "application/json"
         },
         "body": JSON.stringify({
-            "r": "listInstalledPacks"
+            "r": "packageDatabase"
         })
     }).then((res) => res.json())
         .then((data) => {
             if (data["status"] == "s") {
                 var responseJSON = JSON.parse(data["content"])
-                var guiApps = responseJSON["gui"]
-                var anyApps = responseJSON["any"]
+                guiApps = responseJSON["gui"] // ? Installed & has GUI
+                anyApps = responseJSON["any"] // ? Installed and can have GUI
+                allApps = responseJSON["all"] // ? All packages in the DB
+                document.getElementById("loadingApplications").hidden = true
+                document.getElementById("packageSearchResults").hidden = true
+                document.getElementById("installedPackagesDetails").hidden = false
+                document.getElementById("installedAppsDetails").hidden = false
                 console.log(guiApps)
                 var htmlCode = ""
                 for (e of Array.from(guiApps)) {
                     if (e != undefined) {
-                        var htmlCode = htmlCode + "<div class=package><img src='" + e[1] + "'><br>" + e[0].split(".")[0].replace("-", " ") + "</div>"
+                        var htmlCode = htmlCode + "<div class='package'><img src='" + e[1] + "'><br>" + e[0].split(".")[0].replace("-", " ") + "<br><button class='remove_package' onclick='removePackage(\"" + e[2] + "\")'>Remove</button></div>"
                         console.log(e[1])
                     }
                 }
                 document.getElementById("installedApps").innerHTML = htmlCode
+
+                var htmlCode = ""
+                for (e of Array.from(anyApps)) {
+                    if (e.length != 0) {
+                        if (e != undefined) {
+                            var htmlCode = htmlCode + "<div class='package_small'>" + e.split(".")[0].replace("-", " ") + "<button class='remove_package' onclick='removePackage(\"" + e + "\")'>Remove</button></div>"
+                            console.log(e[1])
+                        }
+                    }
+                }
+                document.getElementById("installedPackages").innerHTML = htmlCode
+
             }
             else {
                 alert("Can not fetch pack list")
             }
         })
+}
+
+function lookForPackage() {
+    var packageName = document.getElementById("packageSearch").value
+    if (packageName != "" && packageName != null) {
+        document.getElementById("packageSearchResults").hidden = false
+        document.getElementById("installedPackagesDetails").hidden = true
+        document.getElementById("installedAppsDetails").hidden = true
+        var htmlCode = ""
+        if (packageName.length > 2) {
+            for (e of anyApps) {
+                if (e.includes(packageName)) {
+                    var htmlCode = htmlCode + `<div class=package_small>${e.split(".")[0]} <button class=remove_package onclick=removePackage('${e}')>Remove</button></div>`
+                }
+            }
+
+            for (e of allApps) {
+                if (e.includes(packageName)) {
+                    var htmlCode = htmlCode + `<div class=package_small>${e.split(".")[0]} <button class=install_package onclick=installPackage('${e}')>Install</button></div>`
+                }
+            }
+        }
+        document.getElementById("packageSearchResults").innerHTML = htmlCode
+
+    }
+    else {
+        document.getElementById("packageSearchResults").hidden = true
+        document.getElementById("installedPackagesDetails").hidden = false
+        document.getElementById("installedAppsDetails").hidden = false
+    }
+
+}
+
+function removePackage(packageName, button) {
+    confirmModal("Remove app", "<input type='password' placeholder='SUDO Password' id='sudoPasswordInput'>", function () {
+        fetch("/api", {
+            "method": "POST",
+            "headers": {
+                "Content-Type": "application/json"
+            },
+            "body": JSON.stringify({
+                "r": "removePackage",
+                "packageName": packageName,
+                "sudoPassword": document.getElementById("sudoPasswordInput").value
+            })
+        }).then((res) => res.json())
+            .then((data) => {
+                if (data["status"] == "s") {
+                    renderApplicationManagerList()
+                }
+                else {
+                    errorModal("Remove package", "Failed to remove package.")
+                }
+            })
+    })
+}
+
+function installPackage(packageName, button) {
+    confirmModal("Install app", "<input type='password' placeholder='SUDO Password' id='sudoPasswordInput'>", function () {
+        fetch("/api", {
+            "method": "POST",
+            "headers": {
+                "Content-Type": "application/json"
+            },
+            "body": JSON.stringify({
+                "r": "installPackage",
+                "packageName": packageName,
+                "sudoPassword": document.getElementById("sudoPasswordInput").value
+            })
+        }).then((res) => res.json())
+            .then((data) => {
+                if (data["status"] == "s") {
+                    renderApplicationManagerList()
+                }
+                else {
+                    errorModal("Install package", "Failed to install package.")
+                }
+            })
+    })
 }
 
 window.onclick = function () {
@@ -257,6 +340,25 @@ window.onclick = function () {
 window.addEventListener("mousemove", function (e) {
     mouseX = e.pageX
     mouseY = e.pageY
+
+    fetch("/api", {
+        "method": "POST",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "body": JSON.stringify({
+            "r": "userList"
+        })
+    }).then((res) => res.json())
+        .then((data) => {
+            if (data["status"] == "s") {
+                document.getElementById("usersTable").innerHTML = data["text"]
+
+            }
+            else {
+                alert("Can not delete user")
+            }
+        })
 })
 
 setInterval(

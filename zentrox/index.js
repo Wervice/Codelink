@@ -17,9 +17,23 @@ const session = require("express-session");
 const https = require("https");
 var osu = require("node-os-utils");
 const chpr = require("child_process");
+const verboseLog = true
 
 eval(fs.readFileSync(path.join(__dirname, "libs", "packages.js")) + '');
 
+function zlog(string, type = "info") {
+    if (type == "info") {
+        console.log("[ Info " + new Date().toLocaleTimeString() + "] " + string)
+    }
+    else if (type == "error") {
+        console.log("[ Error " + new Date().toLocaleTimeString() + "] " + string)
+    }
+    else if (type == "verb") {
+        if (verboseLog) {
+            console.log("[ Verb " + new Date().toLocaleTimeString() + "] " + string)
+        }
+    }
+}
 
 var key = fs.readFileSync(__dirname + "/selfsigned.key");
 var cert = fs.readFileSync(__dirname + "/selfsigned.crt");
@@ -35,14 +49,14 @@ function auth(username, password, req) {
         .readFileSync(path.join(zentroxInstPath, "users.txt"))
         .toString()
         .split("\n");
-    console.log("Auth \"" + username + "\"")
+    zlog("Auth \"" + username + "\"", "info")
     for (user of users) {
         if (atob(user.split(": ")[0]) == username) {
             if (hash512(password) == user.split(": ")[1]) {
-                console.log(`Auth for user "${username}" success`)
+                zlog(`Auth for user "${username}" success`, "info")
                 return true;
             } else {
-                console.log(`Auth for user "${username}" failed`)
+                zlog(`Auth for user "${username}" failed`, "info")
                 return false;
             }
         }
@@ -50,7 +64,7 @@ function auth(username, password, req) {
 }
 
 function newUser(username, password, role = "user") {
-    console.log(`Adding new user: Name = ${username} | Role = ${role}`)
+    zlog(`Adding new user: Name = ${username} | Role = ${role}`, "info")
     if (role == null || role == "") role = "user";
     var userEntryString = btoa(username) + ": " + hash512(password) + ": " + role;
     var alreadyExisting = false
@@ -197,7 +211,7 @@ app.get("/signup", (req, res) => {
         }
         else {
             res.render("signup.html", {
-                "serverName": fs.readFileSync(path.join(zentroxInstPath, "custom.txt")).toString().split("\n")[0]
+                serverName: fs.readFileSync(path.join(zentroxInstPath, "custom.txt")).toString().split("\n")[0]
             })
         }
     }
@@ -304,13 +318,13 @@ app.get("/api", (req, res) => {
                 res.send({
                     status: "s",
                 });
-                console.log("Started setup");
+                zlog("Started setup", "verb");
             }
             catch (e) {
                 res.send({
                     status: "f",
                 });
-                console.warn("Setup init failed", e);
+                zlog("Setup init failed\t" + e, "error");
             }
         }
         else {
@@ -396,7 +410,7 @@ app.post("/api", (req, res) => {
         if (req.session.isAdmin) {
             var filesHTML = ""
             for (fileN of fs.readdirSync(req.body.path)) {
-                if (fileN.includes(".")) {
+                if (fileN[0] == ".") {
                     if (req.body.showHiddenFiles == true || req.body.showHiddenFiles == "on") {
                         try {
                             if (fs.statSync(path.join(req.body.path, fileN)).isFile()) {
@@ -475,48 +489,71 @@ app.post("/api", (req, res) => {
             })
         }
     }
-    else if (req.body.r == "listInstalledPacks") {
+    else if (req.body.r == "packageDatabase") {
         // * Early return if not admin
         if (!req.session.isAdmin) {
             res.status(403).send("If you are an admin, I'm a teapot.")
             return
         }
 
+        zlog("Request Package Database JSON", "info")
+
         // * Get applications, that feature a GUI
         var desktopFile = ""
         var guiApplications = []
-        for (desktopFile of fs.readdirSync("/usr/share/applications")) {
+        var allInstalledPackages = listInstalledPackages() // ? All installed packages on the system
+        var allPackages = listPackages() // ? All packages in the database 
+
+        for (desktopFile of fs.readdirSync("/usr/share/applications")) { // ? Find all GUI applications using .desktop files
             var pathForFile = path.join("/usr/share/applications/", desktopFile)
-            console.log(pathForFile)
+            zlog(pathForFile, "verb")
             if (fs.statSync(pathForFile).isFile()) {
-                var desktopFileContent = fs.readFileSync(pathForFile).toString("utf-8")
+                var desktopFileContent = fs.readFileSync(pathForFile).toString("utf-8") // ? Read desktop file
                 var desktopFileContentLines = desktopFileContent.split("\n")
                 var nameFound = false
                 var iconFound = false
+                var appExecNameFound = false
                 var appIconName = ""
+                var allOtherPackages = []
 
                 for (line of desktopFileContentLines) {
-                    if (line.split("=")[0] == "Name" && !nameFound) {
+                    if (line.split("=")[0] == "Name" && !nameFound) { // ? Find nice name
                         var appName = line.split("=")[1]
                         nameFound = true
                     }
                 }
 
                 for (line of desktopFileContentLines) {
-                    if (line.split("=")[0] == "Icon" && !iconFound) {
+                    if (line.split("=")[0] == "Icon" && !iconFound) { // ? Find icon name
                         var appIconName = line.split("=")[1].split(" ")[0]
                         iconFound = true
                     }
                 }
 
-                if (getIconForPackage(appIconName) != "") {
-                    var iconForPackage = "data:image/svg+xml;base64,"+fs.readFileSync(getIconForPackage(appIconName)).toString("base64")
-                }
-                else {
-                    var iconForPackage = "data:image/svg+xml;base64,"+fs.readFileSync("static/empty.svg").toString("base64")
+                for (line of desktopFileContentLines) { // ? Find exec command
+                    if (line.split("=")[0] == "Exec" && !appExecNameFound) {
+                        var appExecName = line.split("=")[1].split(" ")[0]
+                        appExecNameFound = true
+                    }
                 }
 
-                guiApplications[guiApplications.length] = [appName, iconForPackage]
+                if (getIconForPackage(appIconName) != "") {
+                    var iconForPackage = "data:image/svg+xml;base64," + fs.readFileSync(getIconForPackage(appIconName)).toString("base64") // ? Icon as Base64 for package
+                }
+                else {
+                    var iconForPackage = "data:image/svg+xml;base64," + fs.readFileSync("static/empty.svg").toString("base64") // ? "Missing icon" SVG as Base64
+                }
+
+                guiApplications[guiApplications.length] = [appName, iconForPackage, appExecName] // ? The GUI application as an array
+            }
+        }
+
+        var i = 0
+        // ? Filter if package is already in another part of JSON
+        for (package of allPackages) {
+            if (!allInstalledPackages.includes(package)) {
+                allOtherPackages[i] = package
+                var i = i + 1
             }
         }
 
@@ -525,14 +562,51 @@ app.post("/api", (req, res) => {
         try {
             res.send({
                 "status": "s",
-                "content": JSON.stringify({ "gui": guiApplications, "any": listInstalledPackages() }) // * Sends GUI applications and installed packages as JSON
+                "content": JSON.stringify({ "gui": guiApplications, "any": allInstalledPackages, "all": allOtherPackages }) // * Sends GUI applications and installed packages as JSON
             })
         }
         catch (err) {
-            console.warn("Error: " + err)
+            zlog(err, "error")
             res.status(500).send({
                 "status": "f"
             })
+        }
+    }
+    else if (req.body.r == "removePackage") {
+        if (!req.session.isAdmin) {
+            res.status(403).send("Nah, I don't think so")
+            return
+        }
+        if (removePackage(req.body.packageName, req.body.sudoPassword)) {
+            res.send({
+                "status": "s"
+            })
+            zlog("Removed package "+req.body.packageName, "info")
+        }
+        else {
+            res.send({
+                "status": "f"
+            })
+            zlog("Failed to remove package "+req.body.packageName, "error")
+        }
+    }
+    else if (req.body.r == "installPackage") {
+        zlog("Install package "+req.body.packageName, "info")
+        if (!req.session.isAdmin) {
+            res.status(403).send("Nah, I don't think so")
+            return
+        }
+        if (installPackage(req.body.packageName, req.body.sudoPassword)) {
+            res.send({
+                "status": "s"
+            })
+            zlog("Installed package "+req.body.packageName, "info")
+        }
+        else {
+            res.send({
+                "status": "f"
+            })
+            zlog("Failed to install package "+req.body.packageName, "error")
         }
     }
 
@@ -541,12 +615,12 @@ app.post("/api", (req, res) => {
 app.get("/logout", (req, res) => {
     req.session.signedIn = null
     req.session.isAdmin = null
-    console.log("Logout " + req.session)
+    zlog("Logout " + req.session, "info")
     setTimeout(function () { res.redirect("/") }, 1000)
 })
 
 server = https.createServer(options, app);
 
 server.listen(port, () => {
-    console.log(`Zentrox running on port ${port}`);
+    zlog(`Zentrox running on port ${port}`, "info");
 });
