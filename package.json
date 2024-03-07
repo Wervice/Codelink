@@ -57,6 +57,7 @@
     "xterm": "^5.3.0"
   },
   "devDependencies": {
+    "chalk": "^5.3.0",
     "nwjs-packager": "^1.5.1"
   }
 }
