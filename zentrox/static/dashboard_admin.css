@@ -84,10 +84,6 @@ button {
         margin-bottom: -3px;
         padding-right: 5px;
     }
-
-    &:hover {
-        background-color: #4f4f4f;
-    }
 }
 
 .outline {
@@ -113,6 +109,12 @@ button {
         padding-bottom: 5px;
         padding-left: 5px;
     }
+}
+
+details {
+    padding: 10px;
+    border-radius: 2.5px;
+    cursor: default;
 }
 
 #pages {
@@ -259,8 +261,8 @@ label[for="showHiddenFiles"] {
 }
 
 .package {
-    height: 80px;
-    max-height: 80px;
+    height: 120px;
+    max-height: 120px;
     width: 10%;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -284,14 +286,78 @@ label[for="showHiddenFiles"] {
     }
 }
 
-#installedApps {
-    overflow-x: scroll;
-    height: calc(100vh - 190px);
-    margin: 9px;
-    width: calc(100vw - 200px) !important;
-    padding: 10px;
+.package_small {
+    height: auto;
+    display: block;
+    background-color: #111;
+    border-bottom: #333 1px solid;
+    color: white;
+    padding: 5px;
+    font-size: 14px;
+
+    & .remove_package {
+        color: rgb(255, 75, 75);
+        background-color: transparent;
+    }
+
+    & .install_package {
+        color: rgb(104, 179, 6);
+        background-color: transparent;
+    }
+
+    & button {
+        position: relative;
+        right: 10px;
+        background-color: #111;
+        padding: 0px;
+        margin: 0px;
+        margin-right: 5px;
+        float: right;
+
+        & :hover {
+            background-color: transparent !important;
+        }
+    }
+
+    &:hover {
+        background-color: #222 !important;
+    }
 }
 
-#installedApps::-webkit-scrollbar {
+#installedApps,
+#installedPackages,
+#packageSearchResults {
+    overflow-y: scroll;
+    height: calc(100vh - 190px);
+    margin: 9px;
+    width: calc(100vw - 220px) !important;
+    padding: 10px;
+    cursor: default;
+}
+
+#installedApps::-webkit-scrollbar,
+#installedPackages::-webkit-scrollbar,
+#packageSearchResults::-webkit-scrollbar {
     display: none;
+}
+
+.remove_package,
+.install_package {
+    padding: 5px;
+    border-radius: 2.5px;
+    background-color: rgb(161, 4, 4);
+    color: white;
+    border-width: 0px;
+    cursor: pointer;
+}
+
+.install_package {
+    background-color: rgb(69, 119, 4);
+}
+
+#loadingApplications {
+    margin-top: 50px;
+    font-size: large;
+    text-align: center;
+    width: calc(100vw - 185px);
 }

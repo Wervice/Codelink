@@ -16,12 +16,13 @@
         <h2>Zentrox</h2>
         <button onclick="changePage('overview')">
             <img src="status.png" alt="status" />Overview</button><br />
-        <button onclick="changePage('applications')">
+        <button onclick="changePage('applications');">
             <img src="applications.png" alt="applications" />Applications</button><br />
-        <button onclick="changePage('files');renderFiles(currFPath)"><img src="files.png"
-                alt="files" />Files</button><br />
+        <button onclick="changePage('storage');renderFiles(currFPath)"><img src="storage.png"
+                alt="storage" />Storage</button><br />
         <button onclick="changePage('shell')"><img src="shell.png" alt="shell" />Shell</button><br />
         <button><img src="shield.png" alt="shield" />Securitry</button><br />
+        <button onclick="changePage('users')"><img src="users.png" alt="users" />Users</button><br />
         <button><img src="settings.png" alt="settings" />Settings</button><br />
         <button onclick="location.href='/logout'">
             <img src="logout.png" alt="logout" />Logout
@@ -44,32 +45,43 @@
                     </div>
                     <br />
                 </div>
-                <br />
             </details>
-            <details open>
-                <summary>
-                    <h3>Users</h3>
-                </summary>
-                <div id="usersTable"></div>
-            </details>
+
         </div>
         <div id="applications" hidden>
             <h2>Applications</h2>
-            <input type="text" placeholder="Search for app" />
+            <input type="text" placeholder="Search all packages" id="packageSearch" onkeyup="lookForPackage()" />
+            <div id="loadingApplications">Loading</div>
             <br />
-            <div id="installedApps"></div>
+            <div id="packageSearchResults" hidden></div>
+            <details id="installedAppsDetails" hidden>
+                <summary>
+                    Installed apps
+                </summary>
+                <div id="installedApps"></div>
+            </details>
+            <details id="installedPackagesDetails" hidden>
+                <summary>
+                    Installed packages
+                </summary>
+                <div id="installedPackages"></div>
+            </details>
         </div>
-        <div id="files" oncontextmenu="return false;" hidden>
+        <div id="storage" oncontextmenu="return false;" hidden>
             <div id="contextmenu" hidden>
                 <button id="renameButton">Rename</button>
                 <button id="deleteButton">Delete</button>
             </div>
-            <h2>Files</h2>
+            <h2>Storage</h2>
             <button onclick="goFUp()">Up</button><span id="currPath"></span><input type="checkbox" id="showHiddenFiles"
                 name="showHiddenFiles" onchange="renderFiles(currFPath)"><label for="showHiddenFiles">Show hidden
                 files</label>
             <div id="filesContainer">
             </div>
+        </div>
+        <div id="users">
+            <h2>Users</h2>
+            <div id="usersTable"></div>
         </div>
     </div>
 </body>

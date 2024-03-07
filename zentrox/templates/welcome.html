@@ -30,14 +30,20 @@
 </head>
 
 <body>
+    <div id="topBar"><%=serverName %></div>
     <div class="contentPage">
         <br>
         <div id="form">
-            <input type="text" placeholder="Username" id="usernameInput">
+            <h1>Welcome</h1>
+            <h3>Login to server</h3>
+            <label>Username</label><br>
+            <input type="text" placeholder="" id="usernameInput">
             <br>
-            <input type="password" placeholder="Password" id="passwordInput"><br>
+            <label>Password</label><br>
+            <input type="password" placeholder="" id="passwordInput"><br>
             <button onclick="submitLogin()">Login</button>
             <%- registrationButton %>
+            <br>
         </div>
     </div>
 </body>

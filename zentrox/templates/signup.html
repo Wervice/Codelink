@@ -9,7 +9,7 @@
     <script>
         function submitLogin() {
             username = document.getElementById("usernameInput").value,
-            password = document.getElementById("passwordInput").value
+                password = document.getElementById("passwordInput").value
             fetch("/signup", {
                 "method": "POST",
                 "headers": {
@@ -30,23 +30,21 @@
 </head>
 
 <body>
+    <div id="topBar"><%=serverName %></div>
     <div class="contentPage">
-        <br>
-        <div style="text-align: center;">
-            <img src="Zentrox.png" alt="Server" width="100">
-        </div>
-        <h1>
-            <%= serverName %>
-        </h1>
-        <h3 align="center">
-          Signup  
-        </h3>  
-      <br>
         <div id="form">
-            <input type="text" placeholder="Username" id="usernameInput">
+            <h1>
+                New account
+            </h1>
             <br>
-            <input type="password" placeholder="Password" id="passwordInput"><br>
+            <label>Username</label><br>
+            <input type="text" placeholder="" id="usernameInput">
+            <br>
+            <label>Password</label><br>
+            <input type="password" placeholder="" id="passwordInput"><br>
             <button onclick="submitLogin()">Signup</button>
+            <button onclick="location.href = '/'" class="outline">Login</button>
+
         </div>
     </div>
 </body>
