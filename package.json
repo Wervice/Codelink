@@ -1,50 +1,11 @@
 {
-  "main": "index.html",
   "name": "codelink",
-  "window": {
-    "frame": true,
-    "toolbar": false,
-    "icon": "images/codelink.png",
-    "transparent": false
-  },
-  "host_permissions": [
-    "https://*",
-    "http://*"
-  ],
-  "version": "1.9",
   "scripts": {
-    "dev": "nwp -r",
+    "start": "nwp -r",
     "build": "nwp"
   },
-  "author": "",
-  "license": "MIT",
-  "chromiumArgs": "--enable-transparent-visuals",
-  "nwjs-packager": {
-    "nwVersion": "0.84.0",
-    "appFriendlyName": "tin",
-    "appMacIcon": "images/tinlogo.icns",
-    "appWinIcon": "images/tinlogo.ico",
-    "files": [
-      "images/**",
-      "tin/**",
-      "assets/**"
-    ],
-    "builds": {
-      "linux": {
-        "tar.gz": true
-      },
-      "osx": {
-        "zip": true
-      },
-      "win": {
-        "zip": false
-      }
-    },
-    "appPackageName": "tin",
-    "appVersion": "1.9",
-    "appDescription": "Tiled browser",
-    "appCopyright": "Wervice (Constantin Volke)"
-  },
+  "author": "wervice",
+  "license": "Apache-2.0",
   "dependencies": {
     "cookie-parser": "^1.4.6",
     "ejs": "^3.1.9",
