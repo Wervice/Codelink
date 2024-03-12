@@ -5,6 +5,10 @@ Zentrox helps you manage and set up a NAS and collaboration applications on your
 <img src="https://raw.githubusercontent.com/Wervice/Codelink/main/zentrox/static/Zentrox.png" width="200">
 </div>
 
+> [!IMPORTANT]
+> Zentrox is still in development. You can use the commands bellow to see what the current state is.
+> Please DO NOT actually use it only test it! It is not yet ready.
+
 ## Requirements
 
 - NodeJS >=v20
