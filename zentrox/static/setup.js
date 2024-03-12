@@ -11,12 +11,12 @@ function submitRegistration() {
             "adminPassword": adminPassword
         })
     }).then((res) => res.json())
-    .then((data) => {
-        if (data["status"] == "s") {
-            document.getElementById("adminSetup").hidden = true // ? Setup admin account
-            document.getElementById("userSetup").hidden = false // ? Add users & AccID?
-        }
-    })
+        .then((data) => {
+            if (data["status"] == "s") {
+                document.getElementById("adminSetup").hidden = true // ? Setup admin account
+                document.getElementById("userSetup").hidden = false // ? Add users & AccID?
+            }
+        })
 }
 
 function submitUserRegMode() {
@@ -30,17 +30,25 @@ function submitUserRegMode() {
             "regMode": regMode
         })
     }).then((res) => res.json())
-    .then((data) => {
-        if (data["status"] == "s") {
-            document.getElementById("userSetup").hidden = true // ? Setup admin account
-            document.getElementById("customization").hidden = false // ? Add users & AccID?
-        }
-    })
+        .then((data) => {
+            if (data["status"] == "s") {
+                document.getElementById("userSetup").hidden = true // ? Setup admin account
+                document.getElementById("customization").hidden = false // ? Add users & AccID?
+            }
+        })
 }
 
 function submitCustomization() {
     serverName = document.getElementById("serverName").value,
-    cltheme = document.getElementById("colorTheme").value
+        cltheme = document.getElementById("colorTheme").value
+
+    document.getElementById("customizationFinishButton").innerHTML = "Getting things ready" // TODO Make actual loader
+
+    confirmModal("Sudo Password", "Zentrox need your sudo password to install required packages.<br><input type='password' id='sudoPasswordSetup'>", function () {
+        document.getElementById("loader").innerHTML = "Setting everything up<br>This may take a few minutes"
+        document.getElementById("loader").hidden = false
+    })
+
     fetch("/setup/custom", {
         "method": "POST",
         "headers": {
@@ -48,14 +56,15 @@ function submitCustomization() {
         },
         "body": JSON.stringify({
             "serverName": serverName,
-            "cltheme": cltheme
+            "cltheme": cltheme,
+            "sudo": document.getElementById("sudoPasswordSetup").value
         })
     }).then((res) => res.json())
-    .then((data) => {
-        if (data["status"] == "s") {
-            location.href = "/dashboard"
-        }
-    })
+        .then((data) => {
+            if (data["status"] == "s") {
+                location.href = "/dashboard"
+            }
+        })
 }
 
 function updateDescriptionRegMode() {
@@ -65,4 +74,8 @@ function updateDescriptionRegMode() {
         "public": "Anyone can register to your server.<br>This is insecure."
     }
     document.getElementById("descriptionRegMode").innerHTML = RegModeDescriptions[document.getElementById("userRegistrationMode").value]
+}
+
+window.onload = function () {
+    dataInit()
 }

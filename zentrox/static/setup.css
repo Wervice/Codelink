@@ -104,3 +104,18 @@ div.contentPage {
     border: 1px solid #222;
     border-radius: 10px;
 }
+
+#loader {
+    position: fixed;
+    top: calc(50vh - 50px);
+    left: calc(50vw - 100px);
+    text-align: center;
+    box-shadow: 0px 0px 100vw 0px #00000033;
+    width: 200px;
+    padding: 20px;
+    font-size: 15px;
+    color: white;
+    background-color: #111;
+    border: 1px solid #222;
+    border-radius: 5px;
+}

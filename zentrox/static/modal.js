@@ -71,6 +71,13 @@ cssCode = `@keyframes fly-in {
     font-weight: bold;
 }
 
+#modalMain input {
+    padding: 5px;
+    border-radius: 2.5px;
+    background: #ffffff11;
+    margin-bottom: 0px;
+}
+
 @keyframes fly-out {
     100% {
         top: -100vh;
@@ -140,6 +147,16 @@ function confirmModalWarning(title, message, command) {
         killModalPopup()
     }
     document.getElementById('buttonConfirm').classList.add("red")
+}
+
+function inputModal(title, message, inputName, type, command) {
+    document.getElementById('modalMain').hidden = false
+    document.getElementById('modalTitle').innerHTML = title
+    document.getElementById('modalMessage').innerHTML = message+`<br><input type="${type}" id="${inputName}" class="inputModal">`
+    document.getElementById('buttonConfirm').onclick = function () {
+        command()
+        killModalPopup()
+    }
 }
 
 function flyOut(id, duration) {

@@ -43,6 +43,53 @@ function setDiskBar() {
         })
 }
 
+function getDriveList() {
+    fetch("/api?r=driveList", {
+        "method": "GET",
+        "headers": {
+            "Content-Type": "application/json"
+        }
+    }).then((res) => res.json())
+        .then((data) => {
+            if (data["status"] == "s") {
+                var htmlCode = ""
+                for (drive of Array.from(data["drives"])) {
+                    var childrenHtmlCode = ""
+                    if (drive["children"] != null) {
+                        for (child of drive["children"]) {
+                            var childrenHtmlCode = childrenHtmlCode + `<button class="drive" onclick="driveInformationModal('${child["name"]}')">${child["name"]}</button>`
+                        }
+                        var htmlCode = htmlCode + `<button class="drive" onclick="driveInformationModal('${drive["name"]}')">${drive["name"]}</button>${childrenHtmlCode}`
+                    }
+                    else {
+                        var htmlCode = htmlCode + `<button class="drive" onclick="driveInformationModal('${drive["name"]}')">${drive["name"]}</button>`
+                    }
+                }
+                document.getElementById("disks").innerHTML = htmlCode
+            }
+        })
+}
+
+function getUserList() {
+    fetch("/api", {
+        "method": "POST",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "body": JSON.stringify({
+            "r": "userList"
+        })
+    }).then((res) => res.json())
+        .then((data) => {
+            if (data["status"] == "s") {
+                document.getElementById("usersTable").innerHTML = data["text"]
+            }
+            else {
+                errorModal("User list", "Zentrox failed to fetch the user list.<br>This may occur, if the connection to the server is lost.", function () { })
+            }
+        })
+}
+
 function deleteUser(username) {
     if (confirm(`Do you want to delete ${username}?`)) {
         fetch("/api", {
@@ -57,28 +104,10 @@ function deleteUser(username) {
         }).then((res) => res.json())
             .then((data) => {
                 if (data["status"] == "s") {
-                    // * Get list of users
-                    fetch("/api", {
-                        "method": "POST",
-                        "headers": {
-                            "Content-Type": "application/json"
-                        },
-                        "body": JSON.stringify({
-                            "r": "userList"
-                        })
-                    }).then((res) => res.json())
-                        .then((data) => {
-                            if (data["status"] == "s") {
-                                document.getElementById("usersTable").innerHTML = data["text"]
-
-                            }
-                            else {
-                                alert("Can not delete user")
-                            }
-                        })
+                    getUserList()
                 }
                 else {
-                    alert("Can not delete user")
+                    errorModal("Delete user", "Zentrox delete a user.<br>This may occur, if the connection to the server is lost.", function () { })
                 }
             })
     }
@@ -97,6 +126,12 @@ function changePage(pageName) {
 
     if (pageName == "applications" && typeof allApps == 'undefined') {
         renderApplicationManagerList()
+    }
+    if (pageName == "connections") {
+        fetchFTPconnectionInformation()
+    }
+    if (pageName == "users") {
+        getUserList()
     }
 }
 
@@ -117,10 +152,9 @@ function renderFiles(path) {
         .then((data) => {
             if (data["status"] == "s") {
                 document.getElementById("filesContainer").innerHTML = data["content"]
-
             }
             else {
-                alert("Can not fetch files list")
+                errorModal("File list", "Zentrox failed to fetch the list of files.<br>This may occur if the requested folder doesn't exist.<br>Zentrox will now try to navigate to the root folder. ", function () { currFPath = "/"; renderFiles(currFPath) })
             }
         })
 }
@@ -153,6 +187,10 @@ window.onload = function () {
     dataInit()
     setCPUBar()
     setRAMBar()
+    setDiskBar()
+    getDriveList()
+    getUserList()
+    renderFiles(currFPath)
     document.querySelector("#contextmenu #deleteButton").addEventListener("click", function () {
         confirmModal("Delete", "Do you want to proceed", function () {
             fetch("/api", {
@@ -230,7 +268,7 @@ function renderApplicationManagerList() {
                 var htmlCode = ""
                 for (e of Array.from(guiApps)) {
                     if (e != undefined) {
-                        var htmlCode = htmlCode + "<div class='package'><img src='" + e[1] + "'><br>" + e[0].split(".")[0].replace("-", " ") + "<br><button class='remove_package' onclick='removePackage(\"" + e[2] + "\")'>Remove</button></div>"
+                        var htmlCode = htmlCode + "<div class='package'><img src='" + e[1] + "'><br>" + e[0].split(".")[0].replace("-", " ") + "<br><button class='remove_package' onclick='removePackage(\"" + e[2] + "\", this)'>Remove</button></div>"
                         console.log(e[1])
                     }
                 }
@@ -240,13 +278,12 @@ function renderApplicationManagerList() {
                 for (e of Array.from(anyApps)) {
                     if (e.length != 0) {
                         if (e != undefined) {
-                            var htmlCode = htmlCode + "<div class='package_small'>" + e.split(".")[0].replace("-", " ") + "<button class='remove_package' onclick='removePackage(\"" + e + "\")'>Remove</button></div>"
+                            var htmlCode = htmlCode + "<div class='package_small'>" + e.split(".")[0].replace("-", " ") + "<button class='remove_package' onclick='removePackage(\"" + e + "\", this)'>Remove</button></div>"
                             console.log(e[1])
                         }
                     }
                 }
                 document.getElementById("installedPackages").innerHTML = htmlCode
-
             }
             else {
                 alert("Can not fetch pack list")
@@ -264,13 +301,13 @@ function lookForPackage() {
         if (packageName.length > 2) {
             for (e of anyApps) {
                 if (e.includes(packageName)) {
-                    var htmlCode = htmlCode + `<div class=package_small>${e.split(".")[0]} <button class=remove_package onclick=removePackage('${e}')>Remove</button></div>`
+                    var htmlCode = htmlCode + `<div class=package_small>${e.split(".")[0]} <button class=remove_package onclick=\"removePackage('${e}', this)\">Remove</button></div>`
                 }
             }
 
             for (e of allApps) {
                 if (e.includes(packageName)) {
-                    var htmlCode = htmlCode + `<div class=package_small>${e.split(".")[0]} <button class=install_package onclick=installPackage('${e}')>Install</button></div>`
+                    var htmlCode = htmlCode + `<div class=package_small>${e.split(".")[0]} <button class=install_package onclick=\"installPackage('${e}', this)\">Install</button></div>`
                 }
             }
         }
@@ -287,6 +324,8 @@ function lookForPackage() {
 
 function removePackage(packageName, button) {
     confirmModal("Remove app", "<input type='password' placeholder='SUDO Password' id='sudoPasswordInput'>", function () {
+        button.innerHTML = "In work"
+        button.disabled = true
         fetch("/api", {
             "method": "POST",
             "headers": {
@@ -304,13 +343,18 @@ function removePackage(packageName, button) {
                 }
                 else {
                     errorModal("Remove package", "Failed to remove package.")
+                    button.innerHTML = "Failed"
+                    button.disabled = false
+                    button.style.color = "rgb(255, 75, 75);"
                 }
             })
     })
 }
 
 function installPackage(packageName, button) {
-    confirmModal("Install app", "<input type='password' placeholder='SUDO Password' id='sudoPasswordInput'>", function () {
+    confirmModal("Install package", "<input type='password' placeholder='SUDO Password' id='sudoPasswordInput'>", function () {
+        button.innerHTML = "In work"
+        button.disabled = true
         fetch("/api", {
             "method": "POST",
             "headers": {
@@ -328,6 +372,9 @@ function installPackage(packageName, button) {
                 }
                 else {
                     errorModal("Install package", "Failed to install package.")
+                    button.innerHTML = "Failed"
+                    button.disabled = false
+                    button.style.color = "rgb(255, 75, 75);"
                 }
             })
     })
@@ -341,29 +388,101 @@ window.addEventListener("mousemove", function (e) {
     mouseX = e.pageX
     mouseY = e.pageY
 
+
+})
+
+function updateFTPConnectionSettings() {
+    var enableFTP = document.getElementById("enableFTP").checked
+
+    inputModal("Sudo password", "Please enter your sudo password to change these settings", "sudoPasswordFTP", "password", function () { // TODO Not yet reading the sudo password
+        document.getElementById("ftpSettingsApply").innerText = "Updating"
+        fetch("/api", {
+            "method": "POST",
+            "headers": {
+                "Content-Type": "application/json"
+            },
+            "body": JSON.stringify({
+                "r": "updateFTPconfig",
+                "enableFTP": enableFTP,
+                "sudo": document.getElementById("sudoPasswordFTP").value
+            })
+        }).then((res) => res.json())
+            .then((data) => {
+                if (data["status"] == "s") {
+                    fetchFTPconnectionInformation()
+                    document.getElementById("ftpSettingsApply").innerText = "Apply"
+                }
+                else {
+                    alert("Can not delete user")
+                }
+            })
+    }
+    )
+}
+
+function fetchFTPconnectionInformation() {
     fetch("/api", {
         "method": "POST",
         "headers": {
             "Content-Type": "application/json"
         },
         "body": JSON.stringify({
-            "r": "userList"
+            "r": "ftpInformation"
         })
     }).then((res) => res.json())
         .then((data) => {
             if (data["status"] == "s") {
-                document.getElementById("usersTable").innerHTML = data["text"]
-
-            }
-            else {
-                alert("Can not delete user")
+                document.getElementById("enableFTP").checked = data["enabled"]
             }
         })
-})
+}
+
+function otherConnectionsTab(pageName) {
+    for (page of document.querySelectorAll("#connectionTabsPages > div")) {
+        console.log(page)
+        if (page.id != pageName) {
+            page.hidden = true
+        }
+        else {
+            page.hidden = false
+        }
+    }
+
+    for (page of document.querySelectorAll("#conectionsTabs > button")) {
+        console.log(page)
+        if (page.id != pageName + "Button") {
+            page.classList.remove("active")
+        }
+        else {
+            page.classList.add("active")
+        }
+    }
+}
+
+function driveInformationModal(driveName) {
+    fetch("/api", {
+        "method": "POST",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "body": JSON.stringify({
+            "r": "driveInformation",
+            "driveName": driveName
+        })
+    }).then((res) => res.json())
+        .then((data) => {
+            if (data["status"] == "s") {
+                document.getElementById("driveName").innerText = data["drives"]["name"]
+                document.getElementById("driveModal").hidden = false
+            }
+        })
+}
 
 setInterval(
     function () {
         setCPUBar()
         setRAMBar()
-    }, 5000
+        setDiskBar()
+        getDriveList()
+    }, 10000
 )
