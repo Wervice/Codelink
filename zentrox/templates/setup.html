@@ -7,9 +7,13 @@
     <title>Zentrox</title>
     <link rel="stylesheet" href="setup.css">
     <script src="setup.js"></script>
+    <script src="modal.js"></script>
+    <link rel="shortcut icon" href="Zentrox.ico" type="image/x-icon">
 </head>
 
 <body>
+    <div id="loader" hidden>
+    </div>
     <div class="contentPage">
         <h1>Setup</h1>
         <div style="text-align: center; padding: 20px;">
@@ -58,7 +62,7 @@
                 <option value="light">Light</option>
             </select>
             <br>
-            <button onclick="submitCustomization()">Finish</button>
+            <button onclick="submitCustomization()" id="customizationFinishButton">Finish</button>
         </div>
     </div>
 </body>

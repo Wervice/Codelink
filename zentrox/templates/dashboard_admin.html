@@ -9,9 +9,28 @@
     <link rel="stylesheet" href="dashboard_admin.css" />
     <script src="dashboard_admin.js"></script>
     <script src="modal.js"></script>
+    <link rel="shortcut icon" href="Zentrox.ico" type="image/x-icon">
 </head>
 
 <body>
+    <div id="driveModal" hidden>
+        <h3 id="driveName"></h3>
+        <table>
+            <tr>
+                <td>Size</td>
+                <td id="driveSize"></td>
+            </tr>
+            <tr>
+                <td>Mountpoint</td>
+                <td id="driveMountpoint"></td>
+            </tr>
+            <tr>
+                <td>Model</td>
+                <td id="driveModel"></td>
+            </tr>
+        </table>
+        <button class="call_to_action" onclick="document.getElementById('driveModal').hidden = true">Close</button>
+    </div>
     <div id="sideBar">
         <h2>Zentrox</h2>
         <button onclick="changePage('overview')">
@@ -23,6 +42,7 @@
         <button onclick="changePage('shell')"><img src="shell.png" alt="shell" />Shell</button><br />
         <button><img src="shield.png" alt="shield" />Securitry</button><br />
         <button onclick="changePage('users')"><img src="users.png" alt="users" />Users</button><br />
+        <button onclick="changePage('connections')"><img src="network.png" alt="users" />Connections</button><br />
         <button><img src="settings.png" alt="settings" />Settings</button><br />
         <button onclick="location.href='/logout'">
             <img src="logout.png" alt="logout" />Logout
@@ -42,16 +62,20 @@
                     <br />
                     <div class="line_bar_chart">
                         <div id="ram_bar" style="width: 20px">RAM</div>
+                    </div><br>
+                    <div class="line_bar_chart">
+                        <div id="disk_bar" style="width: 20px">Disk</div>
                     </div>
                     <br />
                 </div>
             </details>
-
         </div>
         <div id="applications" hidden>
             <h2>Applications</h2>
             <input type="text" placeholder="Search all packages" id="packageSearch" onkeyup="lookForPackage()" />
-            <div id="loadingApplications">Loading</div>
+            <div id="loadingApplications">
+                <img src="Loading.svg" alt="Loading">
+            </div>
             <br />
             <div id="packageSearchResults" hidden></div>
             <details id="installedAppsDetails" hidden>
@@ -73,16 +97,51 @@
                 <button id="deleteButton">Delete</button>
             </div>
             <h2>Storage</h2>
-            <button onclick="goFUp()">Up</button><span id="currPath"></span><input type="checkbox" id="showHiddenFiles"
-                name="showHiddenFiles" onchange="renderFiles(currFPath)"><label for="showHiddenFiles">Show hidden
-                files</label>
-            <div id="filesContainer">
-            </div>
+            <details>
+                <summary>Disks</summary>
+                <div id="disks"></div>
+            </details>
+            <details>
+                <summary>
+                    Files
+                </summary>
+                <button onclick="goFUp()">Up</button><input type="checkbox"
+                    id="showHiddenFiles" name="showHiddenFiles" onchange="renderFiles(currFPath)"><label
+                    for="showHiddenFiles">Show hidden
+                    files</label>
+                <div id="filesContainer">
+            </details>
         </div>
-        <div id="users">
+        <div id="users" hidden>
             <h2>Users</h2>
+            <button class="call_to_action">New user</button>
             <div id="usersTable"></div>
         </div>
+        <div id="connections" hidden>
+            <!--
+                FTP, SMB, WebDav, SSH, Git Server Setup, Samba, NFS
+            -->
+            <div id="conectionsTabs">
+                <button onclick="otherConnectionsTab('ftp')" id="ftpButton">FTP</button>
+                <button onclick="otherConnectionsTab('smb')" id="smbButton">SMB</button>
+                <button onclick="otherConnectionsTab('webdav')" id="Button">WebDav</button>
+                <button onclick="otherConnectionsTab('ssh')" id="Button">SSH</button>
+                <button onclick="otherConnectionsTab('smb')" id="Button">SMB</button>
+                <button onclick="otherConnectionsTab('nfs')" id="Button">NFS</button>
+            </div>
+            <div id="connectionTabsPages">
+                <div id="ftp">
+                    <h3>FTP</h3>
+                    <input type="checkbox" id="enableFTP" name="enableFTP"> <label for="enableFTP">Enable
+                        FTP</label><br>
+                    <button onclick="updateFTPConnectionSettings()" id="ftpSettingsApply">Apply</button><br>
+                    <small>Zentrox uses <a href="https://security.appspot.com/vsftpd.html">vsftpd</a> as a FTP
+                        server.</small>
+                </div>
+                <div id="smb"></div>
+            </div>
+        </div>
+    </div>
     </div>
 </body>
 
