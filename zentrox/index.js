@@ -17,23 +17,29 @@ const session = require("express-session");
 const https = require("https");
 var osu = require("node-os-utils");
 const chpr = require("child_process");
-const verboseLog = true
+const {
+    Worker,
+    isMainThread,
+    setEnvironmentData,
+    getEnvironmentData,
+} = require('node:worker_threads');
 
-eval(fs.readFileSync(path.join(__dirname, "libs", "packages.js")) + '');
-
-function zlog(string, type = "info") {
+function zlog(string, type) {
     if (type == "info") {
         console.log("[ Info " + new Date().toLocaleTimeString() + "] " + string)
     }
     else if (type == "error") {
         console.log("[ Error " + new Date().toLocaleTimeString() + "] " + string)
     }
-    else if (type == "verb") {
-        if (verboseLog) {
-            console.log("[ Verb " + new Date().toLocaleTimeString() + "] " + string)
-        }
+    else {
+        console.log("[ Verb " + new Date().toLocaleTimeString() + "] " + string)
     }
 }
+
+new Worker("./libs/packageWorker.js")
+
+eval(fs.readFileSync(path.join(__dirname, "libs", "packages.js")) + '');
+eval(fs.readFileSync(path.join(__dirname, "libs", "drives.js")) + '');
 
 var key = fs.readFileSync(__dirname + "/selfsigned.key");
 var cert = fs.readFileSync(__dirname + "/selfsigned.crt");
@@ -42,7 +48,7 @@ var options = {
     cert: cert,
 };
 
-const zentroxInstPath = path.join(os.homedir(), "zentrox/");
+const zentroxInstPath = path.join(os.homedir(), "zentrox_data/");
 
 function auth(username, password, req) {
     users = fs
@@ -112,13 +118,15 @@ if (!fs.existsSync(zentroxInstPath)) {
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(cookieParser());
+app.use(cookieParser(fs
+    .readFileSync(path.join(zentroxInstPath, "sessionSecret.txt"))
+    .toString("utf8")));
 app.use(
     session({
         secret: fs
             .readFileSync(path.join(zentroxInstPath, "sessionSecret.txt"))
             .toString("utf8"),
-        name: "sessionMangemenet",
+        name: "currentSessionCookies",
         saveUninitialized: true,
         resave: true,
         cookie: {
@@ -236,7 +244,6 @@ app.post("/signup", (req, res) => {
 })
 
 app.get("/setup", (req, res) => {
-    startsetup()
     if (!fs.existsSync(path.join(zentroxInstPath, "setupDone.txt"))) {
         res.render(path.join(__dirname, "templates/setup.html"));
     } else {
@@ -287,6 +294,18 @@ app.post("/setup/custom", (req, res) => {
         fs.writeFileSync(path.join(zentroxInstPath, "setupDone.txt"), "true");
         req.session.signedIn = true;
         req.session.isAdmin = true
+
+        // ? Write package list to folder for the 1. time
+        var packagesString = String(new Date().getTime()) + "\n"
+        var allPackages = listPackages()
+        for (line of allPackages) {
+            packagesString = packagesString + "\n" + line
+        }
+        fs.writeFileSync(path.join(zentroxInstPath, "allPackages.txt"), packagesString)
+
+        // ? Installing packages
+        installPackage("vsftpd", req.body.sudo) // * Install FTP server
+
         res.send({
             status: "s"
         });
@@ -312,9 +331,7 @@ app.get("/api", (req, res) => {
     if (req.query["r"] == "startsetup") {
         if (!fs.existsSync(path.join(zentroxInstPath, "setupDone.txt"))) {
             try {
-                if (!fs.existsSync(zentroxInstPath)) {
-                    startsetup();
-                }
+                startsetup();
                 res.send({
                     status: "s",
                 });
@@ -349,7 +366,23 @@ app.get("/api", (req, res) => {
                 p: Number((os.totalmem() - os.freemem()) / os.totalmem()) * 100,
             });
         }
+    } else if (req.query["r"] == "diskPercent") {
+        if (req.session.isAdmin == true) {
 
+            var stats = fs.statfsSync("/")
+            var percent = ((stats.bsize * stats.blocks) - (stats.bsize * stats.bfree)) / (stats.bsize * stats.blocks)
+            res.send({
+                status: "s",
+                p: Number(percent) * 100,
+            });
+        }
+    } else if (req.query["r"] == "driveList") {
+        if (req.session.isAdmin == true) {
+            res.send({
+                status: "s",
+                drives: deviceList()
+            });
+        }
     } else if (req.query["r"] == "callfile") {
         if (req.session.isAdmin == true) {
             res.set({
@@ -358,7 +391,7 @@ app.get("/api", (req, res) => {
         }
         else {
             res.send("This file can not be shown to you")
-            console.warn(`Somebody tried to access ${req.query["file"]} without the correct permissions.`)
+            console.zlog(`Somebody tried to access ${req.query["file"]} without the correct permissions.`, "error")
         }
     } else {
         res.status("403").send({
@@ -379,7 +412,7 @@ app.post("/api", (req, res) => {
             )
         }
         else {
-            res.status(403).send("You are not an admin")
+            res.status(403).send("You have no permissions to access this resource")
         }
     }
     else if (req.body.r == "userList") {
@@ -404,6 +437,9 @@ app.post("/api", (req, res) => {
                 status: "s",
                 text: userTable
             })
+        }
+        else {
+            res.status(403).send("You have no permissions to access this resource")
         }
     }
     else if (req.body.r == "filesRender") {
@@ -454,7 +490,7 @@ app.post("/api", (req, res) => {
             )
         }
         else {
-            res.status(403).send("'Are you an admin'\n\t- Teapot")
+            res.status(403).send("You have no permissions to access this resource")
         }
     }
     else if (req.body.r == "deleteFile") {
@@ -492,7 +528,7 @@ app.post("/api", (req, res) => {
     else if (req.body.r == "packageDatabase") {
         // * Early return if not admin
         if (!req.session.isAdmin) {
-            res.status(403).send("If you are an admin, I'm a teapot.")
+            res.status(403).send("You have no permissions to access this resource")
             return
         }
 
@@ -501,9 +537,10 @@ app.post("/api", (req, res) => {
         // * Get applications, that feature a GUI
         var desktopFile = ""
         var guiApplications = []
-        var allInstalledPackages = listInstalledPackages() // ? All installed packages on the system
-        var allPackages = listPackages() // ? All packages in the database 
 
+        var allInstalledPackages = listInstalledPackages() // ? All installed packages on the system
+        allPackages = fs.readFileSync(path.join(zentroxInstPath, "allPackages.txt")).toString("ascii").split("\n")
+        allPackages.splice(0, 1)
         for (desktopFile of fs.readdirSync("/usr/share/applications")) { // ? Find all GUI applications using .desktop files
             var pathForFile = path.join("/usr/share/applications/", desktopFile)
             zlog(pathForFile, "verb")
@@ -574,42 +611,90 @@ app.post("/api", (req, res) => {
     }
     else if (req.body.r == "removePackage") {
         if (!req.session.isAdmin) {
-            res.status(403).send("Nah, I don't think so")
+            res.status(403).send("You have no permissions to access this resource")
             return
         }
         if (removePackage(req.body.packageName, req.body.sudoPassword)) {
             res.send({
                 "status": "s"
             })
-            zlog("Removed package "+req.body.packageName, "info")
+            zlog("Removed package " + req.body.packageName, "info")
         }
         else {
             res.send({
                 "status": "f"
             })
-            zlog("Failed to remove package "+req.body.packageName, "error")
+            zlog("Failed to remove package " + req.body.packageName, "error")
         }
     }
     else if (req.body.r == "installPackage") {
-        zlog("Install package "+req.body.packageName, "info")
+        zlog("Install package " + req.body.packageName, "info")
         if (!req.session.isAdmin) {
-            res.status(403).send("Nah, I don't think so")
+            res.status(403).send("You have no permissions to access this resource")
             return
         }
         if (installPackage(req.body.packageName, req.body.sudoPassword)) {
             res.send({
                 "status": "s"
             })
-            zlog("Installed package "+req.body.packageName, "info")
+            zlog("Installed package " + req.body.packageName, "info")
         }
         else {
             res.send({
                 "status": "f"
             })
-            zlog("Failed to install package "+req.body.packageName, "error")
+            zlog("Failed to install package " + req.body.packageName, "error")
         }
     }
+    else if (req.body.r == "updateFTPconfig") {
+        if (!req.session.isAdmin) {
+            res.status(403).send("You have no permissions to access this resource")
+            return
+        }
 
+        zlog("Change FTP Settings")
+        if (req.body.enableFTP == "true" || req.body.enableFTP == true) {
+            chpr.execSync(`echo ${req.body.sudo.replace("\"", "\\\"").replace("\'", "\\\'").replace("\`", "\\\`")} | sudo -S systemctl enable --now vsftpd`, { stdio: "pipe" })
+        }
+        else {
+            chpr.execSync(`echo ${req.body.sudo.replace("\"", "\\\"").replace("\'", "\\\'").replace("\`", "\\\`")} | sudo -S systemctl disable --now vsftpd`, { stdio: "pipe" })
+        }
+
+        res.send({
+            "status": "s"
+        })
+    }
+    else if (req.body.r == "ftpInformation") {
+        if (!req.session.isAdmin) {
+            res.status(403).send("You have no permissions to access this resource")
+            return
+        }
+
+        try {
+            var enableFTP = chpr.execSync("systemctl status vsftpd", { timeout: 2000 }).toString("ascii").includes("active")
+        }
+        catch (e) {
+            console.log(e)
+            var enableFTP = false
+        }
+
+        res.send({
+            "status": "s",
+            "enabled": enableFTP
+        })
+    }
+    else if (req.body.r == "driveInformation") {
+        if (!req.session.isAdmin) {
+            res.status(403).send("You have no permissions to access this resource")
+            return
+        }
+        res.send(
+            {
+                "status": "s",
+                "drives": deviceInformation(req.body.driveName)
+            }
+        )
+    }
 })
 
 app.get("/logout", (req, res) => {
@@ -624,3 +709,4 @@ server = https.createServer(options, app);
 server.listen(port, () => {
     zlog(`Zentrox running on port ${port}`, "info");
 });
+
