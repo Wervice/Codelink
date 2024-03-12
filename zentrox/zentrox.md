@@ -30,7 +30,7 @@ clear
 node index.js # Run zentrox main JS
 ```
 
-> [!INFO]
+> [!NOTE]
 > You can remove the Codelink folder after installing Zentrox. It doesn't contain anything important anymore
 
 Zentrox will now be hosted on `localhost:3000`. You can continue with a GUI setup from there.
