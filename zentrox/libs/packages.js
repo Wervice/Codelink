@@ -284,11 +284,11 @@ function listPackages() {
             }
         }
 
-        if (packages[0] == "Installed" || packages[0] == "Last") {
-            packages.splice(0, 1)
+        if (packages.includes("Installed")) {
+            packages.splice(packages.indexOf("Installed"), 1)
         }
-        if (packages[1] == "Installed" || packages[1] == "Last") {
-            packages.splice(1, 1)
+        if (packages.includes("Last")) {
+            packages.splice(packages.indexOf("Last"), 1)
         }
 
         return packages;
@@ -321,11 +321,11 @@ function listInstalledPackages() {
             }
         }
 
-        if (packages[0] == "Installed" || packages[0] == "Last") {
-            packages.splice(0, 1)
+        if (packages.includes("Installed")) {
+            packages.splice(packages.indexOf("Installed"), 1)
         }
-        if (packages[1] == "Installed" || packages[1] == "Last") {
-            packages.splice(1, 1)
+        if (packages.includes("Last")) {
+            packages.splice(packages.indexOf("Last"), 1)
         }
 
         zlog(packages, "verb")
@@ -340,7 +340,7 @@ function installPackage(name, password) {
     try {
         data = chpr
             .execSync(
-                `echo "${password.replace("\"", "\\\"").replace("\'", "\\\'").replace("\`", "\\\`")}" | sudo -S ` +
+                `echo "${password.replace("\"", "\\\"").replace("\'", "\\\'").replace("\`", "\\\`")}" | sudo -S -k ` +
                 installedCommand.replace("PCKG", name.replace("\"", "\\\"").replace("\'", "\\\'").replace("\`", "\\\`")), execOptions
             )
             .toString("utf-8");
@@ -356,7 +356,7 @@ function installPackage(name, password) {
 }
 
 function removePackage(name, password) {
-    zlog(`echo "${password.replace("\"", "\\\"").replace("\'", "\\\'").replace("\`", "\\\`")}" | sudo -S `
+    zlog(`echo "${password.replace("\"", "\\\"").replace("\'", "\\\'").replace("\`", "\\\`")}" | sudo -S -k `
         + removeCommand.replace("PCKG", name.replace("\"", "\\\"").replace("\'", "\\\'").replace("\`", "\\\`")), "verb")
     try {
         data = chpr
