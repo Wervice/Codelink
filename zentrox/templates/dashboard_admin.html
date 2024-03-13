@@ -28,6 +28,18 @@
                 <td>Model</td>
                 <td id="driveModel"></td>
             </tr>
+            <tr>
+                <td>Location in file system</td>
+                <td id="drivePath"></td>
+            </tr>
+            <tr>
+                <td>Ussage</td>
+                <td id="driveUssage"></td>
+            </tr>
+            <tr>
+                <td>Mounted</td>
+                <td id="driveMounted"></td>
+            </tr>
         </table>
         <button class="call_to_action" onclick="document.getElementById('driveModal').hidden = true">Close</button>
     </div>
@@ -99,15 +111,17 @@
             <h2>Storage</h2>
             <details>
                 <summary>Disks</summary>
+                <br>
+                <button class="call_to_action" onclick="getDriveList()">Reload</button>
+                <br><br>
                 <div id="disks"></div>
             </details>
             <details>
                 <summary>
                     Files
                 </summary>
-                <button onclick="goFUp()">Up</button><input type="checkbox"
-                    id="showHiddenFiles" name="showHiddenFiles" onchange="renderFiles(currFPath)"><label
-                    for="showHiddenFiles">Show hidden
+                <button onclick="goFUp()">Up</button><input type="checkbox" id="showHiddenFiles" name="showHiddenFiles"
+                    onchange="renderFiles(currFPath)"><label for="showHiddenFiles">Show hidden
                     files</label>
                 <div id="filesContainer">
             </details>

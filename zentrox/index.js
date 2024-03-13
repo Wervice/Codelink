@@ -205,10 +205,7 @@ app.post("/login", (req, res) => {
             status: "s",
         });
     } else {
-        res.send({
-            status: "f",
-            message: "Wrong credentials",
-        });
+        res.status("403").send();
     }
 });
 
@@ -304,6 +301,7 @@ app.post("/setup/custom", (req, res) => {
         fs.writeFileSync(path.join(zentroxInstPath, "allPackages.txt"), packagesString)
 
         // ? Installing packages
+        console.log("test")
         installPackage("vsftpd", req.body.sudo) // * Install FTP server
 
         res.send({

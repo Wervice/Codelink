@@ -164,7 +164,7 @@ details {
 
 #filesContainer {
     overflow: scroll;
-    max-height: 90vh;
+    max-height: 80vh;
     width: calc(100vw - 250px);
 }
 
@@ -433,6 +433,10 @@ div.warning {
 
     #sideBar {
         width: min-content;
+    }
+
+    #filesContainer {
+        width: calc(100vw - 50px);
     }
 }
 
