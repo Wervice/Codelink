@@ -290,6 +290,9 @@ function listPackages() {
         if (packages.includes("Last")) {
             packages.splice(packages.indexOf("Last"), 1)
         }
+        if (packages.includes("Listing")) {
+            packages.splice(packages.indexOf("Last"), 1)
+        }
 
         return packages;
     } else {
@@ -325,6 +328,9 @@ function listInstalledPackages() {
             packages.splice(packages.indexOf("Installed"), 1)
         }
         if (packages.includes("Last")) {
+            packages.splice(packages.indexOf("Last"), 1)
+        }
+        if (packages.includes("Listing")) {
             packages.splice(packages.indexOf("Last"), 1)
         }
 
