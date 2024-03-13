@@ -47,24 +47,25 @@ function submitCustomization() {
     confirmModal("Sudo Password", "Zentrox need your sudo password to install required packages.<br><input type='password' id='sudoPasswordSetup'>", function () {
         document.getElementById("loader").innerHTML = "Setting everything up<br>This may take a few minutes"
         document.getElementById("loader").hidden = false
+        fetch("/setup/custom", {
+            "method": "POST",
+            "headers": {
+                "Content-Type": "application/json"
+            },
+            "body": JSON.stringify({
+                "serverName": serverName,
+                "cltheme": cltheme,
+                "sudo": document.getElementById("sudoPasswordSetup").value
+            })
+        }).then((res) => res.json())
+            .then((data) => {
+                if (data["status"] == "s") {
+                    location.href = "/dashboard"
+                }
+            })
     })
 
-    fetch("/setup/custom", {
-        "method": "POST",
-        "headers": {
-            "Content-Type": "application/json"
-        },
-        "body": JSON.stringify({
-            "serverName": serverName,
-            "cltheme": cltheme,
-            "sudo": document.getElementById("sudoPasswordSetup").value
-        })
-    }).then((res) => res.json())
-        .then((data) => {
-            if (data["status"] == "s") {
-                location.href = "/dashboard"
-            }
-        })
+
 }
 
 function updateDescriptionRegMode() {
