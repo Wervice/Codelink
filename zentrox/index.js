@@ -686,10 +686,17 @@ app.post("/api", (req, res) => {
             res.status(403).send("You have no permissions to access this resource")
             return
         }
+        const dfOutput = chpr.execSync("df -P").toString("ascii")
+        const dfLines = dfOutput.trim().split('\n').slice(1); // Split output by lines, removing header
+        const dfData = dfLines.map(line => {
+            const [filesystem, size, used, available, capacity, mounted] = line.split(/\s+/);
+            return { filesystem, size, used, available, capacity, mounted };
+        });
         res.send(
             {
                 "status": "s",
-                "drives": deviceInformation(req.body.driveName)
+                "drives": deviceInformation(req.body.driveName),
+                "ussage": dfData
             }
         )
     }

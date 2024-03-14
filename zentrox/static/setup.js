@@ -64,8 +64,6 @@ function submitCustomization() {
                 }
             })
     })
-
-
 }
 
 function updateDescriptionRegMode() {

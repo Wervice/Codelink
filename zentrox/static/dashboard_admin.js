@@ -474,10 +474,17 @@ function driveInformationModal(driveName) {
             if (data["status"] == "s") {
                 document.getElementById("driveName").innerText = data["drives"]["name"]
                 document.getElementById("driveModel").innerText = data["drives"]["model"] == null ? "N/A" : data["drives"]["model"]
-                document.getElementById("driveSize").innerText = data["drives"]["size"] == null ? "N/A" : Math.floor(Number(data["drives"]["size"])/1073741824)+" GB" == "0 GB" ? data["drives"]["size"] + " B"  : Math.floor(Number(data["drives"]["size"])/1073741824)+" GB"
+                document.getElementById("driveSize").innerText = data["drives"]["size"] == null ? "N/A" : Math.floor(Number(data["drives"]["size"]) / 1073741824) + " GB" == "0 GB" ? data["drives"]["size"] + " B" : Math.floor(Number(data["drives"]["size"]) / 1073741824) + " GB"
                 document.getElementById("driveMountpoint").innerText = data["drives"]["mountpoint"] == null ? "N/A" : data["drives"]["mountpoint"]
                 document.getElementById("drivePath").innerText = data["drives"]["path"] == null ? "N/A" : data["drives"]["path"]
-                document.getElementById("driveMounted").innerHTML = driveName.includes("sda") ? "True" : data["drives"]["mountpoint"] != null ? "True": "False"
+                document.getElementById("driveMounted").innerHTML = driveName.includes("sda") ? "True" : data["drives"]["mountpoint"] != null ? "True" : "False"
+                document.getElementById("driveUssage").innerHTML = "N/A"
+                for (drive of data["ussage"]) {
+                    if (drive["mounted"] == data["drives"]["mountpoint"]) {
+                        document.getElementById("driveUssage").innerHTML = drive["capacity"]
+                    }
+                }
+
 
                 document.getElementById("driveModal").hidden = false
             }
