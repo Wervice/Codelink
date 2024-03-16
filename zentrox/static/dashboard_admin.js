@@ -491,6 +491,30 @@ function driveInformationModal(driveName) {
         })
 }
 
+function addNewUser() {
+    document.getElementById("newUserModal").hidden = false
+}
+
+function submitNewUser() {
+    fetch("/api", {
+        "method": "POST",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "body": JSON.stringify({
+            "r": "newUser",
+            "username": "",
+            "password": "",
+            "userChoosesPassword": false
+        })
+    }).then((res) => res.json())
+        .then((data) => {
+            if (data["status"] == "s") {
+                document.getElementById("enableFTP").checked = data["enabled"]
+            }
+        })
+}
+
 setInterval(
     function () {
         setCPUBar()
