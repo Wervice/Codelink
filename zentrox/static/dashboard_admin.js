@@ -1,3 +1,94 @@
+// Global variables
+
+currFPath = "/"
+
+// Windows events
+
+window.onclick = function () {
+    document.getElementById("contextmenu").hidden = true
+}
+
+window.addEventListener("mousemove", function (e) {
+    mouseX = e.pageX
+    mouseY = e.pageY
+})
+
+window.onload = function () {
+    dataInit()
+    setCPUBar()
+    setRAMBar()
+    setDiskBar()
+    getDriveList()
+    getUserList()
+    renderFiles(currFPath)
+    document.querySelector("#contextmenu #deleteButton").addEventListener("click", function () {
+        confirmModal("Delete", "Do you want to proceed", function () {
+            fetch("/api", {
+                "method": "POST",
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "body": JSON.stringify({
+                    "path": contextFMenuFile,
+                    "r": "deleteFile"
+                })
+            }).then((res) => res.json())
+                .then((data) => {
+                    if (data["status"] == "s") {
+                        renderFiles(currFPath)
+                    }
+                    else {
+                        alert("Can not delete this file")
+                    }
+                })
+            renderFiles(currFPath)
+        })
+    }
+    )
+
+    document.querySelector("#contextmenu #renameButton").addEventListener("click", function () {
+        confirmModal("Rename", "Filename<br><br><input type='text' id='renameNameInput'>", function () {
+            var newFileName = document.getElementById("renameNameInput").value
+            fetch("/api", {
+                "method": "POST",
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+                "body": JSON.stringify({
+                    "path": contextFMenuFile,
+                    "newName": currFPath + newFileName,
+                    "r": "renameFile"
+                })
+            }).then((res) => res.json())
+                .then((data) => {
+                    if (data["status"] == "s") {
+                        renderFiles(currFPath)
+                    }
+                    else {
+                        alert("Can not rename this file")
+                    }
+                })
+            renderFiles(currFPath)
+        })
+    }
+    )
+}
+
+// Intervals
+
+setInterval(
+    function () {
+        setCPUBar()
+        setRAMBar()
+        setDiskBar()
+        getDriveList()
+    }, 10000
+)
+
+// Functions
+
+// Status bars (Dashboard)
+
 function setCPUBar() {
     fetch("/api?r=cpuPercent", {
         "method": "GET",
@@ -90,6 +181,8 @@ function getUserList() {
         })
 }
 
+// User management
+
 function deleteUser(username) {
     if (confirm(`Do you want to delete ${username}?`)) {
         fetch("/api", {
@@ -113,6 +206,32 @@ function deleteUser(username) {
     }
 }
 
+function addNewUser() {
+    document.getElementById("newUserModal").hidden = false
+}
+
+function submitNewUser() {
+    fetch("/api", {
+        "method": "POST",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "body": JSON.stringify({
+            "r": "newUser",
+            "username": "",
+            "password": "",
+            "userChoosesPassword": false
+        })
+    }).then((res) => res.json())
+        .then((data) => {
+            if (data["status"] == "s") {
+                document.getElementById("enableFTP").checked = data["enabled"]
+            }
+        })
+}
+
+// Interface
+
 function changePage(pageName) {
     for (page of document.querySelectorAll("#pages > div")) {
         console.log(page)
@@ -135,7 +254,7 @@ function changePage(pageName) {
     }
 }
 
-var currFPath = "/"
+// Files / Stroage
 
 function renderFiles(path) {
     fetch("/api", {
@@ -183,66 +302,38 @@ function contextMenuF(filename) {
     contextFMenuFile = currFPath + filename
 }
 
-window.onload = function () {
-    dataInit()
-    setCPUBar()
-    setRAMBar()
-    setDiskBar()
-    getDriveList()
-    getUserList()
-    renderFiles(currFPath)
-    document.querySelector("#contextmenu #deleteButton").addEventListener("click", function () {
-        confirmModal("Delete", "Do you want to proceed", function () {
-            fetch("/api", {
-                "method": "POST",
-                "headers": {
-                    "Content-Type": "application/json"
-                },
-                "body": JSON.stringify({
-                    "path": contextFMenuFile,
-                    "r": "deleteFile"
-                })
-            }).then((res) => res.json())
-                .then((data) => {
-                    if (data["status"] == "s") {
-                        renderFiles(currFPath)
-                    }
-                    else {
-                        alert("Can not delete this file")
-                    }
-                })
-            renderFiles(currFPath)
+function driveInformationModal(driveName) {
+    fetch("/api", {
+        "method": "POST",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "body": JSON.stringify({
+            "r": "driveInformation",
+            "driveName": driveName
         })
-    }
-    )
+    }).then((res) => res.json())
+        .then((data) => {
+            if (data["status"] == "s") {
+                document.getElementById("driveName").innerText = data["drives"]["name"]
+                document.getElementById("driveModel").innerText = data["drives"]["model"] == null ? "N/A" : data["drives"]["model"]
+                document.getElementById("driveSize").innerText = data["drives"]["size"] == null ? "N/A" : Math.floor(Number(data["drives"]["size"]) / 1073741824) + " GB" == "0 GB" ? data["drives"]["size"] + " B" : Math.floor(Number(data["drives"]["size"]) / 1073741824) + " GB"
+                document.getElementById("driveMountpoint").innerText = data["drives"]["mountpoint"] == null ? "N/A" : data["drives"]["mountpoint"]
+                document.getElementById("drivePath").innerText = data["drives"]["path"] == null ? "N/A" : data["drives"]["path"]
+                document.getElementById("driveMounted").innerHTML = driveName.includes("sda") ? "True" : data["drives"]["mountpoint"] != null ? "True" : "False"
+                document.getElementById("driveUssage").innerHTML = "N/A"
+                for (drive of data["ussage"]) {
+                    if (drive["mounted"] == data["drives"]["mountpoint"]) {
+                        document.getElementById("driveUssage").innerHTML = drive["capacity"]
+                    }
+                }
 
-    document.querySelector("#contextmenu #renameButton").addEventListener("click", function () {
-        confirmModal("Rename", "Filename<br><br><input type='text' id='renameNameInput'>", function () {
-            var newFileName = document.getElementById("renameNameInput").value
-            fetch("/api", {
-                "method": "POST",
-                "headers": {
-                    "Content-Type": "application/json"
-                },
-                "body": JSON.stringify({
-                    "path": contextFMenuFile,
-                    "newName": currFPath + newFileName,
-                    "r": "renameFile"
-                })
-            }).then((res) => res.json())
-                .then((data) => {
-                    if (data["status"] == "s") {
-                        renderFiles(currFPath)
-                    }
-                    else {
-                        alert("Can not rename this file")
-                    }
-                })
-            renderFiles(currFPath)
+                document.getElementById("driveModal").hidden = false
+            }
         })
-    }
-    )
 }
+
+// Packages
 
 function renderApplicationManagerList() {
     fetch("/api", {
@@ -380,19 +471,15 @@ function installPackage(packageName, button) {
     })
 }
 
-window.onclick = function () {
-    document.getElementById("contextmenu").hidden = true
-}
+// Network
 
-window.addEventListener("mousemove", function (e) {
-    mouseX = e.pageX
-    mouseY = e.pageY
-
-
-})
+// FTP
 
 function updateFTPConnectionSettings() {
     var enableFTP = document.getElementById("enableFTP").checked
+    var FTPlocalRoot = document.getElementById("ftpLocalRoot").value
+    var ftpUserUsername = document.getElementById("ftpUserUsername").value
+    var ftpUserPassword = document.getElementById("ftpUserPassword").value
 
     inputModal("Sudo password", "Please enter your sudo password to change these settings", "sudoPasswordFTP", "password", function () { // TODO Not yet reading the sudo password
         document.getElementById("ftpSettingsApply").innerText = "Updating"
@@ -404,17 +491,22 @@ function updateFTPConnectionSettings() {
             "body": JSON.stringify({
                 "r": "updateFTPconfig",
                 "enableFTP": enableFTP,
+                "ftpLocalRoot": FTPlocalRoot,
+                "ftpUserUsername": ftpUserUsername,
+                "ftpUserPassword": ftpUserPassword,
                 "sudo": document.getElementById("sudoPasswordFTP").value
             })
-        }).then((res) => res.json())
+        }).then((res) => {
+            if (!res.ok) {
+                console.log(res)
+                document.getElementById("ftpSettingsApply").innerHTML = "Apply"
+                throw new Error("Failed to update FTP configuration")
+            }
+            return res.json();
+        })
             .then((data) => {
-                if (data["status"] == "s") {
-                    fetchFTPconnectionInformation()
-                    document.getElementById("ftpSettingsApply").innerText = "Apply"
-                }
-                else {
-                    alert("Can not delete user")
-                }
+                fetchFTPconnectionInformation()
+                document.getElementById("ftpSettingsApply").innerText = "Apply"
             })
     }
     )
@@ -433,6 +525,8 @@ function fetchFTPconnectionInformation() {
         .then((data) => {
             if (data["status"] == "s") {
                 document.getElementById("enableFTP").checked = data["enabled"]
+                document.getElementById("ftpUserUsername").value = data["ftpUserUsername"]
+                document.getElementById("ftpLocalRoot").value = data["ftpLocalRoot"]
             }
         })
 }
@@ -458,68 +552,3 @@ function otherConnectionsTab(pageName) {
         }
     }
 }
-
-function driveInformationModal(driveName) {
-    fetch("/api", {
-        "method": "POST",
-        "headers": {
-            "Content-Type": "application/json"
-        },
-        "body": JSON.stringify({
-            "r": "driveInformation",
-            "driveName": driveName
-        })
-    }).then((res) => res.json())
-        .then((data) => {
-            if (data["status"] == "s") {
-                document.getElementById("driveName").innerText = data["drives"]["name"]
-                document.getElementById("driveModel").innerText = data["drives"]["model"] == null ? "N/A" : data["drives"]["model"]
-                document.getElementById("driveSize").innerText = data["drives"]["size"] == null ? "N/A" : Math.floor(Number(data["drives"]["size"]) / 1073741824) + " GB" == "0 GB" ? data["drives"]["size"] + " B" : Math.floor(Number(data["drives"]["size"]) / 1073741824) + " GB"
-                document.getElementById("driveMountpoint").innerText = data["drives"]["mountpoint"] == null ? "N/A" : data["drives"]["mountpoint"]
-                document.getElementById("drivePath").innerText = data["drives"]["path"] == null ? "N/A" : data["drives"]["path"]
-                document.getElementById("driveMounted").innerHTML = driveName.includes("sda") ? "True" : data["drives"]["mountpoint"] != null ? "True" : "False"
-                document.getElementById("driveUssage").innerHTML = "N/A"
-                for (drive of data["ussage"]) {
-                    if (drive["mounted"] == data["drives"]["mountpoint"]) {
-                        document.getElementById("driveUssage").innerHTML = drive["capacity"]
-                    }
-                }
-
-
-                document.getElementById("driveModal").hidden = false
-            }
-        })
-}
-
-function addNewUser() {
-    document.getElementById("newUserModal").hidden = false
-}
-
-function submitNewUser() {
-    fetch("/api", {
-        "method": "POST",
-        "headers": {
-            "Content-Type": "application/json"
-        },
-        "body": JSON.stringify({
-            "r": "newUser",
-            "username": "",
-            "password": "",
-            "userChoosesPassword": false
-        })
-    }).then((res) => res.json())
-        .then((data) => {
-            if (data["status"] == "s") {
-                document.getElementById("enableFTP").checked = data["enabled"]
-            }
-        })
-}
-
-setInterval(
-    function () {
-        setCPUBar()
-        setRAMBar()
-        setDiskBar()
-        getDriveList()
-    }, 10000
-)

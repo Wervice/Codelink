@@ -148,9 +148,26 @@
                     <h3>FTP</h3>
                     <input type="checkbox" id="enableFTP" name="enableFTP"> <label for="enableFTP">Enable
                         FTP</label><br>
+                    <br>
+                    <input type="text" placeholder="FTP Root Folder" id="ftpLocalRoot">
+                    <br>
+                    <br>
+                    <input type="text" placeholder="FTP User Username" id="ftpUserUsername"><br>
+                    <input type="password" placeholder="FTP User Password" id="ftpUserPassword">
+                    <br><br>
                     <button onclick="updateFTPConnectionSettings()" id="ftpSettingsApply">Apply</button><br>
-                    <small>Zentrox uses <a href="https://security.appspot.com/vsftpd.html">vsftpd</a> as a FTP
-                        server.</small>
+                    <small>
+                        <details>
+                            <summary>Information</summary>
+                            <div>
+                                Zentrox uses <a href="https://security.appspot.com/vsftpd.html">VSFTPD</a> and <a
+                                    href="https://manpages.ubuntu.com/manpages/bionic/en/man8/ufw.8.html">UFW</a> to
+                                mange FTP and Firewall. <br>
+                                Please note: Zentrox manipulates the vsftpd.conf and vsftpd.user_list file on first use of Zentrox. <br>In addition to that, it creates a new user on the system. <br>To remove the account, use the current ftp user username.
+                            </div>
+                        </details>
+                    </small>
+
                 </div>
                 <div id="smb"></div>
             </div>

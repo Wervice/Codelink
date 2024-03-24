@@ -64,7 +64,7 @@ select {
 }
 
 small {
-    color: #666;
+    color: #a0a0a0;
 }
 
 span.caption {
@@ -452,8 +452,8 @@ button.drive {
         transform: scale(10%);
     }
 
-    80% {
-        transform: scale(105%);
+    70% {
+        transform: scale(115%);
     }
 
     100% {

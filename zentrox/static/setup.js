@@ -44,7 +44,7 @@ function submitCustomization() {
 
     document.getElementById("customizationFinishButton").innerHTML = "Getting things ready" // TODO Make actual loader
 
-    confirmModal("Sudo Password", "Zentrox need your sudo password to install required packages.<br><input type='password' id='sudoPasswordSetup'>", function () {
+    confirmModal("Sudo Password", "Zentrox needs your sudo password to install required packages.<br><input type='password' id='sudoPasswordSetup'>", function () {
         document.getElementById("loader").innerHTML = "Setting everything up<br>This may take a few minutes"
         document.getElementById("loader").hidden = false
         fetch("/setup/custom", {
