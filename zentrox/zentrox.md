@@ -61,6 +61,21 @@ You can remove Zentrox by deleting the zentrox_server folder. If you also want t
 > [!IMPORTANT]
 > You can not restore your data after removing it once.
 
+### System changes
+Zentrox changes a few configurations on your system, so it will work properly. These are:
+#### FTP
+1. Installing vsftpd and ufw
+2. Enabling ufw
+3. Allowing port 20 and 21 using ufw for FTP
+4. Creating an FTP user called ftp_zentrox (This will change, if you change the user later using zentrox; The user has the default password `change_me` and not shell access)
+    The user will also get no home folder
+5. Changing /etc/vsftpd.conf (The last few lines after the last comment)
+    - Use vsftpd.userlist
+    - Set local root to / (you can change that later)
+    - Enable userlist
+    - Sub token user to $USER
+6. Stopping / Starting vsftpd
+
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first

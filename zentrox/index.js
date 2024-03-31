@@ -20,7 +20,6 @@ const chpr = require("child_process");
 const { Worker } = require("node:worker_threads");
 eval(fs.readFileSync(path.join(__dirname, "libs", "packages.js")) + ""); // 
 eval(fs.readFileSync(path.join(__dirname, "libs", "drives.js")) + "");
-eval(fs.readFileSync(path.join(__dirname, "libs", "io_special.js")) + "");
 
 var key = fs.readFileSync(__dirname + "/selfsigned.key");
 var cert = fs.readFileSync(__dirname + "/selfsigned.crt");
@@ -172,8 +171,8 @@ app.get("/", (req, res) => { // ? Main page
                     .readFileSync(path.join(zentroxInstPath, "custom.txt"))
                     .toString()
                     .split("\n")[0]
-                    .replace("<", "&lt")
-                    .replace(">", "&gt"),
+                    .replaceAll("<", "&lt")
+                    .replaceAll(">", "&gt"),
                 registrationButton: (function () {
                     if (
                         fs
@@ -210,7 +209,7 @@ app.post("/login", (req, res) => { // ? Login screen
             status: "s",
         });
     } else {
-        res.status("403").send();
+        res.status("403").send({});
     }
 });
 
@@ -286,14 +285,6 @@ app.post("/setup/regMode", (req, res) => { // ? Change registration mode in setu
 
 app.post("/setup/custom", (req, res) => { // ? Final installation changes
 
-    const vsftpd_conf_content = `
-        user_sub_token=$USER
-        local_root=/ftp
-        userlist_enable=YES
-        userlist_file=/etc/vsftpd.userlist
-        userlist_deny=NO
-    `
-
     if (fs.existsSync(path.join(zentroxInstPath, "custom.txt"))) {
         res.status(403).send("This action is not allowed");
     } else {
@@ -306,8 +297,6 @@ app.post("/setup/custom", (req, res) => { // ? Final installation changes
         fs.writeFileSync(path.join(zentroxInstPath, "setupDone.txt"), "true");
         req.session.signedIn = true;
         req.session.isAdmin = true;
-
-
 
         // ? Write package list to folder for the 1. time
         var packagesString = String(new Date().getTime()) + "\n";
@@ -322,19 +311,23 @@ app.post("/setup/custom", (req, res) => { // ? Final installation changes
 
         // ? Installing packages
         installPackage("vsftpd ufw", req.body.sudo); // * Install FTP server
-
+        chpr.exec(`echo ${req.body.sudo
+            .replaceAll('"', '\\"')
+            .replaceAll("'", "\\'")
+            .replaceAll("`", "\\`")} | sudo -S ufw enable; sudo ufw allow 20; sudo ufw allow 21; sudo systemctl stop --now vsftpd`)
 
         // ? Creating system user
         // * FTP
 
         fs.writeFileSync(path.join(zentroxInstPath, "ftp.txt"), "ftp_zentrox\n/")
-        try {chpr.execSync(`echo ${req.body.sudo
-            .replace('"', '\\"')
-            .replace("'", "\\'")
-            .replace("`", "\\`")} | sudo -S useradd -M -p $(openssl passwd -1 change_me) -s /sbin/nologin ftp_zentrox`, { stdio: "pipe" }) // * Done: TODO Fill in old username
+        try {
+            chpr.exec(`echo ${req.body.sudo
+                .replaceAll('"', '\\"')
+                .replaceAll("'", "\\'")
+                .replaceAll("`", "\\`")} | sudo -S useradd -p $(openssl passwd -1 change_me)  ftp_zentrox`, { stdio: "pipe" })
         }
-        catch {}
-        sudoAppendFileSync("/etc/vsftpd.conf", vsftpd_conf_content, req.body.sudo)
+        catch { }
+        chpr.execSync(`echo ${req.body.sudo} | sudo -S node libs/vsftpd_conf_init.js`)
 
         res.send({
             status: "s",
@@ -433,6 +426,14 @@ app.get("/api", (req, res) => { // ? Handle get API
     }
 });
 
+app.get("/logout", (req, res) => { //? Log user out of the Zentrox system
+    req.session.signedIn = null;
+    req.session.isAdmin = null;
+    zlog("Logout " + req.session, "info");
+    setTimeout(function () {
+        res.redirect("/");
+    }, 1000);
+});
 // ? Make it RESRful? 👇
 
 app.post("/api", (req, res) => { // ? Handle post API
@@ -473,8 +474,7 @@ app.post("/api", (req, res) => { // ? Handle post API
             }
             var userTable = userTable + "</table>";
             res.send({
-                status: "s",
-                text: userTable,
+                text: userTable
             });
         } else {
             res.status(403).send("You have no permissions to access this resource");
@@ -503,8 +503,8 @@ app.post("/api", (req, res) => { // ? Handle post API
                         var filesHTML =
                             filesHTML +
                             `<button class='fileButtons' onclick="${funcToUse}('${fileN}')" oncontextmenu="contextMenuF('${fileN}')"><img src="${fileIcon}"><br>${fileN
-                                .replace("<", "&lt;")
-                                .replace(">", "&gt;")}</button>`;
+                                .replaceAll("<", "&lt;")
+                                .replaceAll(">", "&gt;")}</button>`;
                     }
                 } else {
                     try {
@@ -522,13 +522,12 @@ app.post("/api", (req, res) => { // ? Handle post API
                     var filesHTML =
                         filesHTML +
                         `<button class='fileButtons' onclick="${funcToUse}('${fileN}')" oncontextmenu="contextMenuF('${fileN}')"><img src="${fileIcon}"><br>${fileN
-                            .replace("<", "&lt;")
-                            .replace(">", "&gt;")}</button>`;
+                            .replaceAll("<", "&lt;")
+                            .replaceAll(">", "&gt;")}</button>`;
                 }
             }
             res.send({
-                status: "s",
-                content: filesHTML,
+                content: filesHTML
             });
         } else {
             res.status(403).send("You have no permissions to access this resource");
@@ -543,9 +542,7 @@ app.post("/api", (req, res) => { // ? Handle post API
             }
         } catch (err) {
             console.warn("Error: " + err);
-            res.send({
-                status: "f",
-            });
+            res.status(500).send("Internal server error")
         }
     } else if (req.body.r == "renameFile") { // ? Renamve a file from the linux file system
         try {
@@ -557,9 +554,7 @@ app.post("/api", (req, res) => { // ? Handle post API
             });
         } catch (err) {
             console.warn("Error: " + err);
-            res.send({
-                status: "f",
-            });
+            res.status(500).send({})
         }
     } else if (req.body.r == "packageDatabase") { // ? Send the entire package database to the front end
         // * Early return if not admin
@@ -648,7 +643,6 @@ app.post("/api", (req, res) => { // ? Handle post API
 
         try {
             res.send({
-                status: "s",
                 content: JSON.stringify({
                     gui: guiApplications,
                     any: allInstalledPackages,
@@ -657,9 +651,7 @@ app.post("/api", (req, res) => { // ? Handle post API
             });
         } catch (err) {
             zlog(err, "error");
-            res.status(500).send({
-                status: "f",
-            });
+            res.status(500).send({});
         }
     } else if (req.body.r == "removePackage") { // ? Remove package from the system using apt, dnf, pacman
         if (!req.session.isAdmin) {
@@ -672,9 +664,7 @@ app.post("/api", (req, res) => { // ? Handle post API
             });
             zlog("Removed package " + req.body.packageName, "info");
         } else {
-            res.send({
-                status: "f",
-            });
+            res.status(500).send({})
             zlog("Failed to remove package " + req.body.packageName, "error");
         }
     } else if (req.body.r == "installPackage") { //? Install a package on the system
@@ -689,16 +679,11 @@ app.post("/api", (req, res) => { // ? Handle post API
             });
             zlog("Installed package " + req.body.packageName, "info");
         } else {
-            res.send({
-                status: "f",
-            });
+            res.status(500).send({});
             zlog("Failed to install package " + req.body.packageName, "error");
         }
+
     } else if (req.body.r == "updateFTPconfig") { // ? Change the FTP configuration on the system
-
-        // TODO
-        // Actually change the local root
-
         if (!req.session.isAdmin) {
             res.status(403).send("You have no permissions to access this resource");
             return;
@@ -712,22 +697,23 @@ app.post("/api", (req, res) => { // ? Handle post API
         if (req.body.enableFTP == "true" || req.body.enableFTP == true) {
             chpr.execSync(
                 `echo ${req.body.sudo
-                    .replace('"', '\\"')
-                    .replace("'", "\\'")
-                    .replace("`", "\\`")} | sudo -S systemctl enable --now vsftpd`,
+                    .replaceAll('"', '\\"')
+                    .replaceAll("'", "\\'")
+                    .replaceAll("`", "\\`")} | sudo -S systemctl enable --now vsftpd`,
                 { stdio: "pipe" }
             );
         } else {
             try {
                 chpr.execSync(
                     `echo ${req.body.sudo
-                        .replace('"', '\\"')
-                        .replace("'", "\\'")
-                        .replace("`", "\\`")} | sudo -S systemctl disable --now vsftpd`,
+                        .replaceAll('"', '\\"')
+                        .replaceAll("'", "\\'")
+                        .replaceAll("`", "\\`")} | sudo -S systemctl disable --now vsftpd`,
                     { stdio: "pipe" }
                 );
             } catch { }
         }
+        // TODO Use C
 
         // ? FTP User
 
@@ -738,26 +724,38 @@ app.post("/api", (req, res) => { // ? Handle post API
             return
         }
 
-        try {
-            chpr.execSync(`echo ${req.body.sudo  // ! Removing the old user
-                .replace('"', '\\"')
-                .replace("'", "\\'")
-                .replace("`", "\\`")} | sudo -S userdel ${currentFtpUserUsername}`, { stdio: "pipe" })
-        } catch { zlog("Didn't delete user to change FTP user credentials", "info") }
-        chpr.execSync(`echo ${req.body.sudo  // ! Add new user
-            .replace('"', '\\"')
-            .replace("'", "\\'")
-            .replace("`", "\\`")} | sudo -S useradd -M -p $(openssl passwd -1 ${req.body.ftpUserPassword}) -s /sbin/nologin ${req.body.ftpUserUsername}`, { stdio: "pipe" }) // * Done: TODO Fill in old username
-        // * -M: No home folder | -p: Password | -s: Shell = nologin
+        if (req.body.ftpUserPassword.length == 0) {
+            res.status(500).send({ "details": "FTP password can not be empty" })
+            return
+        }
 
-        sudoWriteFileSync("/etc/vsftpd.userlist", req.body.ftpUserUsername, req.body.sudo)
-        fs.writeFileSync(path.join(zentroxInstPath, "ftp.txt"), req.body.ftpUserUsername+"\n"+req.body.ftpLocalRoot)
-        res.send({
-            status: "s",
-        });
-    } else if (req.body.r == "ftpInformation") { // ? Send the current FTP information
-        var currentFtpUserUsername = fs.readFileSync(path.join(zentroxInstPath, "ftp.txt")).toString("utf-8").split("\n")[0]
-        var localRoot = fs.readFileSync(path.join(zentroxInstPath, "ftp.txt")).toString("utf-8").split("\n")[1]
+        if (req.body.ftpLocalRoot.length == 0) {
+            res.status(500).send({ "details": "Local root may not be empty" })
+            return
+        }
+
+        // TODO Replace code until next note with C
+        try {
+            chpr.execSync(`echo ${req.body.sudo  // ? Removing the old user
+                .replaceAll('"', '\\"')
+                .replaceAll("'", "\\'")
+                .replaceAll("`", "\\`")} | sudo -S userdel ${currentFtpUserUsername}`, { stdio: "pipe" })
+        } catch { zlog("Didn't delete user to change FTP user credentials", "info") }
+        chpr.execSync(`echo ${req.body.sudo  // ? Add new user
+            .replaceAll('"', '\\"')
+            .replaceAll("'", "\\'")
+            .replaceAll("`", "\\`")} | sudo -S useradd -p $(openssl passwd -1 ${req.body.ftpUserPassword}) ${req.body.ftpUserUsername}`, { stdio: "pipe" }) // * Done: TODO Fill in old username
+        // TODO End of the code to replace
+
+        chpr.execSync(`echo ${req.body.sudo} | sudo -S node libs/vsftpd_update.js ${req.body.ftpUserUsername} ${req.body.ftpLocalRoot} ${os.userInfo().username}`)
+        // TODO C can do it instead
+
+        fs.writeFileSync(path.join(zentroxInstPath, "ftp.txt"), req.body.ftpUserUsername + "\n" + req.body.ftpLocalRoot)
+
+        res.send({});
+    } else if (req.body.r == "fetchFTPconfig") { // ? Send the current FTP information
+        const currentFtpUserUsername = fs.readFileSync(path.join(zentroxInstPath, "ftp.txt")).toString("utf-8").split("\n")[0]
+        const localRoot = fs.readFileSync(path.join(zentroxInstPath, "ftp.txt")).toString("utf-8").split("\n")[1]
 
         if (!req.session.isAdmin) {
             res.status(403).send("You have no permissions to access this resource");
@@ -772,9 +770,9 @@ app.post("/api", (req, res) => { // ? Handle post API
         } catch (e) {
             var enableFTP = false;
         }
+        // TODO Update using execSync
 
         res.send({
-            status: "s",
             enabled: enableFTP,
             ftpUserUsername: currentFtpUserUsername,
             ftpLocalRoot: localRoot,
@@ -784,28 +782,18 @@ app.post("/api", (req, res) => { // ? Handle post API
             res.status(403).send("You have no permissions to access this resource");
             return;
         }
-        const dfOutput = chpr.execSync("df -P").toString("ascii");
-        const dfLines = dfOutput.trim().split("\n").slice(1); // Split output by lines, removing header
+        const dfOutput = chpr.execSync("df -P").toString("ascii"); // TODO Replace with execSync
+        const dfLines = dfOutput.trim().split("\n").slice(1); // ? Split output by lines, removing header
         const dfData = dfLines.map((line) => {
             const [filesystem, size, used, available, capacity, mounted] =
                 line.split(/\s+/);
             return { filesystem, size, used, available, capacity, mounted };
         });
         res.send({
-            status: "s",
             drives: deviceInformation(req.body.driveName),
             ussage: dfData,
         });
     }
-});
-
-app.get("/logout", (req, res) => { //? Log user out of the Zentrox system
-    req.session.signedIn = null;
-    req.session.isAdmin = null;
-    zlog("Logout " + req.session, "info");
-    setTimeout(function () {
-        res.redirect("/");
-    }, 1000);
 });
 
 server = https.createServer(options, app);

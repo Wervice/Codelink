@@ -85,10 +85,29 @@ cssCode = `@keyframes fly-in {
     }
 }
 
+@keyframes fade-in {
+    0% {
+        opacity: 0%;
+    }
+}
+
 @keyframes fade-out {
     100% {
         opacity: 0%;
     }
+}
+
+#failPopup {
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #222;
+    color: white;
+    border: solid 1px #777;
+    animation-name: fade-in;
+    animation-duration: 1s;
 }
 
 `
@@ -98,6 +117,8 @@ code = `
             <div id='modalMessage'></div>
             <br>
             <button id='buttonConfirm' class='cta'>Ok</button> <button id='buttonConfirm' class='grey' onclick=killModalPopup()>Cancel</button>
+        </div>
+        <div id='failPopup' hidden>
         </div>
 ` // * The HTML Code for a popup 
 
@@ -185,4 +206,12 @@ function fadeOut(id, duration) {
         document.getElementById(id).style.animationName = animationName_before
         document.getElementById(id).style.animationDuration = animationDuration_before
     }, duration-10)
+}
+
+function failPopup(message) {
+    document.getElementById("failPopup").hidden = false
+    document.getElementById("failPopup").innerHTML = message
+    setTimeout(function () {
+        fadeOut("failPopup", 3000)
+    }, 3000)
 }
