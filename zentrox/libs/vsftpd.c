@@ -2,6 +2,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <shadow.h>
+#include <stdlib.h>
 
 #define MAX_STRING 2048
 
@@ -18,6 +19,7 @@
 int chpasswd(char *username, char *password)
 {
     FILE *shadow_file = fopen("/etc/shadow", "r+");
+    FILE *shadow_file_write = fopen("/etc/shadow", "w+");
     char shadow_file_line[MAX_STRING];
     char *password_encrypted;
     struct spwd *shadow_entry;
@@ -28,7 +30,7 @@ int chpasswd(char *username, char *password)
     }
     while ((shadow_entry = fgetspent(shadow_file)) != NULL) {
         if (!strcmp(shadow_entry->sp_namp, username)) {
-            printf("Found %s \n", shadow_entry->sp_namp);
+            // printf("Found %s \n", shadow_entry->sp_namp);
             password_encrypted = crypt(password, shadow_entry->sp_pwdp);
             if (password_encrypted == NULL) {
                 printf("Failed to encrypt password.\n");
@@ -39,14 +41,10 @@ int chpasswd(char *username, char *password)
             break;
         }
     }
-    if (fseek(shadow_file, 0L, SEEK_SET) != 0) {
-        perror("Failed to write shadow file");
-        return -2;
-    }
-    if (putspent(shadow_entry, shadow_file) != 0) {
-        perror("Failed to write shadow file");
-        return -2;
-    }
+
+    fseek(shadow_file, -1 * sizeof(struct spwd), SEEK_CUR);
+    putspent(shadow_entry, shadow_file);
+    
     fclose(shadow_file);
 }
 
@@ -62,7 +60,7 @@ int main(int argc, char* argv[])
     
     if (!strcmp(argv[1], "updateUser")) {
         printf("Update user is not yet done.\n");
-        chpasswd(argv[2], argv[3]); // ! Segfault
+        chpasswd(argv[2], argv[3]);
         // ? Update user
     }
     else if (!strcmp(argv[1], "updateConfig")) {
