@@ -1,5 +1,5 @@
 // Global variables
-
+// TODO Send proper http status codes !!!!!
 currFPath = "/"
 
 // Windows events
@@ -95,12 +95,11 @@ function setCPUBar() {
         "headers": {
             "Content-Type": "application/json"
         }
-    }).then((res) => res.json())
+    }).then((res) => { if (!res.ok) { failPopup("Failed to fetch CPU status"); throw new Error("Failed to fetch CPU status") } return res.json() })
         .then((data) => {
-            if (data["status"] == "s") {
-                document.getElementById("cpu_bar").style.width = Math.floor(Number(data["p"] * 2)) + "px"
-                document.getElementById("cpu_bar").title = "CPU " + Math.round(data["p"]) + "%"
-            }
+            document.getElementById("cpu_bar").style.width = Math.floor(Number(data["p"] * 2)) + "px"
+            document.getElementById("cpu_bar").title = "CPU " + Math.round(data["p"]) + "%"
+
         })
 }
 
@@ -110,12 +109,10 @@ function setRAMBar() {
         "headers": {
             "Content-Type": "application/json"
         }
-    }).then((res) => res.json())
+    }).then((res) => { if (!res.ok) { failPopup("Failed to fetch RAM status"); throw new Error("Failed to fetch RAM status") } return res.json() })
         .then((data) => {
-            if (data["status"] == "s") {
-                document.getElementById("ram_bar").style.width = Math.floor(Number(data["p"]) * 2) + "px"
-                document.getElementById("ram_bar").title = "RAM " + Math.round(data["p"]) + "%"
-            }
+            document.getElementById("ram_bar").style.width = Math.floor(Number(data["p"]) * 2) + "px"
+            document.getElementById("ram_bar").title = "RAM " + Math.round(data["p"]) + "%"
         })
 }
 
@@ -125,12 +122,10 @@ function setDiskBar() {
         "headers": {
             "Content-Type": "application/json"
         }
-    }).then((res) => res.json())
+    }).then((res) => { if (!res.ok) { failPopup("Failed to fetch Disk status"); throw new Error("Failed to fetch Disk status") } return res.json() })
         .then((data) => {
-            if (data["status"] == "s") {
-                document.getElementById("disk_bar").style.width = Math.floor(Number(data["p"]) * 2) + "px"
-                document.getElementById("disk_bar").title = "Disk " + Math.round(data["p"]) + "%"
-            }
+            document.getElementById("disk_bar").style.width = Math.floor(Number(data["p"]) * 2) + "px"
+            document.getElementById("disk_bar").title = "Disk " + Math.round(data["p"]) + "%"
         })
 }
 
@@ -140,24 +135,23 @@ function getDriveList() {
         "headers": {
             "Content-Type": "application/json"
         }
-    }).then((res) => res.json())
+    }).then((res) => { if (!res.ok) { failPopup("Failed to fetch disk list"); throw new Error("Failed to fetch disk list") } return res.json() })
         .then((data) => {
-            if (data["status"] == "s") {
-                var htmlCode = ""
-                for (drive of Array.from(data["drives"])) {
-                    var childrenHtmlCode = ""
-                    if (drive["children"] != null) {
-                        for (child of drive["children"]) {
-                            var childrenHtmlCode = childrenHtmlCode + `<button class="drive" onclick="driveInformationModal('${child["name"]}')">${child["name"]}</button>`
-                        }
-                        var htmlCode = htmlCode + `<button class="drive" onclick="driveInformationModal('${drive["name"]}')">${drive["name"]}</button>${childrenHtmlCode}`
+            var htmlCode = ""
+            for (drive of Array.from(data["drives"])) {
+                var childrenHtmlCode = ""
+                if (drive["children"] != null) {
+                    for (child of drive["children"]) {
+                        var childrenHtmlCode = childrenHtmlCode + `<button class="drive" onclick="driveInformationModal('${child["name"]}')">${child["name"]}</button>`
                     }
-                    else {
-                        var htmlCode = htmlCode + `<button class="drive" onclick="driveInformationModal('${drive["name"]}')">${drive["name"]}</button>`
-                    }
+                    var htmlCode = htmlCode + `<button class="drive" onclick="driveInformationModal('${drive["name"]}')">${drive["name"]}</button>${childrenHtmlCode}`
                 }
-                document.getElementById("disks").innerHTML = htmlCode
+                else {
+                    var htmlCode = htmlCode + `<button class="drive" onclick="driveInformationModal('${drive["name"]}')">${drive["name"]}</button>`
+                }
             }
+            document.getElementById("disks").innerHTML = htmlCode
+
         })
 }
 
@@ -170,14 +164,9 @@ function getUserList() {
         "body": JSON.stringify({
             "r": "userList"
         })
-    }).then((res) => res.json())
+    }).then((res) => { if (!res.ok) { failPopup("Failed to fetch list of users"); throw new Error("Failed to fetch list of users") } return res.json() })
         .then((data) => {
-            if (data["status"] == "s") {
-                document.getElementById("usersTable").innerHTML = data["text"]
-            }
-            else {
-                errorModal("User list", "Zentrox failed to fetch the user list.<br>This may occur, if the connection to the server is lost.", function () { })
-            }
+            document.getElementById("usersTable").innerHTML = data["text"]
         })
 }
 
@@ -194,14 +183,9 @@ function deleteUser(username) {
                 "username": username,
                 "r": "deleteUser"
             })
-        }).then((res) => res.json())
+        }).then((res) => { if (!res.ok) { failPopup("Failed to delete user"); throw new Error("Failed to delete user") } return res.json() })
             .then((data) => {
-                if (data["status"] == "s") {
-                    getUserList()
-                }
-                else {
-                    errorModal("Delete user", "Zentrox delete a user.<br>This may occur, if the connection to the server is lost.", function () { })
-                }
+                getUserList()
             })
     }
 }
@@ -222,11 +206,9 @@ function submitNewUser() {
             "password": "",
             "userChoosesPassword": false
         })
-    }).then((res) => res.json())
+    }).then((res) => { if (!res.ok) { failPopup("Failed to submit new user"); throw new Error("Failed to submit new user") } return res.json() })
         .then((data) => {
-            if (data["status"] == "s") {
-                document.getElementById("enableFTP").checked = data["enabled"]
-            }
+            // TODO Missing
         })
 }
 
@@ -267,14 +249,10 @@ function renderFiles(path) {
             "showHiddenFiles": document.getElementById("showHiddenFiles").checked,
             "r": "filesRender"
         })
-    }).then((res) => res.json())
+    }).then((res) => { if (!res.ok) { failPopup("Failed to fetch list of files"); throw new Error("Failed to fetch list of files") } return res.json() })
         .then((data) => {
-            if (data["status"] == "s") {
-                document.getElementById("filesContainer").innerHTML = data["content"]
-            }
-            else {
-                errorModal("File list", "Zentrox failed to fetch the list of files.<br>This may occur if the requested folder doesn't exist.<br>Zentrox will now try to navigate to the root folder. ", function () { currFPath = "/"; renderFiles(currFPath) })
-            }
+            document.getElementById("filesContainer").innerHTML = data["content"]
+
         })
 }
 
@@ -312,24 +290,23 @@ function driveInformationModal(driveName) {
             "r": "driveInformation",
             "driveName": driveName
         })
-    }).then((res) => res.json())
+    }).then((res) => { if (!res.ok) { failPopup("Failed to fetch drive information"); throw new Error("Failed to fetch drive information") } return res.json() })
         .then((data) => {
-            if (data["status"] == "s") {
-                document.getElementById("driveName").innerText = data["drives"]["name"]
-                document.getElementById("driveModel").innerText = data["drives"]["model"] == null ? "N/A" : data["drives"]["model"]
-                document.getElementById("driveSize").innerText = data["drives"]["size"] == null ? "N/A" : Math.floor(Number(data["drives"]["size"]) / 1073741824) + " GB" == "0 GB" ? data["drives"]["size"] + " B" : Math.floor(Number(data["drives"]["size"]) / 1073741824) + " GB"
-                document.getElementById("driveMountpoint").innerText = data["drives"]["mountpoint"] == null ? "N/A" : data["drives"]["mountpoint"]
-                document.getElementById("drivePath").innerText = data["drives"]["path"] == null ? "N/A" : data["drives"]["path"]
-                document.getElementById("driveMounted").innerHTML = driveName.includes("sda") ? "True" : data["drives"]["mountpoint"] != null ? "True" : "False"
-                document.getElementById("driveUssage").innerHTML = "N/A"
-                for (drive of data["ussage"]) {
-                    if (drive["mounted"] == data["drives"]["mountpoint"]) {
-                        document.getElementById("driveUssage").innerHTML = drive["capacity"]
-                    }
+            document.getElementById("driveName").innerText = data["drives"]["name"]
+            document.getElementById("driveModel").innerText = data["drives"]["model"] == null ? "N/A" : data["drives"]["model"]
+            document.getElementById("driveSize").innerText = data["drives"]["size"] == null ? "N/A" : Math.floor(Number(data["drives"]["size"]) / 1073741824) + " GB" == "0 GB" ? data["drives"]["size"] + " B" : Math.floor(Number(data["drives"]["size"]) / 1073741824) + " GB"
+            document.getElementById("driveMountpoint").innerText = data["drives"]["mountpoint"] == null ? "N/A" : data["drives"]["mountpoint"]
+            document.getElementById("drivePath").innerText = data["drives"]["path"] == null ? "N/A" : data["drives"]["path"]
+            document.getElementById("driveMounted").innerHTML = driveName.includes("sda") ? "True" : data["drives"]["mountpoint"] != null ? "True" : "False"
+            document.getElementById("driveUssage").innerHTML = "N/A"
+            for (drive of data["ussage"]) {
+                if (drive["mounted"] == data["drives"]["mountpoint"]) {
+                    document.getElementById("driveUssage").innerHTML = drive["capacity"]
                 }
-
-                document.getElementById("driveModal").hidden = false
             }
+
+            document.getElementById("driveModal").hidden = false
+
         })
 }
 
@@ -344,41 +321,37 @@ function renderApplicationManagerList() {
         "body": JSON.stringify({
             "r": "packageDatabase"
         })
-    }).then((res) => res.json())
+    }).then((res) => { if (!res.ok) { failPopup("Failed to fetch package list"); throw new Error("Failed to fetch package list") } return res.json() })
         .then((data) => {
-            if (data["status"] == "s") {
-                var responseJSON = JSON.parse(data["content"])
-                guiApps = responseJSON["gui"] // ? Installed & has GUI
-                anyApps = responseJSON["any"] // ? Installed and can have GUI
-                allApps = responseJSON["all"] // ? All packages in the DB
-                document.getElementById("loadingApplications").hidden = true
-                document.getElementById("packageSearchResults").hidden = true
-                document.getElementById("installedPackagesDetails").hidden = false
-                document.getElementById("installedAppsDetails").hidden = false
-                console.log(guiApps)
-                var htmlCode = ""
-                for (e of Array.from(guiApps)) {
+            var responseJSON = JSON.parse(data["content"])
+            guiApps = responseJSON["gui"] // ? Installed & has GUI
+            anyApps = responseJSON["any"] // ? Installed and can have GUI
+            allApps = responseJSON["all"] // ? All packages in the DB
+            document.getElementById("loadingApplications").hidden = true
+            document.getElementById("packageSearchResults").hidden = true
+            document.getElementById("installedPackagesDetails").hidden = false
+            document.getElementById("installedAppsDetails").hidden = false
+            console.log(guiApps)
+            var htmlCode = ""
+            for (e of Array.from(guiApps)) {
+                if (e != undefined) {
+                    var htmlCode = htmlCode + "<div class='package'><img src='" + e[1] + "'><br>" + e[0].split(".")[0].replace("-", " ") + "<br><button class='remove_package' onclick='removePackage(\"" + e[2] + "\", this)'>Remove</button></div>"
+                    console.log(e[1])
+                }
+            }
+            document.getElementById("installedApps").innerHTML = htmlCode
+
+            var htmlCode = ""
+            for (e of Array.from(anyApps)) {
+                if (e.length != 0) {
                     if (e != undefined) {
-                        var htmlCode = htmlCode + "<div class='package'><img src='" + e[1] + "'><br>" + e[0].split(".")[0].replace("-", " ") + "<br><button class='remove_package' onclick='removePackage(\"" + e[2] + "\", this)'>Remove</button></div>"
+                        var htmlCode = htmlCode + "<div class='package_small'>" + e.split(".")[0].replace("-", " ") + "<button class='remove_package' onclick='removePackage(\"" + e + "\", this)'>Remove</button></div>"
                         console.log(e[1])
                     }
                 }
-                document.getElementById("installedApps").innerHTML = htmlCode
+            }
+            document.getElementById("installedPackages").innerHTML = htmlCode
 
-                var htmlCode = ""
-                for (e of Array.from(anyApps)) {
-                    if (e.length != 0) {
-                        if (e != undefined) {
-                            var htmlCode = htmlCode + "<div class='package_small'>" + e.split(".")[0].replace("-", " ") + "<button class='remove_package' onclick='removePackage(\"" + e + "\", this)'>Remove</button></div>"
-                            console.log(e[1])
-                        }
-                    }
-                }
-                document.getElementById("installedPackages").innerHTML = htmlCode
-            }
-            else {
-                alert("Can not fetch pack list")
-            }
         })
 }
 
@@ -427,17 +400,17 @@ function removePackage(packageName, button) {
                 "packageName": packageName,
                 "sudoPassword": document.getElementById("sudoPasswordInput").value
             })
-        }).then((res) => res.json())
+        }).then((res) => {
+            if (!res.ok) {
+                failPopup("Failed to remove package");
+                button.innerHTML = "Failed"
+                button.disabled = false;
+                button.style.color = "rgb(255, 75, 75);";
+                throw new Error("Failed to remove package");
+            }; return res.json()
+        })
             .then((data) => {
-                if (data["status"] == "s") {
-                    renderApplicationManagerList()
-                }
-                else {
-                    errorModal("Remove package", "Failed to remove package.")
-                    button.innerHTML = "Failed"
-                    button.disabled = false
-                    button.style.color = "rgb(255, 75, 75);"
-                }
+                renderApplicationManagerList()
             })
     })
 }
@@ -456,17 +429,17 @@ function installPackage(packageName, button) {
                 "packageName": packageName,
                 "sudoPassword": document.getElementById("sudoPasswordInput").value
             })
-        }).then((res) => res.json())
+        }).then((res) => {
+            if (!res.ok) {
+                failPopup("Failed to install package");
+                button.innerHTML = "Failed"
+                button.disabled = false;
+                button.style.color = "rgb(255, 75, 75);";
+                throw new Error("Failed to install package");
+            }; return res.json()
+        })
             .then((data) => {
-                if (data["status"] == "s") {
-                    renderApplicationManagerList()
-                }
-                else {
-                    errorModal("Install package", "Failed to install package.")
-                    button.innerHTML = "Failed"
-                    button.disabled = false
-                    button.style.color = "rgb(255, 75, 75);"
-                }
+                renderApplicationManagerList()
             })
     })
 }
@@ -480,6 +453,11 @@ function updateFTPConnectionSettings() {
     var FTPlocalRoot = document.getElementById("ftpLocalRoot").value
     var ftpUserUsername = document.getElementById("ftpUserUsername").value
     var ftpUserPassword = document.getElementById("ftpUserPassword").value
+
+    if (ftpUserPassword.length == 0) {
+        document.getElementById("ftpUserPassword").focus()
+        return
+    }
 
     inputModal("Sudo password", "Please enter your sudo password to change these settings", "sudoPasswordFTP", "password", function () { // TODO Not yet reading the sudo password
         document.getElementById("ftpSettingsApply").innerText = "Updating"
@@ -498,11 +476,17 @@ function updateFTPConnectionSettings() {
             })
         }).then((res) => {
             if (!res.ok) {
-                console.log(res)
-                document.getElementById("ftpSettingsApply").innerHTML = "Apply"
-                throw new Error("Failed to update FTP configuration")
+                res.json().then(function (jsonResponse) {
+                    document.getElementById("ftpSettingsApply").innerHTML = "Failed (retry)"
+                    document.getElementById("ftpError").innerHTML = jsonResponse["details"]
+                    failPopup("Failed to update FTP configuration")
+                    throw new Error("Failed to update FTP configuration")
+                })
             }
-            return res.json();
+            else {
+                document.getElementById("ftpError").innerHTML = ""
+            }
+            return res.json(); // ! The JSON is empty => Fix on server side!!!!
         })
             .then((data) => {
                 fetchFTPconnectionInformation()
@@ -519,15 +503,13 @@ function fetchFTPconnectionInformation() {
             "Content-Type": "application/json"
         },
         "body": JSON.stringify({
-            "r": "ftpInformation"
+            "r": "fetchFTPconfig"
         })
-    }).then((res) => res.json())
+    }).then((res) => { if (!res.ok) { failPopup("Can not fetch FTP configuration information"); throw new Error("Failed to fetch FTP configuration information") } return res.json() })
         .then((data) => {
-            if (data["status"] == "s") {
-                document.getElementById("enableFTP").checked = data["enabled"]
-                document.getElementById("ftpUserUsername").value = data["ftpUserUsername"]
-                document.getElementById("ftpLocalRoot").value = data["ftpLocalRoot"]
-            }
+            document.getElementById("enableFTP").checked = data["enabled"]
+            document.getElementById("ftpUserUsername").value = data["ftpUserUsername"]
+            document.getElementById("ftpLocalRoot").value = data["ftpLocalRoot"]
         })
 }
 
