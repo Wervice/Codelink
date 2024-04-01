@@ -18,8 +18,8 @@
 
 int chpasswd(char *username, char *password)
 {
-    FILE *shadow_file = fopen("/etc/shadow", "r+");
-    FILE *shadow_file_write = fopen("/etc/shadow", "w+");
+    FILE *shadow_file = fopen("/home/---/shadow.txt", "r+"); // ? I changed the file to a copy for now.
+    FILE *shadow_file_write = fopen("/home/---/shadow.txt", "w+");
     char shadow_file_line[MAX_STRING];
     char *password_encrypted;
     struct spwd *shadow_entry;
