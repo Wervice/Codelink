@@ -63,6 +63,17 @@ Zentrox offers many features for different purposes:
 - System resource measurement
 - Web shell
 
+# Why...
+## ... JavaScript?
+JavaScript is a very fast and extensible language.    
+It features most of the things I was looking for and doesn't stress the hardware it runs on to much.
+## ... C?
+Zentrox also uses C to speed up certain tasks.    
+C had the libraries and features I needed to change the system.
+## ... Express?
+Express is very fast minimal. It can be extended using libraries.    
+In addition to that, it also is very fast and lightweight on the system.
+
 ## Removing
 
 You can remove Zentrox by deleting the zentrox_server folder. If you also want to erase all user & admin data, you can remove zentrox_data.
