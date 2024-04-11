@@ -1,6 +1,7 @@
 # Zentrox
 
 Zentrox helps you manage and set up a NAS and collaboration applications on your server or computer.
+
 <div align=center>
 <img src="https://raw.githubusercontent.com/Wervice/Codelink/main/zentrox/static/Zentrox.png" width="200">
 </div>
@@ -40,16 +41,22 @@ node index.js # Run zentrox main JS
 Zentrox will now be hosted on `localhost:3000`. You can continue with a GUI setup from there.
 
 ## Usage
+
 After rebooting the server or closing Zentrox, please restart it using:
+
 ```bash
 cd ~/zentrox_server # Go to Zentrox code folder
 node index.js # Start zentrox
 ```
+
 You can now login to Zentrox using your admin credentials.
 
 ## Features
+
 Zentrox offers many features for different purposes:
+
 ### Administration & Management
+
 - File sharing protocols
 - Package manager
 - Storage & Files overview
@@ -57,23 +64,28 @@ Zentrox offers many features for different purposes:
 - Web shell
 
 ## Removing
+
 You can remove Zentrox by deleting the zentrox_server folder. If you also want to erase all user & admin data, you can remove zentrox_data.
+
 > [!IMPORTANT]
 > You can not restore your data after removing it once.
 
 ### System changes
+
 Zentrox changes a few configurations on your system, so it will work properly. These are:
+
 #### FTP
+
 1. Installing vsftpd and ufw
 2. Enabling ufw
 3. Allowing port 20 and 21 using ufw for FTP
 4. Creating an FTP user called ftp_zentrox (This will change, if you change the user later using zentrox; The user has the default password `change_me` and not shell access)
-    The user will also get no home folder
+   The user will also get no home folder
 5. Changing /etc/vsftpd.conf (The last few lines after the last comment)
-    - Use vsftpd.userlist
-    - Set local root to / (you can change that later)
-    - Enable userlist
-    - Sub token user to $USER
+   - Use vsftpd.userlist
+   - Set local root to / (you can change that later)
+   - Enable userlist
+   - Sub token user to $USER
 6. Stopping / Starting vsftpd
 
 ## Contributing
@@ -85,6 +97,6 @@ to discuss what you would like to change.
 
 Codelink is released under [Apache 2.0](https://github.com/Wervice/Codelink?tab=Apache-2.0-1-ov-file#readme)
 
-Codelink uses/requires the following resources:   
-Icons8 Icons [icons8.com](https://icons8.com)   
+Codelink uses/requires the following resources:  
+Icons8 Icons [icons8.com](https://icons8.com)  
 VSFTPD as an FTP server [https://security.appspot.com/vsftpd.html](https://security.appspot.com/vsftpd.html) (Has not been modified)
