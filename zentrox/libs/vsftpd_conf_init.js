@@ -1,7 +1,6 @@
-const fs = require("fs")
+const fs = require("fs");
 
-const vsftpd_conf_code = 
-`
+const vsftpd_conf_code = `
 # Example config file /etc/vsftpd.conf
 #
 # The default compiled in settings are fairly paranoid. This sample file
@@ -163,7 +162,7 @@ local_root=/
 userlist_enable=YES
 userlist_file=/etc/vsftpd.userlist
 userlist_deny=NO
-`
+`;
 
-fs.writeFileSync("/etc/vsftpd.conf", vsftpd_conf_code)
-fs.writeFileSync("/etc/vsftpd.userlist", "ftp_zentrox")
+fs.writeFileSync("/etc/vsftpd.conf", vsftpd_conf_code);
+fs.writeFileSync("/etc/vsftpd.userlist", "ftp_zentrox");
