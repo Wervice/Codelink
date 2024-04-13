@@ -1,5 +1,8 @@
 # Zentrox
 
+![GitHub License](https://img.shields.io/github/license/Wervice/Codelink?style=flat-square)
+![GitHub Repo stars](https://img.shields.io/github/stars/Wervice/Codelink?style=flat-square)
+
 Zentrox helps you manage and set up a NAS and collaboration applications on your server or computer.
 
 <div align=center>
@@ -64,14 +67,20 @@ Zentrox offers many features for different purposes:
 - Web shell
 
 # Why...
+
 ## ... JavaScript?
-JavaScript is a very fast and extensible language.    
+
+JavaScript is a very fast and extensible language.  
 It features most of the things I was looking for and doesn't stress the hardware it runs on to much.
+
 ## ... C?
-Zentrox also uses C to speed up certain tasks.    
+
+Zentrox also uses C to speed up certain tasks.  
 C had the libraries and features I needed to change the system.
+
 ## ... Express?
-Express is very fast minimal. It can be extended using libraries.    
+
+Express is very fast minimal. It can be extended using libraries.  
 In addition to that, it also is very fast and lightweight on the system.
 
 ## Removing

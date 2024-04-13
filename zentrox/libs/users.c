@@ -4,6 +4,7 @@
 #include <shadow.h>
 #include <stdlib.h>
 #include <time.h>
+#include <pwd.h>
 
 #define MAX_STRING 2048
 
@@ -33,7 +34,7 @@ int chpasswd(const char *username, const char *password)
 
     if (!shadow_file)
     {
-        printf("Failed to open /etc/passwd\nPlease make sure, you run this program as root.\n");
+        printf("Failed to open /etc/shadow\nPlease make sure, you run this program as root.\n");
         return -2;
     }
   
@@ -51,11 +52,6 @@ int chpasswd(const char *username, const char *password)
             snprintf(time_string, 16, "%ld", current_time);
             snprintf(setting_prefix, MAX_STRING - 8, "$6$%s$", time_string);
             
-            /* 
-            strncat(setting_prefix, time_string, strlen(setting_prefix));
-            strncat(setting_prefix, setting_suffix, strlen(setting_prefix));
-            */
-
             password_encrypted = crypt(password, setting_prefix);
 
             if (password_encrypted == NULL)
@@ -113,16 +109,27 @@ int chpasswd(const char *username, const char *password)
 }
 
 int chusernm(const char *username, const char *new_username) {
-  struct spwd *shadow_entry;
-  FILE *tempfile = tmpfile();
-  FILE *shadow_file = fopen("/home/constantin/shadow.txt", "r");
- 
+  // Define variables before user
+  struct spwd *shadow_entry; // Shadow entry is a struct and stored in this var
+  struct passwd passwd_entry;
+  FILE *tempfile = tmpfile(); // Tempfile for shadow
+  FILE *tempfile_p = tmpfile(); // Tempfile for passwd
+  FILE *shadow_file = fopen("/home/constantin/shadow.txt", "r"); // Shadow file pointer
+  FILE *passwd_file = fopen("/home/constantin/passwd.txt", "r"); // Passwd file pointer
+
   if (!shadow_file)
+  {
+      printf("Failed to open /etc/shadow\nPlease make sure, you run this program as root.\n");
+      return -2;
+  }
+  
+  if (!passwd_file)
   {
       printf("Failed to open /etc/passwd\nPlease make sure, you run this program as root.\n");
       return -2;
   }
 
+  // Change shadow entry
   while ((shadow_entry = fgetspent(shadow_file)) != NULL) {
     if (!strcmp(shadow_entry->sp_namp, username)) {
       strncpy(shadow_entry->sp_namp, new_username, 512);
@@ -132,10 +139,18 @@ int chusernm(const char *username, const char *new_username) {
       putspent(shadow_entry, tempfile);
     }
   }
+  
+  // Change passwd entry 
 
+  // Change home folder name
+
+  // Write data to files
   rewind(tempfile);
+  rewind(tempfile_p);
   fclose(shadow_file);
+  fclose(passwd_file);
   shadow_file = fopen("/home/constantin/shadow.txt", "w");
+  passwd_file = fopen("/home/constantin/passwd.txt", "w"); 
 
   int c;
   while ((c = fgetc(tempfile)) != EOF)
@@ -145,6 +160,8 @@ int chusernm(const char *username, const char *new_username) {
   
   fclose(tempfile);
   fclose(shadow_file);
+  fclose(tempfile_p);
+  fclose(passwd_file);
   return 0; 
 }
 

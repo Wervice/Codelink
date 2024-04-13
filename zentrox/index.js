@@ -802,7 +802,6 @@ app.post("/api", (req, res) => {
             .toString()
             .split("\n")[0],
       );
-
       const usernameChangeCout = chpr.execSync(
         `echo ${req.body.sudo
           .replaceAll('"', '\\"')
