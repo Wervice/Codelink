@@ -26,6 +26,11 @@ You can use this script to install Zentrox on your system. It will auto generate
 
 If you already have a .key and .crt, please copy it to the folder and call it selfsigned.crt / selfsigned.key.
 
+> [!IMPORTANT]
+> Zentrox is not done yet. If you want to try the latest state of development, you can install it using the commands bellow.
+> Please do NOT ignore any disclaimers, as you could potentially break your system.
+> Look under [Removing](#Removing), to remove Zentrox from your system again.
+
 ```bash
 git clone https://github.com/Wervice/Codelink/ # Clones Codelink repo to current folder
 mv Codelink/zentrox ~/zentrox_server # Moves zentrox to ~/zentrox_server. This folder includes the zentrox code
