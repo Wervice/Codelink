@@ -10,29 +10,47 @@
   --green: #65a017;
 }
 
-*:focus {
-  outline: none;
-  filter: brightness(1.2);
-}
-
-button:hover {
-  filter: brightness(1.1);
-}
-
-button:disabled {
-  filter: grayscale();
-}
-
-button.call_to_action {
-  background-color: var(--accent-color);
+::selection {
+  background: transparent;
 }
 
 ::placeholder {
   color: #888;
 }
 
+*:focus {
+  outline: none;
+  filter: brightness(1.2);
+}
+
 * {
   font-family: "Work Sans", sans-serif;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0%;
+  }
+}
+
+@keyframes turning {
+  50% {
+    rotate: 30turn;
+  }
+}
+
+@keyframes pop_open {
+  0% {
+    transform: scale(10%);
+  }
+
+  70% {
+    transform: scale(115%);
+  }
+
+  100% {
+    transform: scale(100%);
+  }
 }
 
 body {
@@ -41,6 +59,8 @@ body {
   padding: 0px;
   margin: 0px;
   overflow: hidden;
+  animation-name: fade-in;
+  animation-duration: 0.25s;
 }
 
 input[type="text"],
@@ -58,12 +78,39 @@ select {
   width: 200px;
 }
 
+input[type="checkbox"] {
+  margin-top: -1px;
+  appearance: none;
+  vertical-align: middle;
+  width: 15px;
+  height: 15px;
+  background: #ffffff22;
+  border-radius: 2px;
+  background-size: 0%;
+  background-position: center;
+  transition: ease-in-out 0.125s;
+}
+
+input[type="checkbox"]:checked {
+  animation-duration: 0.25s;
+  animation-iteration-count: 1;
+  background: var(--accent-color-dark);
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAA0klEQVR4nO2XWwrCMBQF7w59oPRD9y4oqNAlVBgJtOqHSmrT5EbOfBUKzZyT9pKaCSGEEGJegBVwAVpgYzUBNEDHk9Yqlg9crWL5Dlibd4DtG/kbsDPvIPlCoOYLgZovhJr/y+aBBXAEDuE6iXHc8aBJtcB5lgfnkA/07SdfIIv8yyuUdKFs8gPhj+fDR7a3WkYlCUIUn/NMCFFcfkoIN/K/hHAnPyaEW/mYEO7lI2Z6vjk/0074bn5ECP/yX0LUIz8ALIFTfwhcPm4IIYQQwqK4A05/JpzKhHQ2AAAAAElFTkSuQmCC");
+  background-size: 50%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
 select {
   width: 225px;
 }
 
 small {
   color: #a0a0a0;
+}
+
+h2 {
+  margin-bottom: 5px;
 }
 
 span.caption {
@@ -94,6 +141,18 @@ button {
     margin-bottom: -3px;
     padding-right: 5px;
   }
+
+  & :hover {
+    filter: brightness(1.1);
+  }
+
+  button:disabled {
+    filter: grayscale();
+  }
+
+  button.call_to_action {
+    background-color: var(--accent-color);
+  }
 }
 
 .outline {
@@ -105,6 +164,7 @@ button {
 #sideBar button {
   width: 175px;
   text-align: left;
+  background: #242424;
 }
 
 #sideBar {
@@ -112,7 +172,8 @@ button {
   background-color: #242424;
   padding: 5px;
   height: 100vh;
-
+  animation-name: fade-in;
+  animation-duration: 0.5s;
   & h2 {
     margin: 0px;
     padding-top: 5px;
@@ -139,6 +200,11 @@ details {
     padding: 2.5px;
     color: #ffffff88;
     display: contents;
+  }
+
+  & button {
+    animation-name: fade-in;
+    animation-duration: 0.25s;
   }
 }
 
@@ -213,51 +279,24 @@ details {
 
 td {
   padding: 10px;
-}
 
-td button {
-  background: transparent;
-  color: white;
-  padding: 0px;
-  margin: 0px;
-}
+  & button {
+    background: transparent;
+    color: white;
+    padding: 0px;
+    margin: 0px;
+  }
 
-td button:hover {
-  background: transparent;
-  opacity: 80%;
-}
-
-h2 {
-  margin-bottom: 5px;
+  & :hover {
+    background: transparent;
+    opacity: 80%;
+  }
 }
 
 #renameNameInput {
   padding: 8px;
   background-color: #444;
   border: 1px solid #333 !important;
-}
-
-input[type="checkbox"] {
-  margin-top: -1px;
-  appearance: none;
-  vertical-align: middle;
-  width: 15px;
-  height: 15px;
-  background: #ffffff22;
-  border-radius: 2px;
-  background-size: 0%;
-  background-position: center;
-  transition: ease-in-out 0.125s;
-}
-
-input[type="checkbox"]:checked {
-  animation-duration: 0.25s;
-  animation-iteration-count: 1;
-  background: var(--accent-color-dark);
-  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAAAsTAAALEwEAmpwYAAAA0klEQVR4nO2XWwrCMBQF7w59oPRD9y4oqNAlVBgJtOqHSmrT5EbOfBUKzZyT9pKaCSGEEGJegBVwAVpgYzUBNEDHk9Yqlg9crWL5Dlibd4DtG/kbsDPvIPlCoOYLgZovhJr/y+aBBXAEDuE6iXHc8aBJtcB5lgfnkA/07SdfIIv8yyuUdKFs8gPhj+fDR7a3WkYlCUIUn/NMCFFcfkoIN/K/hHAnPyaEW/mYEO7lI2Z6vjk/0074bn5ECP/yX0LUIz8ALIFTfwhcPm4IIYQQwqK4A05/JpzKhHQ2AAAAAElFTkSuQmCC");
-  background-size: 50%;
-  background-position: center;
-  background-repeat: no-repeat;
 }
 
 label[for="showHiddenFiles"] {
@@ -365,12 +404,6 @@ label[for="showHiddenFiles"] {
   background-color: var(--green);
 }
 
-@keyframes turning {
-  50% {
-    rotate: 30turn;
-  }
-}
-
 #loadingApplications {
   margin-top: 50px;
   font-size: large;
@@ -443,20 +476,6 @@ button.drive {
   padding: 10px;
   border-radius: 5px;
   background-color: #333;
-}
-
-@keyframes pop_open {
-  0% {
-    transform: scale(10%);
-  }
-
-  70% {
-    transform: scale(115%);
-  }
-
-  100% {
-    transform: scale(100%);
-  }
 }
 
 #driveModal {

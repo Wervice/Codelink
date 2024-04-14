@@ -97,6 +97,25 @@ h3 {
   color: #888;
 }
 
+@keyframes scale_in {
+  0% {
+    position: relative;
+    opacity: 70%;
+    transform: scale(80%) translateY(-60%);
+  }
+
+  100% {
+    top: 50%;
+  }
+}
+
+@keyframes scale_in_logo {
+  0% {
+    opacity: 0%;
+    transform: scale(80%);
+  }
+}
+
 #logo {
   width: 100px;
   height: 100px;
@@ -104,13 +123,14 @@ h3 {
   position: fixed;
   top: calc(50vh - 50px);
   left: 600px;
+  animation-name: scale_in_logo;
+  animation-duration: 0.25s;
 }
 
 div.contentPage {
   margin-left: 20px;
   position: relative;
   top: 50%;
-  -ms-transform: translateY(-50%);
   transform: translateY(-50%);
   width: 500px;
   max-width: 100vw;
@@ -119,7 +139,8 @@ div.contentPage {
   box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.52);
   border: 1px solid #222;
   border-radius: 10px;
-  position: relative;
+  animation-name: scale_in;
+  animation-duration: 0.25s;
 
   & #form {
     width: 100%;
