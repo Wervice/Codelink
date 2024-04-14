@@ -1,7 +1,7 @@
 # Zentrox
 
-![GitHub License](https://img.shields.io/github/license/Wervice/Codelink?style=flat-square)
-![GitHub Repo stars](https://img.shields.io/github/stars/Wervice/Codelink?style=flat-square)
+![GitHub License](https://img.shields.io/github/license/Wervice/Codelink?style=for-the-badge)
+![GitHub Repo stars](https://img.shields.io/github/stars/Wervice/Codelink?style=for-the-badge)
 ![JavaScript](https://img.shields.io/badge/JavaScript-white.svg?style=for-the-badge&logo=javascript&logoColor=black&color=gold)
 ![C](https://img.shields.io/badge/C%20Language-white.svg?style=for-the-badge&logo=c&logoColor=white&color=blue)
 ![Linux](https://img.shields.io/badge/Linux-white.svg?style=for-the-badge&logo=linux&logoColor=white&color=grey)
