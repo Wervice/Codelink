@@ -115,6 +115,7 @@ int chusernm(const char *username, char *new_username) {
   struct passwd *passwd_entry;
   
   char *passwd_line = NULL;
+  char *new_passwd_line;
   char c;
   
   FILE *tempfile = tmpfile(); // Tempfile for shadow
@@ -158,17 +159,22 @@ int chusernm(const char *username, char *new_username) {
   // Change passwd entry 
   
   int getlineval;
-  while((getlineval = getline(&passwd_line, &passwd_line_len, passwd_file))) {
-    printf("Evaluated with %d\n", getlineval);
+  printf("1\n");
+  passwd_entry = getpwnam(username);
+  printf("2\n");
+  while((getlineval = getline(&passwd_line, &passwd_line_len, passwd_file)) != -1) { 
+    printf("3\n");
     if (strstr(passwd_line, username)) {
-      printf("S %s", passwd_line);
+      sprintf(new_passwd_line, "%s:%s:%d:%d:%s:%s:%s", passwd_entry->pw_name, passwd_entry->pw_passwd, passwd_entry->pw_uid, passwd_entry->pw_gid, passwd_entry->pw_gecos, passwd_entry->pw_dir, passwd_entry->pw_shell);
+      // Generate modified line and write it to file
     }
-    else {
-      printf("%s", passwd_line);
+    else {   
+      fputs(passwd_line, tempfile_p);
     }
   }
-    
-// Change home folder name
+  // Write tempfile to passwd
+
+  // Change home folder name
 
   // Write data to files
   rewind(tempfile);
