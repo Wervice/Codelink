@@ -108,25 +108,34 @@ int chpasswd(const char *username, const char *password)
     return 0;
 }
 
-int chusernm(const char *username, const char *new_username) {
+int chusernm(const char *username, char *new_username) {
   // Define variables before user
+  
   struct spwd *shadow_entry; // Shadow entry is a struct and stored in this var
-  struct passwd passwd_entry;
+  struct passwd *passwd_entry;
+  
+  char *passwd_line = NULL;
+  char c;
+  
   FILE *tempfile = tmpfile(); // Tempfile for shadow
   FILE *tempfile_p = tmpfile(); // Tempfile for passwd
+  
   FILE *shadow_file = fopen("/home/constantin/shadow.txt", "r"); // Shadow file pointer
   FILE *passwd_file = fopen("/home/constantin/passwd.txt", "r"); // Passwd file pointer
-
+  
+  int change_username_shadow = 0;
+  size_t passwd_line_len; 
+  
   if (!shadow_file)
   {
-      printf("Failed to open /etc/shadow\nPlease make sure, you run this program as root.\n");
-      return -2;
+    printf("Failed to open /etc/shadow\nPlease make sure, you run this program as root.\n");
+    return -2;
   }
   
   if (!passwd_file)
   {
-      printf("Failed to open /etc/passwd\nPlease make sure, you run this program as root.\n");
-      return -2;
+    printf("Failed to open /etc/passwd\nPlease make sure, you run this program as root.\n");
+    exit(-2);
   }
 
   // Change shadow entry
@@ -134,15 +143,32 @@ int chusernm(const char *username, const char *new_username) {
     if (!strcmp(shadow_entry->sp_namp, username)) {
       strncpy(shadow_entry->sp_namp, new_username, 512);
       putspent(shadow_entry, tempfile);
+      change_username_shadow = 1;
     }
     else {
       putspent(shadow_entry, tempfile);
     }
+}
+
+  if (change_username_shadow == 0) {
+    printf("Failed to change username in shadow file\n");
+    exit(-3);
   }
   
   // Change passwd entry 
-
-  // Change home folder name
+  
+  int getlineval;
+  while((getlineval = getline(&passwd_line, &passwd_line_len, passwd_file))) {
+    printf("Evaluated with %d\n", getlineval);
+    if (strstr(passwd_line, username)) {
+      printf("S %s", passwd_line);
+    }
+    else {
+      printf("%s", passwd_line);
+    }
+  }
+    
+// Change home folder name
 
   // Write data to files
   rewind(tempfile);
@@ -152,7 +178,7 @@ int chusernm(const char *username, const char *new_username) {
   shadow_file = fopen("/home/constantin/shadow.txt", "w");
   passwd_file = fopen("/home/constantin/passwd.txt", "w"); 
 
-  int c;
+  c = 0;
   while ((c = fgetc(tempfile)) != EOF)
   {
     fputc(c, shadow_file);
