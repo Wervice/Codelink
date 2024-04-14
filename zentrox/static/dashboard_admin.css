@@ -146,11 +146,11 @@ button {
     filter: brightness(1.1);
   }
 
-  button:disabled {
+  & :disabled {
     filter: grayscale();
   }
 
-  button.call_to_action {
+  & .call_to_action {
     background-color: var(--accent-color);
   }
 }
@@ -221,7 +221,7 @@ details {
     padding: 5px;
     height: 25px;
     font-size: 20px;
-    background-color: var(--accent-color);
+    background-color: var(--accent-color-dark);
     transition: width ease-in-out 0.125s;
     border-radius: 5px;
   }

@@ -10,6 +10,7 @@ const path = require("path");
 const app = express();
 const os = require("os");
 const fs = require("fs");
+var compression = require('compression')
 const bodyParser = require("body-parser");
 const crypto = require("crypto");
 const cookieParser = require("cookie-parser");
@@ -74,6 +75,7 @@ app.use(express.static("static"));
 app.set("views", __dirname + "/templates");
 app.engine("html", require("ejs").renderFile);
 app.set("view engine", "ejs");
+app.use(compression())
 
 new Worker("./libs/packageWorker.js");
 
