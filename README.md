@@ -5,6 +5,12 @@
 <img src="images/icon.svg" height=100>
 </div>
 
+## ⚠️ Codelink is not being worked on!
+Developing for any of the Codelink projects has been paused except for Zentrox, which has been moved to a [seperate repository](https://github.com/wervice/zentrox).
+Currently, I do not plan on working on Codelink again. I did not archive this repository, as I may come back to it.
+The current state of the projects may contain bugs and does not use the latest versions of NW.js and Chromium. Thus I do not recommend using any of the applications.
+Thank you for showing interest in Codelink 🙂
+
 <table>
 <tr>
 <td>
